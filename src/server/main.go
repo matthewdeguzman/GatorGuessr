@@ -15,10 +15,10 @@ func initializeRouter() {
 
 	// Route Handlers / Endpoints
 	r.HandleFunc("/api/users", getUsers).Methods("GET")
-	r.HandleFunc("/api/users/{id}", getUser).Methods("GET")
+	r.HandleFunc("/api/users/{username}", getUser).Methods("GET")
 	r.HandleFunc("/api/users", createUser).Methods("POST")
-	r.HandleFunc("/api/users/{id}", updateUser).Methods("PUT")
-	r.HandleFunc("/api/users/{id}", deleteUser).Methods("DELETE")
+	r.HandleFunc("/api/users/{username}", updateUser).Methods("PUT")
+	r.HandleFunc("/api/users/{username}", deleteUser).Methods("DELETE")
 
 	log.Fatal(http.ListenAndServe(":8000", r))
 }
