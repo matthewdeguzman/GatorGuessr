@@ -8,29 +8,20 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MaterialModule } from './material.module';
 import { LoginComponent } from './login/login.component';
 
-const routes: Routes = [
-  { path: '', redirectTo: 'app', pathMatch: 'full' },
-  { path: 'app', component: AppComponent },
-  { path: 'login', component: LoginComponent },
-  // Add additional routes here
-];
 
 @NgModule({
   declarations: [
     AppComponent,
-    LoginComponent,
+    LoginComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
     MaterialModule,
-    RouterModule.forRoot(routes)
+    RouterModule
   ],
   providers: [],
   bootstrap: [AppComponent],
-  exports: [
-    RouterModule
-  ]
 })
 export class AppModule { }
