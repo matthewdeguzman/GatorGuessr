@@ -24,6 +24,7 @@ func initializeMigration() {
 		fmt.Println("Server Connected Successfully")
 	}
 
+	// migrates the server if necessary
 	db.AutoMigrate(&User{})
 
 }
@@ -34,12 +35,12 @@ func initializeRouter() {
 
 	// Route Handlers / Endpoints
 	r.HandleFunc("/api/users", getUsers).Methods("GET")
-	r.HandleFunc("/api/users/{username}", getUser).Methods("GET")
+	r.HandleFunc("/api/users/{id}", getUser).Methods("GET")
 	r.HandleFunc("/api/users", createUser).Methods("POST")
-	r.HandleFunc("/api/users/{username}", updateUser).Methods("PUT")
-	r.HandleFunc("/api/users/{username}", deleteUser).Methods("DELETE")
+	r.HandleFunc("/api/ users/{id}", updateUser).Methods("PUT")
+	r.HandleFunc("/api/users/{id}", deleteUser).Methods("DELETE")
 
-	log.Fatal(http.ListenAndServe(":8080", r))
+	log.Fatal(http.ListenAndServe(":9000", r))
 }
 
 func main() {

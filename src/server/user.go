@@ -5,15 +5,19 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
+	"gorm.io/gorm"
 )
 
 type User struct {
+	gorm.Model
 	Username string `json:"username"`
 	Password string `json:"password"`
 }
 
 func getUsers(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
+
+	// retrieves the users from the database and encodes it
 	var users []User
 	db.Find(&users)
 	json.NewEncoder(w).Encode(users)
@@ -21,9 +25,11 @@ func getUsers(w http.ResponseWriter, r *http.Request) {
 
 func getUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
+
+	// retrieves the params and finds the first user with the id
 	params := mux.Vars(r)
 	var user User
-	db.First(&user, params["username"])
+	db.First(&user, params["id"])
 	json.NewEncoder(w).Encode(user)
 }
 
