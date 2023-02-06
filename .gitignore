@@ -1,0 +1,5 @@
+**/node_modules
+**/.angular
+src/server/GatorGuessr
+src/server/credentials.go
+.vscode
