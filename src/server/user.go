@@ -27,12 +27,9 @@ func getUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	// loops through all users
-	for _, item := range users {
-		if item.Username == params["username"] {
-			json.NewEncoder(w).Encode(item)
-			return
-		}
-	}
+	params := mux.Vars(r)
+	var user User
+	db.First(&user, params["id"])
 	json.NewEncoder(w).Encode(&User{})
 }
 
