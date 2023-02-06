@@ -37,7 +37,7 @@ func initializeRouter() {
 	r.HandleFunc("/api/users", getUsers).Methods("GET")
 	r.HandleFunc("/api/users/{id}", getUser).Methods("GET")
 	r.HandleFunc("/api/users", createUser).Methods("POST")
-	r.HandleFunc("/api/ users/{id}", updateUser).Methods("PUT")
+	r.HandleFunc("/api/users/{id}", updateUser).Methods("PUT")
 	r.HandleFunc("/api/users/{id}", deleteUser).Methods("DELETE")
 
 	log.Fatal(http.ListenAndServe(":9000", r))

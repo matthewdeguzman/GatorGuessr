@@ -50,8 +50,9 @@ func updateUser(w http.ResponseWriter, r *http.Request) {
 	// finds the user with the id and reads the request and updates the user
 	params := mux.Vars(r)
 	var user User
+	db.First(&user, params["id"])
 	json.NewDecoder(r.Body).Decode(&user)
-	db.Model(params["id"]).Update(user)
+	db.Save(&user)
 	json.NewEncoder(w).Encode(user)
 }
 
