@@ -1,13 +1,33 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 
 	"github.com/gorilla/mux"
+	"gorm.io/driver/mysql"
+	"gorm.io/gorm"
 )
 
-var users []User
+var db *gorm.DB
+var err error
+
+func initializeMigration() {
+
+	// Build connection string
+	db, err = gorm.Open(mysql.Open(DSN), &gorm.Config{})
+	if err != nil {
+		fmt.Println(err.Error())
+		panic("Cannot connect to DB")
+	} else {
+		fmt.Println("Server Connected Successfully")
+	}
+
+	// migrates the server if necessary
+	db.AutoMigrate(&User{})
+
+}
 
 func initializeRouter() {
 	// initialize router
@@ -20,14 +40,11 @@ func initializeRouter() {
 	r.HandleFunc("/api/users/{username}", updateUser).Methods("PUT")
 	r.HandleFunc("/api/users/{username}", deleteUser).Methods("DELETE")
 
-	log.Fatal(http.ListenAndServe(":8000", r))
+	log.Fatal(http.ListenAndServe(":9000", r))
 }
 
 func main() {
 
-	// mock data - @TODO: Implement real database with azure
-	users = append(users, User{Username: "madmatt10125", Password: "good_password"})
-	users = append(users, User{Username: "thereal_throatgoat", Password: "great_password :o"})
-
+	initializeMigration()
 	initializeRouter()
 }

@@ -1,1 +1,3 @@
 src/server/GatorGuessr
+src/server/credentials.go
+.vscode
