@@ -46,9 +46,20 @@ func createUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func updateUser(w http.ResponseWriter, r *http.Request) {
-	// @TODO - Ethan
+	w.Header().Set("Content-Type", "application/json")
+	// finds the user with the id and reads the request and updates the user
+	params := mux.Vars(r)
+	var user User
+	json.NewDecoder(r.Body).Decode(&user)
+	db.Model(params["id"]).Update(user)
+	json.NewEncoder(w).Encode(user)
 }
 
 func deleteUser(w http.ResponseWriter, r *http.Request) {
-	// @TODO - Ethan
+	w.Header().Set("Content-Type", "application/json")
+	// retrieves user from the database and deletes it
+	params := mux.Vars(r)
+	var user User
+	db.Delete(&user, params["id"])
+	json.NewEncoder(w).Encode(user)
 }
