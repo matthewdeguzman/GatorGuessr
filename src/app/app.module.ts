@@ -1,14 +1,17 @@
-import { NgModule } from '@angular/core';
+import { BannerComponent } from './components/banner/banner.component';
+import { LoginComponent } from './components/login/login.component';
+import { NgModule, Component } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+
 import { RouterModule, Routes } from '@angular/router';
-import { HttpClientModule } from '@angular/common/http';
 import { AppRoutingModule } from './app-routing.module';
+
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MaterialModule } from './material.module';
-import { LoginComponent } from './components/login/login.component';
-import { ReactiveFormsModule } from '@angular/forms';
-import { MatFormFieldModule } from '@angular/material/form-field';
+
+import { IssueService } from './issue.service';
+import { HttpClientModule } from '@angular/common/http';
 
 const routes: Routes = [
   { path: '', redirectTo: 'app', pathMatch: 'full' },
@@ -21,17 +24,17 @@ const routes: Routes = [
   declarations: [
     AppComponent,
     LoginComponent,
+    BannerComponent,
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
+    HttpClientModule,
     MaterialModule,
-    ReactiveFormsModule,
-    MatFormFieldModule,
     RouterModule.forRoot(routes),
   ],
-  providers: [],
+  providers: [IssueService],
   bootstrap: [AppComponent],
   exports: [
     RouterModule

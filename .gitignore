@@ -1,4 +1,5 @@
 **/node_modules
 **/.angular
-src/server/credentials/credentials.go
 src/server/credentials/GatorGuessr.exe
+src/server/credentials/credentials.go
+.vscode

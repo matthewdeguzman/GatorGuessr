@@ -35,7 +35,6 @@ mat-form-field {
 
 mat-card-title,
       mat-card-content {
-        
         display: flex;
         justify-content: center;
     }
