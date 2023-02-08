@@ -1,5 +1,7 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
+import { IssueService } from '../../issue.service';
+
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
@@ -10,10 +12,12 @@ export class LoginComponent implements OnInit{
     username: new FormControl(''),
     password: new FormControl(''),
   });
-  constructor() { }
-ngOnInit(){
-  
-}
+  constructor(private IssueService: IssueService) { }
+  ngOnInit(){
+    this.IssueService.getUsers().subscribe((issue) => {
+      console.log(issue);
+    })
+  }
 submitLogin() {
   
   }
