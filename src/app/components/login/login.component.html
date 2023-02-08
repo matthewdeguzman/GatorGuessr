@@ -1,0 +1,59 @@
+<!-- <mat-card>
+    <mat-card-title>Login</mat-card-title>
+    <mat-card-content>
+       
+        <form [formGroup]="loginForm" (ngSubmit)="submitLogin()">
+            <label>
+                username:
+                <input type="text" formControlName="username" />
+            </label>
+            <label>
+                password:
+                <input type="text" formControlName="password" />
+            
+        </mat-card-content>
+</mat-card>
+ -->
+
+ <!-- <my-login-form (menu)='open($event)'>Your Form</my-login-form> -->
+
+ <mat-card>
+    <mat-card-title>Login</mat-card-title>
+    <mat-card-content>
+        <form [formGroup] = "loginForm" (ngSubmit) = "submitLogin()">
+            <p>
+                <mat-form-field appearance="outline">
+                    <mat-label>Username</mat-label>
+                    <input matInput placeholder = "Username"
+                        formControlName = "username" />
+                    <mat-icon matSuffix> sentiment_very_satisfied</mat-icon>
+                </mat-form-field>
+            </p>
+
+            <p>
+                <mat-form-field appearance = "outline">
+                    <mat-label>Password</mat-label>
+                    <input matInput [type]="showPassword ? 'text' : 'password'" name="password">
+                    <!-- <input matInput placeholder = "Password" 
+                        formControlName = "password" /> -->
+                        <mat-icon matSuffix (click)="togglePasswordVisibility()">
+                            {{showPassword?'visibility_off':'visibility'}}
+                        </mat-icon>
+
+                    
+                </mat-form-field>
+            </p>
+
+            <!-- <p *ngIf = "error" class = "error">
+                {{error}}
+            </p> -->
+            <div class = "mat-button">
+                <button type = "submit" mat-raised-button>Login</button>
+            </div>
+        </form>
+    </mat-card-content>
+ </mat-card>
+<router-outlet></router-outlet>
+
+
+ 

@@ -1,0 +1,54 @@
+/* 
+
+p {
+  font-family: "Verdana", sans-serif;
+  text-align: justify;
+}
+.login-card {
+    max-width: fit-content;
+    /* margin: auto;
+    width: 50%;
+    border: 3px solid green;
+    padding: 10px;
+    padding-top: center;
+    height: 450px; 
+} */
+
+host {
+    display: flex;
+    justify-content: center;
+    margin: 100px 0px;
+  }
+
+mat-card {
+    justify-content: center;
+    text-align: center;
+    width: 100%;
+    max-width: max-content;
+    margin: auto;
+    background-color: rgb(111, 6, 6);
+    color: gold;
+  }
+
+mat-form-field {
+    width: 100%;
+    min-width: 300px;
+  }
+
+mat-card-title,
+      mat-card-content {
+        display: flex;
+        justify-content: center;
+    }
+
+error {
+    padding: 16px;
+    width: 300px;
+    color: white;
+    background-color: red;
+    }
+      
+button {
+    display: flex;
+    justify-content: flex-end;
+    }

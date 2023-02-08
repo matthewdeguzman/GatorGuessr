@@ -13,7 +13,7 @@ export class IssueService {
     return this.http.get(`${this.uri}/api/users/${id}`)
   }
   getUsers() {
-    return this.http.get(`/api/users`)
+    return this.http.get(`${this.uri}/api/users`)
   }
 
 }

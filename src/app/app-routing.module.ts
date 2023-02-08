@@ -1,5 +1,5 @@
-import { BannerComponent } from './banner/banner.component';
-import { LoginComponent } from './login/login.component';
+import { BannerComponent } from './components/banner/banner.component';
+import { LoginComponent } from './components/login/login.component';
 import { AppComponent } from './app.component';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';

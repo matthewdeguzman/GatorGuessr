@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { IssueService } from './issue.service';
 //import { HttpClient } from '@angular/common/http';
 
 @Component({
@@ -8,5 +9,10 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'GatorGuessr';
+  constructor(private IssueService: IssueService) { }
+  ngOnInit(){
+    this.IssueService.getUsers().subscribe((issue) => {
+      console.log(issue);
+    })
+  }
 }
-
