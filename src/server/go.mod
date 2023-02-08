@@ -1,8 +1,7 @@
 module github.com/matthewdeguzman/GatorGuessr/src/server
 
-<<<<<<< HEAD
 go 1.19
-=======
+
 
 require (
 	github.com/gorilla/mux v1.8.0
@@ -15,7 +14,3 @@ require (
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
 )
-<<<<<<< HEAD
-=======
-
->>>>>>> 695d8b0afc09c2741c0ec65b2387e39dbb2e7784
