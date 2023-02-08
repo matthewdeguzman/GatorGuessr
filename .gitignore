@@ -3,4 +3,4 @@
 src/server/credentials/GatorGuessr.exe
 src/server/credentials/credentials.go
 .vscode
-src\server\main.go
+src/server/main.go
