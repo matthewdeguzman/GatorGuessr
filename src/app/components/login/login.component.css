@@ -26,8 +26,6 @@ mat-card {
     width: 100%;
     max-width: max-content;
     margin: auto;
-    background-color: rgb(111, 6, 6);
-    color: gold;
   }
 
 mat-form-field {
