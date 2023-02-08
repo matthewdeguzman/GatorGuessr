@@ -16,9 +16,15 @@ var db *gorm.DB
 var err error
 
 const DB_USERNAME = "cen3031"
+<<<<<<< HEAD
 const DB_NAME = "user_database"
 const DB_HOST = "cen3031-server.mysql.database.azure.com"
 const DB_PORT = "3306"
+=======
+const DB_HOST = "cen3031-server.mysql.database.azure.com"
+const DB_PORT = "3306"
+const DB_NAME = "user_database"
+>>>>>>> 695d8b0afc09c2741c0ec65b2387e39dbb2e7784
 
 const DSN = DB_USERNAME + ":" + credentials.DB_PASSWORD + "@tcp" + "(" + DB_HOST + ":" + DB_PORT + ")/" + DB_NAME + "?" + "parseTime=true&loc=Local"
 
