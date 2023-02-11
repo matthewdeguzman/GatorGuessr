@@ -48,5 +48,6 @@ error {
       
 button {
     display: flex;
-    justify-content: flex-end;
+    max-width: auto;
+    /* justify-content: flex-end; */
     }

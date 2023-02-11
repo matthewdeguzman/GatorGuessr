@@ -1,5 +1,6 @@
 import { BannerComponent } from './components/banner/banner.component';
 import { LoginComponent } from './components/login/login.component';
+import { RegisterComponent } from './components/register/register.component';
 import { NgModule, Component } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
@@ -17,6 +18,7 @@ const routes: Routes = [
   { path: '', redirectTo: 'app', pathMatch: 'full' },
   { path: 'app', component: AppComponent },
   { path: 'login', component: LoginComponent },
+  { path: 'register', title:'Register', component: RegisterComponent},
   // Add additional routes here
 ];
 
@@ -25,6 +27,7 @@ const routes: Routes = [
     AppComponent,
     LoginComponent,
     BannerComponent,
+    RegisterComponent,
   ],
   imports: [
     BrowserModule,
