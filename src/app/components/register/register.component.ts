@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { FormGroup, FormControl } from '@angular/forms';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { IssueService } from '../../issue.service';
 
 @Component({
@@ -12,6 +12,12 @@ export class RegisterComponent implements OnInit{
     username: new FormControl(''),
     password: new FormControl(''),
   });
+  usernameRequirements = new FormControl('',[Validators.required, Validators.minLength(4)]);
+  passwordRequirements = new FormControl('',[
+    Validators.required, 
+    Validators.minLength(8),
+    Validators.pattern(/^(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$/)
+  ]);
   constructor(private IssueService: IssueService) { }
   ngOnInit(){
     this.IssueService.getUsers().subscribe((issue) => {

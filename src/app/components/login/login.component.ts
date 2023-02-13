@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { FormGroup, FormControl } from '@angular/forms';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { IssueService } from '../../issue.service';
 
 @Component({
@@ -7,6 +7,7 @@ import { IssueService } from '../../issue.service';
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
+
 export class LoginComponent implements OnInit{
   loginForm = new FormGroup({
     username: new FormControl(''),
@@ -20,16 +21,14 @@ export class LoginComponent implements OnInit{
   }
 submitLogin() {
   
-  }
-  // @Input() error: string | null;
-  @Output() submitEM = new EventEmitter();
+}
+// @Input() error: string | null;
+@Output() submitEM = new EventEmitter();
   
+public showPassword: boolean = false;
 
-  public showPassword: boolean = false;
-
-  public togglePasswordVisibility(): void {
+public togglePasswordVisibility(): void {
     this.showPassword = !this.showPassword;
   }
-
 }
 

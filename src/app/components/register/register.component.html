@@ -5,8 +5,9 @@
             <p>
                 <mat-form-field appearance="outline">
                     <mat-label>Username</mat-label>
-                    <input matInput placeholder = "Username"
-                        formControlName = "username" />
+                    <input matInput placeholder = "Username" [formControl] = "usernameRequirements"/>
+                    <div *ngIf="usernameRequirements.invalid && usernameRequirements.touched">
+                    </div>
                     <mat-icon matSuffix> sentiment_very_satisfied</mat-icon>
                 </mat-form-field>
             </p>
@@ -14,12 +15,12 @@
             <p>
                 <mat-form-field appearance = "outline">
                     <mat-label>Password</mat-label>
-                    <input matInput [type]="showPassword ? 'text' : 'password'" name="password">
-                    <!-- <input matInput placeholder = "Password" 
-                        formControlName = "password" /> -->
-                        <mat-icon matSuffix (click)="togglePasswordVisibility()">
-                            {{showPassword?'visibility_off':'visibility'}}
-                        </mat-icon>
+                    <input matInput [type]="showPassword ? 'text' : 'password'" name="password" [formControl]="passwordRequirements">
+                    <div *ngIf="passwordRequirements.invalid && passwordRequirements.touched">
+                    </div>
+                    <mat-icon matSuffix (click)="togglePasswordVisibility()">
+                        {{showPassword?'visibility_off':'visibility'}}
+                    </mat-icon>
                 </mat-form-field>
             </p>
 
