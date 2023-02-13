@@ -15,5 +15,12 @@ export class IssueService {
   getUsers() {
     return this.http.get(`${this.uri}/api/users`)
   }
+  createUser(username, password) {
+    const user = {
+      username: username,
+      password: password,
+    };
+    return this.http.post(`${this.uri}/api/users`, user);
+  }
 
 }
