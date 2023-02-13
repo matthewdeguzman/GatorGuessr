@@ -7,6 +7,8 @@
                     <mat-label>Username</mat-label>
                     <input matInput placeholder = "Username" [formControl] = "usernameRequirements"/>
                     <div *ngIf="usernameRequirements.invalid && usernameRequirements.touched">
+                        <p *ngIf="usernameRequirements.errors?.['minlength']">Username must be at least 4 characters long</p>
+                        <p *ngIf="usernameRequirements.errors?.['required']">Username is required</p>
                     </div>
                     <mat-icon matSuffix> sentiment_very_satisfied</mat-icon>
                 </mat-form-field>
@@ -17,6 +19,9 @@
                     <mat-label>Password</mat-label>
                     <input matInput [type]="showPassword ? 'text' : 'password'" name="password" [formControl]="passwordRequirements">
                     <div *ngIf="passwordRequirements.invalid && passwordRequirements.touched">
+                        <p *ngIf="passwordRequirements.errors?.['minlength']">Password must be at least 8 characters long</p>
+                        <p *ngIf="passwordRequirements.errors?.['required']">Password is required</p>
+                        <p *ngIf="passwordRequirements.errors?.['pattern']">Password must have an uppercase and a number</p>
                     </div>
                     <mat-icon matSuffix (click)="togglePasswordVisibility()">
                         {{showPassword?'visibility_off':'visibility'}}
