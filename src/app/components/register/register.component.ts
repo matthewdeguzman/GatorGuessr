@@ -32,8 +32,12 @@ submitRegister() {
   
 
   public showPassword: boolean = false;
+  public showConfirmPassword: boolean = false;
 
   public togglePasswordVisibility(): void {
     this.showPassword = !this.showPassword;
+  }
+  public toggleConfirmPassWordVisivility(): void {
+    this.showConfirmPassword = !this.showConfirmPassword;
   }
 }

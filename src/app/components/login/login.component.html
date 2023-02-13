@@ -21,16 +21,16 @@
     <mat-card-title>Login</mat-card-title>
     <mat-card-content>
         <form [formGroup] = "loginForm" (ngSubmit) = "submitLogin()">
-            <p>
+            <div>
                 <mat-form-field appearance="outline">
                     <mat-label>Username</mat-label>
                     <input matInput placeholder = "Username"
                         formControlName = "username" />
                     <mat-icon matSuffix> sentiment_very_satisfied</mat-icon>
                 </mat-form-field>
-            </p>
+            </div>
 
-            <p>
+            <div>
                 <mat-form-field appearance = "outline">
                     <mat-label>Password</mat-label>
                     <input matInput [type]="showPassword ? 'text' : 'password'" name="password">
@@ -42,7 +42,7 @@
 
                     
                 </mat-form-field>
-            </p>
+            </div>
 
             <!-- <p *ngIf = "error" class = "error">
                 {{error}}

@@ -8,8 +8,10 @@ mat-card {
   }
 
 mat-form-field {
+    
     width: 100%;
     min-width: 300px;
+    
   }
 
 mat-card-title,
