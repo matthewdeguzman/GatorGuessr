@@ -2,6 +2,7 @@ module github.com/matthewdeguzman/GatorGuessr/src/server
 
 go 1.19
 
+
 require (
 	github.com/gorilla/mux v1.8.0
 	gorm.io/driver/mysql v1.4.6
