@@ -23,9 +23,9 @@ const DB_PORT = "3306"
 const DSN = DB_USERNAME + ":" + credentials.DB_PASSWORD + "@tcp" + "(" + DB_HOST + ":" + DB_PORT + ")/" + DB_NAME + "?" + "parseTime=true&loc=Local"
 
 type User struct {
-	gorm.Model
-	Username string `json:"username"`
+	Username string `gorm:"primarykey"`
 	Password string `json:"password"`
+	// gorm.Model
 }
 
 func getUsers(w http.ResponseWriter, r *http.Request) {
@@ -43,7 +43,9 @@ func getUser(w http.ResponseWriter, r *http.Request) {
 	// loops through all users
 	params := mux.Vars(r)
 	var user User
-	db.First(&user, params["id"])
+	// db.First(&user, params["id"])
+	db.First(&user, params["username"])
+	fmt.Print(params)
 	json.NewEncoder(w).Encode(user)
 }
 
@@ -101,7 +103,7 @@ func initializeRouter() {
 
 	// Route Handlers / Endpoints
 	r.HandleFunc("/api/users", getUsers).Methods("GET")
-	r.HandleFunc("/api/users/{id}", getUser).Methods("GET")
+	r.HandleFunc("/api/users/{username}", getUser).Methods("GET")
 	r.HandleFunc("/api/users", createUser).Methods("POST")
 	r.HandleFunc("/api/users/{id}", updateUser).Methods("PUT")
 	r.HandleFunc("/api/users/{id}", deleteUser).Methods("DELETE")
