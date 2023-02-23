@@ -45,7 +45,6 @@ func getUser(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	var user User
 	db.First(&user, "Username = ?", params["username"])
-	fmt.Print(params)
 	json.NewEncoder(w).Encode(user)
 }
 
@@ -108,7 +107,6 @@ func initializeRouter() {
 }
 
 func main() {
-
 	initializeMigration()
 	initializeRouter()
 }
