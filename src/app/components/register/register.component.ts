@@ -23,6 +23,7 @@ export class RegisterComponent{
   @Output() submitEM = new EventEmitter();
   
   public showPassword: boolean = false;
+  public showSubmit: boolean = false;
   public showConfirmPassword: boolean = false;
 
   public togglePasswordVisibility(): void {
@@ -36,5 +37,12 @@ export class RegisterComponent{
     this.IssueService.createUser(username,password).subscribe((res) => {
       console.log('User created');
     });
+  }
+  verifySubmit(): boolean {
+    if (this.usernameRequirements.valid && this.passwordRequirements.valid) {
+      return false; //means it will display
+    }
+    else return true;
+    
   }
 }
