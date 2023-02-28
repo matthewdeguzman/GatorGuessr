@@ -35,7 +35,7 @@ func TestGetUsers(t *testing.T) {
 	}
 }
 
-func userTest(username string, t *testing.T) {
+func userTest(username string, t *testing.T) string {
 	initializeMigration()
 	req, err := http.NewRequest("GET", "/api/users", nil)
 	if err != nil {
@@ -64,22 +64,39 @@ func userTest(username string, t *testing.T) {
 		t.Errorf("got invalid reponse, expected a user, got: %v", rr.Body.String())
 	}
 
-	if user.Username != username {
-		t.Errorf("got invalid user, expected %v, got: %v", username, user.Username)
-	}
+	return user.Username
 }
 func TestGetUser1(t *testing.T) {
-	userTest("matthew", t)
+	username := "ramajanco"
+	if resp := userTest(username, t); resp != username {
+		t.Errorf("got invalid response, expected %v, got: %v", username, resp)
+	}
 }
 
 func TestGetUser2(t *testing.T) {
-	userTest("ethanfan", t)
+	username := "ethanfan"
+	if resp := userTest(username, t); resp != username {
+		t.Errorf("got invalid response, expected %v, got: %v", username, resp)
+	}
 }
 
 func TestGetUser3(t *testing.T) {
-	userTest("stephencoomes", t)
+	username := "stephencoomes"
+	if resp := userTest(username, t); resp != username {
+		t.Errorf("got invalid response, expected %v, got: %v", username, resp)
+	}
 }
 
 func TestGetUser4(t *testing.T) {
-	userTest("matthew", t)
+	username := "matthew"
+	if resp := userTest(username, t); resp != username {
+		t.Errorf("got invalid response, expected %v, got: %v", username, resp)
+	}
+}
+
+func TestGetUser5(t *testing.T) {
+	username := "invalid-user"
+	if resp := userTest(username, t); resp != "" {
+		t.Errorf("got invalid response, expected %v, got: %v", username, resp)
+	}
 }
