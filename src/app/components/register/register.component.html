@@ -2,7 +2,7 @@
     <mat-card-title>Registration</mat-card-title>
     <mat-card-content>
         <form [formGroup] = "registerForm">
-            <p>
+            <div>
                 <mat-form-field appearance="outline">
                     <mat-label>Username</mat-label>
                     <input matInput 
@@ -16,9 +16,9 @@
                     </div>
                     <mat-icon matSuffix> sentiment_very_satisfied</mat-icon>
                 </mat-form-field>
-            </p>
+            </div>
 
-            <p>
+            <div>
                 <mat-form-field appearance = "outline">
                     <mat-label>Password</mat-label>
                     <input 
@@ -36,9 +36,9 @@
                         {{showPassword?'visibility_off':'visibility'}}
                     </mat-icon>
                 </mat-form-field>
-            </p>
+            </div>
 
-            <p>
+            <div>
                 <mat-form-field appearance = "outline">
                     <mat-label>Confirm Password</mat-label>
                     <input matInput 
@@ -50,7 +50,7 @@
                             {{showPassword?'visibility_off':'visibility'}}
                         </mat-icon>
                 </mat-form-field>
-            </p>
+            </div>
 
             <!-- <p *ngIf = "error" class = "error">
                 {{error}}

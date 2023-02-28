@@ -8,20 +8,12 @@ import { IssueService } from '../../issue.service';
   styleUrls: ['./login.component.css']
 })
 
-export class LoginComponent implements OnInit{
+export class LoginComponent{
   loginForm = new FormGroup({
     username: new FormControl(''),
     password: new FormControl(''),
   });
   constructor(private IssueService: IssueService) { }
-  ngOnInit(){
-    this.IssueService.getUsers().subscribe((issue) => {
-      console.log(issue);
-    })
-  }
-submitLogin() {
-  
-}
 // @Input() error: string | null;
 @Output() submitEM = new EventEmitter();
   
@@ -29,6 +21,11 @@ public showPassword: boolean = false;
 
 public togglePasswordVisibility(): void {
     this.showPassword = !this.showPassword;
+  }
+  submitLogin(username:string,password:string){
+    this.IssueService.getUsersWithUsername(username).subscribe((res) => {
+      console.log(res);
+    });
   }
 }
 

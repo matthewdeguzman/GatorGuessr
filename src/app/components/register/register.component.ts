@@ -29,7 +29,7 @@ export class RegisterComponent{
   submitRegistration(username:string,password:string)
   {
     this.IssueService.createUser(username,password).subscribe((res) => {
-      console.log('User created');
+      console.log(res);
     });
   }
 }

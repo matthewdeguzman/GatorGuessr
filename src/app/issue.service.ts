@@ -9,11 +9,8 @@ export class IssueService {
 
   constructor(private http: HttpClient) { }
 
-  getUsersWithId(id: number) {
-    return this.http.get(`${this.uri}/api/users/${id}`)
-  }
-  getUsers() {
-    return this.http.get(`${this.uri}/api/users`)
+  getUsersWithUsername(username: string) {
+    return this.http.get(`${this.uri}/api/users/${username}`)
   }
   createUser(username: string, password: string) {
     const user = {
@@ -22,5 +19,6 @@ export class IssueService {
     };
     return this.http.post(`${this.uri}/api/users`, user);
   }
+
 
 }
