@@ -7,7 +7,7 @@ import { IssueService } from '../../issue.service';
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.css']
 })
-export class RegisterComponent implements OnInit{
+export class RegisterComponent{
   registerForm = new FormGroup({
     username: new FormControl(''),
     password: new FormControl(''),
@@ -19,18 +19,9 @@ export class RegisterComponent implements OnInit{
     Validators.pattern(/^(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$/)
   ]);
   constructor(private IssueService: IssueService) { }
-  ngOnInit(){
-    this.IssueService.getUsers().subscribe((issue) => {
-      console.log(issue);
-    })
-  }
-submitRegister() {
-  
-  }
   // @Input() error: string | null;
   @Output() submitEM = new EventEmitter();
   
-
   public showPassword: boolean = false;
   public showConfirmPassword: boolean = false;
 
@@ -39,5 +30,11 @@ submitRegister() {
   }
   public toggleConfirmPassWordVisivility(): void {
     this.showConfirmPassword = !this.showConfirmPassword;
+  }
+  submitRegistration(username:string,password:string)
+  {
+    this.IssueService.createUser(username,password).subscribe((res) => {
+      console.log('User created');
+    });
   }
 }

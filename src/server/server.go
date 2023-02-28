@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/gorilla/mux"
 	"github.com/matthewdeguzman/GatorGuessr/src/server/credentials"
@@ -19,63 +20,61 @@ const DB_USERNAME = "cen3031"
 const DB_NAME = "user_database"
 const DB_HOST = "cen3031-server.mysql.database.azure.com"
 const DB_PORT = "3306"
-
 const DSN = DB_USERNAME + ":" + credentials.DB_PASSWORD + "@tcp" + "(" + DB_HOST + ":" + DB_PORT + ")/" + DB_NAME + "?" + "parseTime=true&loc=Local"
 
 type User struct {
-	gorm.Model
-	Username string `json:"username"`
-	Password string `json:"password"`
+	ID        uint `gorm:"primarykey"`
+	Username  string
+	Password  string
+	CreatedAt time.Time
+	UpdatedAt time.Time
 }
 
+// getUsers returns all the users from the database
 func getUsers(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-
-	// retrieves the users from the database and encodes it
 	var users []User
 	db.Find(&users)
 	json.NewEncoder(w).Encode(users)
 }
 
+// getUser returns a specified user from the database
 func getUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
-	// loops through all users
 	params := mux.Vars(r)
 	var user User
-	db.First(&user, params["id"])
-	json.NewEncoder(w).Encode(&User{})
+	db.First(&user, "Username = ?", params["username"])
+	fmt.Print(params)
+	json.NewEncoder(w).Encode(user)
 }
 
+// createUser creates a new user and inserts into the database
 func createUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-
-	// reads the request and puts it into user
 	var user User
 	json.NewDecoder(r.Body).Decode(&user)
-
-	// appends the new user to the database and encodes it into w
 	db.Create(&user)
 	json.NewEncoder(w).Encode(user)
 }
 
+// updateUser updates a user with the sent information
 func updateUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	// finds the user with the id and reads the request and updates the user
 	params := mux.Vars(r)
 	var user User
-	db.First(&user, params["id"])
+	db.First(&user, "Username = ?", params["username"])
 	json.NewDecoder(r.Body).Decode(&user)
 	db.Save(&user)
 	json.NewEncoder(w).Encode(user)
 }
 
+// deleteUser deletes a user from the database
 func deleteUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	// retrieves user from the database and deletes it
 	params := mux.Vars(r)
 	var user User
-	db.Delete(&user, params["id"])
+	db.Delete(&user, "Username = ?", params["username"])
 	json.NewEncoder(w).Encode(user)
 }
 
@@ -96,15 +95,14 @@ func initializeMigration() {
 }
 
 func initializeRouter() {
-	// initialize router
 	r := mux.NewRouter()
 
 	// Route Handlers / Endpoints
 	r.HandleFunc("/api/users", getUsers).Methods("GET")
-	r.HandleFunc("/api/users/{id}", getUser).Methods("GET")
+	r.HandleFunc("/api/users/{username}", getUser).Methods("GET")
 	r.HandleFunc("/api/users", createUser).Methods("POST")
-	r.HandleFunc("/api/users/{id}", updateUser).Methods("PUT")
-	r.HandleFunc("/api/users/{id}", deleteUser).Methods("DELETE")
+	r.HandleFunc("/api/users/{username}", updateUser).Methods("PUT")
+	r.HandleFunc("/api/users/{username}", deleteUser).Methods("DELETE")
 
 	log.Fatal(http.ListenAndServe(":9000", r))
 }

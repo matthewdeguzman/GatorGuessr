@@ -22,5 +22,12 @@ export class IssueService {
   //   };
   //   return this.http.post(`${this.uri}/api/users`, user);
   // }
+  createUser(username: string, password: string) {
+    const user = {
+      username: username,
+      password: password,
+    };
+    return this.http.post(`${this.uri}/api/users`, user);
+  }
 
 }
