@@ -30,13 +30,8 @@ type User struct {
 	UpdatedAt time.Time
 }
 
-func enableCors(w *http.ResponseWriter) {
-	(*w).Header().Set("Access-Control-Allow-Origin", "http://localhost:4200")
-}
-
 // getUsers returns all the users from the database
 func getUsers(w http.ResponseWriter, r *http.Request) {
-	enableCors(&w)
 	w.Header().Set("Content-Type", "application/json")
 	var users []User
 	db.Find(&users)
@@ -45,7 +40,6 @@ func getUsers(w http.ResponseWriter, r *http.Request) {
 
 // getUser returns a specified user from the database
 func getUser(w http.ResponseWriter, r *http.Request) {
-	enableCors(&w)
 	w.Header().Set("Content-Type", "application/json")
 
 	params := mux.Vars(r)
@@ -56,7 +50,6 @@ func getUser(w http.ResponseWriter, r *http.Request) {
 
 // createUser creates a new user and inserts into the database
 func createUser(w http.ResponseWriter, r *http.Request) {
-	enableCors(&w)
 	w.Header().Set("Content-Type", "application/json")
 	var user User
 	json.NewDecoder(r.Body).Decode(&user)
@@ -66,7 +59,6 @@ func createUser(w http.ResponseWriter, r *http.Request) {
 
 // updateUser updates a user with the sent information
 func updateUser(w http.ResponseWriter, r *http.Request) {
-	enableCors(&w)
 	w.Header().Set("Content-Type", "application/json")
 	params := mux.Vars(r)
 	var user User
@@ -78,7 +70,6 @@ func updateUser(w http.ResponseWriter, r *http.Request) {
 
 // deleteUser deletes a user from the database
 func deleteUser(w http.ResponseWriter, r *http.Request) {
-	enableCors(&w)
 	w.Header().Set("Content-Type", "application/json")
 	params := mux.Vars(r)
 	var user User
@@ -101,15 +92,45 @@ func initializeMigration() {
 	db.AutoMigrate(&User{})
 }
 
+func enableCors(w http.ResponseWriter) {
+	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:4200")
+	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+	w.Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization")
+	w.Header().Set("Access-Control-Allow-Credentials", "true")
+}
 func initializeRouter() {
 	r := mux.NewRouter()
 
 	// Route Handlers / Endpoints
-	r.HandleFunc("/api/users", getUsers).Methods("GET")
-	r.HandleFunc("/api/users/{username}", getUser).Methods("GET")
-	r.HandleFunc("/api/users", createUser).Methods("POST")
-	r.HandleFunc("/api/users/{username}", updateUser).Methods("PUT")
-	r.HandleFunc("/api/users/{username}", deleteUser).Methods("DELETE")
+	r.HandleFunc("/api/users", func(w http.ResponseWriter, r *http.Request) {
+		enableCors(w)
+		switch r.Method {
+		case "GET":
+			getUsers(w, r)
+		case "POST":
+			createUser(w, r)
+		case "OPTIONS":
+			w.WriteHeader(http.StatusOK)
+		default:
+			w.WriteHeader(http.StatusNotFound)
+		}
+	})
+
+	r.HandleFunc("/api/users/{username}", func(w http.ResponseWriter, r *http.Request) {
+		enableCors(w)
+		switch r.Method {
+		case "GET":
+			getUser(w, r)
+		case "PUT":
+			updateUser(w, r)
+		case "DELETE":
+			deleteUser(w, r)
+		case "OPTIONS":
+			w.WriteHeader(http.StatusOK)
+		default:
+			w.WriteHeader(http.StatusNotFound)
+		}
+	})
 
 	log.Fatal(http.ListenAndServe(":9000", r))
 }
