@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { IssueService } from '../../issue.service';
+import { IssueService, User } from '../../issue.service';
 
 @Component({
   selector: 'app-register',
@@ -32,8 +32,15 @@ export class RegisterComponent{
 
   submitRegistration(username:string,password:string)
   {
-    this.IssueService.createUser(username,password).subscribe((res) => {
-      console.log(res);
+    this.IssueService.getUsersWithUsername(username).subscribe((res: User) => {
+      if(res.ID!=0){
+        console.log("User already exists");
+      }
+      else{
+        this.IssueService.createUser(username,password).subscribe((res) => {
+          console.log(res);
+        });
+      }
     });
   }
   verifySubmit(): boolean {
