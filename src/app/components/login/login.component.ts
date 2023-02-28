@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { IssueService } from '../../issue.service';
+import { IssueService, User } from '../../issue.service';
 
 @Component({
   selector: 'app-login',
@@ -23,8 +23,8 @@ public togglePasswordVisibility(): void {
     this.showPassword = !this.showPassword;
   }
   submitLogin(username:string,password:string){
-    this.IssueService.getUsersWithUsername(username).subscribe((res) => {
-      console.log(res);
+    this.IssueService.getUsersWithUsername(username).subscribe((res: User) => {
+      console.log(res.ID);
     });
   }
 }
