@@ -24,7 +24,15 @@ public togglePasswordVisibility(): void {
   }
   submitLogin(username:string,password:string){
     this.IssueService.getUsersWithUsername(username).subscribe((res: User) => {
-      console.log(res.ID);
+      if(res.ID==0){
+        console.log("User does not exist");
+      }
+      else if(res.Password==password){
+        console.log("Login successful");
+      }
+      else{
+        console.log("Incorrect password");
+      }
     });
   }
 }
