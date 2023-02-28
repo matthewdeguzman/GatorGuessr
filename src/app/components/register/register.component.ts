@@ -24,14 +24,12 @@ export class RegisterComponent{
   
   public showPassword: boolean = false;
   public showSubmit: boolean = false;
-  public showConfirmPassword: boolean = false;
+
 
   public togglePasswordVisibility(): void {
     this.showPassword = !this.showPassword;
   }
-  public toggleConfirmPassWordVisivility(): void {
-    this.showConfirmPassword = !this.showConfirmPassword;
-  }
+
   submitRegistration(username:string,password:string)
   {
     this.IssueService.createUser(username,password).subscribe((res) => {
