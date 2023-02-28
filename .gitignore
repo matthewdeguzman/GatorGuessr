@@ -1,6 +1,6 @@
 **/node_modules
 **/.angular
 src/server/credentials/server
-src/server/credentials/server.exe
 src/server/credentials/credentials.go
-.vscode
+.vscode/
+*.exe
