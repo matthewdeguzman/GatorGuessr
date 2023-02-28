@@ -1,4 +1,6 @@
 
+
+
 mat-card {
     justify-content: center;
     text-align: center;
@@ -8,9 +10,21 @@ mat-card {
   }
 
 mat-form-field {
+
     width: 100%;
     min-width: 300px;
+    
   }
+mat-error{
+  max-width: 100%;
+}
+
+.password mat-error{
+  display: none !important;
+}
+.password mat-error:first-child{
+  display: block !important;
+}
 
 mat-card-title,
       mat-card-content {

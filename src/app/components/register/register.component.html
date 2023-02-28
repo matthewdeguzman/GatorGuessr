@@ -10,16 +10,21 @@
                     #username
                     [formControl] = "usernameRequirements" 
                     />
-                    <div *ngIf="usernameRequirements.invalid && usernameRequirements.touched">
-                        <p *ngIf="usernameRequirements.errors?.['minlength']">Username must be at least 4 characters long</p>
-                        <p *ngIf="usernameRequirements.errors?.['required']">Username is required</p>
-                    </div>
+                    <mat-error
+                        *ngIf="usernameRequirements.errors?.['minlength']"> 
+                        Username must be at least 4 characters long
+                    </mat-error>
+                    <mat-error
+                        *ngIf="usernameRequirements.errors?.['required']">
+                        Username is required
+                    </mat-error>
+                    
                     <mat-icon matSuffix> sentiment_very_satisfied</mat-icon>
                 </mat-form-field>
             </div>
 
             <div>
-                <mat-form-field appearance = "outline">
+                <mat-form-field class = "password" appearance = "outline">
                     <mat-label>Password</mat-label>
                     <input 
                     matInput [type]="showPassword ? 'text' : 'password'" 
@@ -27,39 +32,51 @@
                     #password
                     [formControl]="passwordRequirements" 
                     />
-                    <div *ngIf="passwordRequirements.invalid && passwordRequirements.touched">
-                        <p *ngIf="passwordRequirements.errors?.['minlength']">Password must be at least 8 characters long</p>
-                        <p *ngIf="passwordRequirements.errors?.['required']">Password is required</p>
-                        <p *ngIf="passwordRequirements.errors?.['pattern']">Password must have an uppercase and a number</p>
-                    </div>
+
+                    <mat-error
+                        *ngIf="passwordRequirements.errors?.['minlength']">
+                        Password must be at least 8 characters long
+                    </mat-error>
+                    <mat-error
+                        *ngIf="passwordRequirements.errors?.['required']">
+                        Password is required
+                    </mat-error>
+                    <mat-error
+                        *ngIf="passwordRequirements.errors?.['pattern']">
+                        Must an uppercase and a number
+                    </mat-error>
+
                     <mat-icon matSuffix (click)="togglePasswordVisibility()">
                         {{showPassword?'visibility_off':'visibility'}}
                     </mat-icon>
                 </mat-form-field>
             </div>
 
-            <div>
-                <mat-form-field appearance = "outline">
-                    <mat-label>Confirm Password</mat-label>
-                    <input matInput 
-                    [type]="showPassword ? 'text' : 'password'" 
-                    placeholder="password">
-                    <!-- <input matInput placeholder = "Password" 
-                        formControlName = "password" /> -->
-                        <mat-icon matSuffix (click)="togglePasswordVisibility()">
-                            {{showPassword?'visibility_off':'visibility'}}
-                        </mat-icon>
-                </mat-form-field>
-            </div>
 
-            <!-- <p *ngIf = "error" class = "error">
-                {{error}}
-            </p> -->
             <div class = "mat-button">
                 <button type = "submit" 
+                [disabled]="verifySubmit()"
                 mat-raised-button (click)="submitRegistration(username.value,password.value)">Register</button>
+                
             </div>
         </form>
     </mat-card-content>
  </mat-card>
 <router-outlet></router-outlet>
+
+
+            <!-- <div>
+                <mat-form-field appearance = "outline">
+                    <mat-label>Confirm Password</mat-label>
+                    <input matInput 
+                    [type]="showPassword ? 'text' : 'password'" 
+                    placeholder="password">
+                        <mat-icon matSuffix (click)="togglePasswordVisibility()">
+                            {{showPassword?'visibility_off':'visibility'}}
+                        </mat-icon>
+                </mat-form-field>
+            </p>
+
+            <!-- <p *ngIf = "error" class = "error">
+                {{error}}
+            </p> -->
