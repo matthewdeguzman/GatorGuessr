@@ -92,22 +92,18 @@ func initializeMigration() {
 	db.AutoMigrate(&User{})
 }
 
-func corsHandler(h http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Access-Control-Allow-Origin", "http://localhost:4200")
-		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
-		if r.Method == "OPTIONS" {
-			w.WriteHeader(http.StatusOK)
-		} else {
-			h.ServeHTTP(w, r)
-		}
-	})
+func enableCors(w http.ResponseWriter) {
+	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:4200")
+	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+	w.Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization")
+	w.Header().Set("Access-Control-Allow-Credentials", "true")
 }
 func initializeRouter() {
 	r := mux.NewRouter()
 
 	// Route Handlers / Endpoints
 	r.HandleFunc("/api/users", func(w http.ResponseWriter, r *http.Request) {
+		enableCors(w)
 		switch r.Method {
 		case "GET":
 			getUsers(w, r)
@@ -121,6 +117,7 @@ func initializeRouter() {
 	})
 
 	r.HandleFunc("/api/users/{username}", func(w http.ResponseWriter, r *http.Request) {
+		enableCors(w)
 		switch r.Method {
 		case "GET":
 			getUser(w, r)
