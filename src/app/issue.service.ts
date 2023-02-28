@@ -15,7 +15,7 @@ export class IssueService {
   getUsers() {
     return this.http.get(`${this.uri}/api/users`)
   }
-  createUser(username, password) {
+  createUser(username: string, password: string) {
     const user = {
       username: username,
       password: password,

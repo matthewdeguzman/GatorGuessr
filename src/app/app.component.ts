@@ -11,8 +11,5 @@ export class AppComponent {
   title = 'GatorGuessr';
   constructor(private IssueService: IssueService) { }
   ngOnInit(){
-    this.IssueService.getUsers().subscribe((issue) => {
-      console.log(issue);
-    })
   }
 }
