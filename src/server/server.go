@@ -45,7 +45,6 @@ func getUser(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	var user User
 	db.First(&user, "Username = ?", params["username"])
-	fmt.Print(params)
 	json.NewEncoder(w).Encode(user)
 }
 
@@ -91,24 +90,61 @@ func initializeMigration() {
 
 	// migrates the server if necessary
 	db.AutoMigrate(&User{})
-
 }
 
+func corsHandler(h http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origin", "http://localhost:4200")
+		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+		if r.Method == "OPTIONS" {
+			w.WriteHeader(http.StatusOK)
+		} else {
+			h.ServeHTTP(w, r)
+		}
+	})
+}
 func initializeRouter() {
 	r := mux.NewRouter()
 
 	// Route Handlers / Endpoints
-	r.HandleFunc("/api/users", getUsers).Methods("GET")
-	r.HandleFunc("/api/users/{username}", getUser).Methods("GET")
-	r.HandleFunc("/api/users", createUser).Methods("POST")
-	r.HandleFunc("/api/users/{username}", updateUser).Methods("PUT")
-	r.HandleFunc("/api/users/{username}", deleteUser).Methods("DELETE")
+	r.HandleFunc("/api/users", func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case "GET":
+			getUsers(w, r)
+		case "POST":
+			createUser(w, r)
+		case "OPTIONS":
+			w.WriteHeader(http.StatusOK)
+		default:
+			w.WriteHeader(http.StatusNotFound)
+		}
+	})
+
+	r.HandleFunc("/api/users/{username}", func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case "GET":
+			getUser(w, r)
+		case "PUT":
+			updateUser(w, r)
+		case "DELETE":
+			deleteUser(w, r)
+		case "OPTIONS":
+			w.WriteHeader(http.StatusOK)
+		default:
+			w.WriteHeader(http.StatusNotFound)
+		}
+	})
+
+	// r.HandleFunc("/api/users", getUsers).Methods("GET")
+	// r.HandleFunc("/api/users/{username}", getUser).Methods("GET")
+	// r.HandleFunc("/api/users", createUser).Methods("POST")
+	// r.HandleFunc("/api/users/{username}", updateUser).Methods("PUT")
+	// r.HandleFunc("/api/users/{username}", deleteUser).Methods("DELETE")
 
 	log.Fatal(http.ListenAndServe(":9000", r))
 }
 
 func main() {
-
 	initializeMigration()
 	initializeRouter()
 }

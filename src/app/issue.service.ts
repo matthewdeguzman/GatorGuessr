@@ -6,14 +6,9 @@ import { HttpClient } from '@angular/common/http';
 })
 export class IssueService {
   uri = 'http://localhost:9000';
-
   constructor(private http: HttpClient) { }
-
-  getUsersWithId(id: number) {
-    return this.http.get(`${this.uri}/api/users/${id}`)
-  }
-  getUsers() {
-    return this.http.get(`${this.uri}/api/users`)
+  getUsersWithUsername(username: string) {
+    return this.http.get(`${this.uri}/api/users/${username}`)
   }
   // createUser(username, password) {
   //   const user = {
@@ -29,5 +24,6 @@ export class IssueService {
     };
     return this.http.post(`${this.uri}/api/users`, user);
   }
+
 
 }
