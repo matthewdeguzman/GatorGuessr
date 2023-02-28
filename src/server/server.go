@@ -30,8 +30,13 @@ type User struct {
 	UpdatedAt time.Time
 }
 
+func enableCors(w *http.ResponseWriter) {
+	(*w).Header().Set("Access-Control-Allow-Origin", "http://localhost:4200")
+}
+
 // getUsers returns all the users from the database
 func getUsers(w http.ResponseWriter, r *http.Request) {
+	enableCors(&w)
 	w.Header().Set("Content-Type", "application/json")
 	var users []User
 	db.Find(&users)
@@ -40,17 +45,18 @@ func getUsers(w http.ResponseWriter, r *http.Request) {
 
 // getUser returns a specified user from the database
 func getUser(w http.ResponseWriter, r *http.Request) {
+	enableCors(&w)
 	w.Header().Set("Content-Type", "application/json")
 
 	params := mux.Vars(r)
 	var user User
 	db.First(&user, "Username = ?", params["username"])
-	fmt.Print(params)
 	json.NewEncoder(w).Encode(user)
 }
 
 // createUser creates a new user and inserts into the database
 func createUser(w http.ResponseWriter, r *http.Request) {
+	enableCors(&w)
 	w.Header().Set("Content-Type", "application/json")
 	var user User
 	json.NewDecoder(r.Body).Decode(&user)
@@ -60,6 +66,7 @@ func createUser(w http.ResponseWriter, r *http.Request) {
 
 // updateUser updates a user with the sent information
 func updateUser(w http.ResponseWriter, r *http.Request) {
+	enableCors(&w)
 	w.Header().Set("Content-Type", "application/json")
 	params := mux.Vars(r)
 	var user User
@@ -71,6 +78,7 @@ func updateUser(w http.ResponseWriter, r *http.Request) {
 
 // deleteUser deletes a user from the database
 func deleteUser(w http.ResponseWriter, r *http.Request) {
+	enableCors(&w)
 	w.Header().Set("Content-Type", "application/json")
 	params := mux.Vars(r)
 	var user User
@@ -91,7 +99,6 @@ func initializeMigration() {
 
 	// migrates the server if necessary
 	db.AutoMigrate(&User{})
-
 }
 
 func initializeRouter() {
@@ -108,7 +115,6 @@ func initializeRouter() {
 }
 
 func main() {
-
 	initializeMigration()
 	initializeRouter()
 }
