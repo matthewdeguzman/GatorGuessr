@@ -16,23 +16,38 @@
 
 ## **Back-end Unit Tests**
 
-- TestGetUsers(t *testing.T)
-  - Tests the getUsers function by sending a GET request to the server
-- TestGetUser1(t* testing.T)
-  - Tests the getUser function by sending a GET request for a user in the database to the server
-- TestGetUser2(t* testing.T)
-  - Tests the getUser function by sending a GET request with a user not in the database to the server
-- TestCreateUser(t *testing.T)
-  - Tests the createUser function by sending a POST request with a new user to the server
-- TestDeleteUser1(t *testing.T) 
-  - Tests the deleteUser function by first creating a user with a GET request then deleting the user with a DELETE request
-- TestDeleteUser2(t *testing.T)
-  - Tests the deleteUser function by sending a DELETE request for a user not in the database
-- TestUpdateUser1(t *testing.T)
-  - Tests the updateUser function by first creating a test user via a GET request then updating the password with a PUT request
-- TestUpdateUser2(t *testing.T)
-  - Tests the updateUser function by sending a PUT request to update a user that does not exist in the database
-    
+### TestGetUsers(t *testing.T)
+
+- Tests the getUsers function by sending a GET request to the server
+
+### TestGetUser1(t* testing.T)
+
+- Tests the getUser function by sending a GET request for a user in the database to the server
+
+### TestGetUser2(t* testing.T)
+
+- Tests the getUser function by sending a GET request with a user not in the database to the server
+
+### TestCreateUser(t *testing.T)
+
+- Tests the createUser function by sending a POST request with a new user to the server
+
+### TestDeleteUser1(t *testing.T) 
+
+- Tests the deleteUser function by first creating a user with a GET request then deleting the user with a DELETE request
+
+### TestDeleteUser2(t *testing.T)
+
+- Tests the deleteUser function by sending a DELETE request for a user not in the database
+
+### TestUpdateUser1(t *testing.T)
+
+- Tests the updateUser function by first creating a test user via a GET request then updating the password with a PUT request
+
+### TestUpdateUser2(t *testing.T)
+
+- Tests the updateUser function by sending a PUT request to update a user that does not exist in the database
+
 ## **API Documentation**
 
 <span style="color:#3396FF"><font size=3.5><strong>
