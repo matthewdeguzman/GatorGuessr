@@ -61,7 +61,7 @@ func testInitMigration(t *testing.T) {
 	db.AutoMigrate(&User{})
 }
 
-func userTest(username string, t *testing.T) string {
+func getUserTest(username string, t *testing.T) string {
 	testInitMigration(t)
 	req, err := http.NewRequest("GET", "/api/users", nil)
 	if err != nil {
@@ -91,6 +91,99 @@ func userTest(username string, t *testing.T) string {
 	}
 
 	return user.Username
+}
+
+func deleteUserTest(username string, t *testing.T) {
+	testInitMigration(t)
+	req, err := http.NewRequest("DELETE", "/api/users", nil)
+	if err != nil {
+		t.Error(err)
+	}
+
+	mockDeleteUser := func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+
+		params := username
+		var user User
+		db.First(&user, "Username = ?", params)
+		db.Delete(&user)
+		json.NewEncoder(w).Encode(user)
+	}
+	rr := httptest.NewRecorder()
+	handler := http.HandlerFunc(mockDeleteUser)
+
+	handler.ServeHTTP(rr, req)
+
+	if status := rr.Code; status != http.StatusOK {
+		t.Errorf("handler return wrong status code: got %v want %v", status, http.StatusOK)
+	}
+
+	var user User
+	if err := json.Unmarshal(rr.Body.Bytes(), &user); err != nil {
+		t.Errorf("got invalid reponse, expected a user, got: %v", rr.Body.String())
+	}
+}
+
+func createTest(username string, t *testing.T) {
+	testInitMigration(t)
+	req, err := http.NewRequest("POST", "/api/users", nil)
+	if err != nil {
+		t.Error(err)
+	}
+
+	mockCreateUser := func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+
+		var user User
+		user.Username = username
+		user.Password = "test-password"
+		db.Create(&user)
+		json.NewEncoder(w).Encode(user)
+	}
+	rr := httptest.NewRecorder()
+	handler := http.HandlerFunc(mockCreateUser)
+
+	handler.ServeHTTP(rr, req)
+
+	if status := rr.Code; status != http.StatusOK {
+		t.Errorf("handler return wrong status code: got %v want %v", status, http.StatusOK)
+	}
+
+	var user User
+	if err := json.Unmarshal(rr.Body.Bytes(), &user); err != nil {
+		t.Errorf("got invalid reponse, expected a user, got: %v", rr.Body.String())
+	}
+}
+
+func updateUserTest(username string, password string, t *testing.T) {
+	testInitMigration(t)
+	req, err := http.NewRequest("PUT", "/api/users/{username}", nil)
+	if err != nil {
+		t.Error(err)
+	}
+
+	mockUpdateUser := func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+
+		var user User
+		db.First(&user, "Username = ?", username)
+		user.Password = password
+		db.Save(&user)
+		json.NewEncoder(w).Encode(user)
+	}
+	rr := httptest.NewRecorder()
+	handler := http.HandlerFunc(mockUpdateUser)
+
+	handler.ServeHTTP(rr, req)
+
+	if status := rr.Code; status != http.StatusOK {
+		t.Errorf("handler return wrong status code: got %v want %v", status, http.StatusOK)
+	}
+
+	var user User
+	if err := json.Unmarshal(rr.Body.Bytes(), &user); err != nil {
+		t.Errorf("got invalid reponse, expected a user, got: %v", rr.Body.String())
+	}
 }
 
 /// TESTS ///
@@ -125,35 +218,72 @@ func TestGetUsers(t *testing.T) {
 
 func TestGetUser1(t *testing.T) {
 	username := "ramajanco"
-	if resp := userTest(username, t); resp != username {
+	if resp := getUserTest(username, t); resp != username {
 		t.Errorf("got invalid response, expected %v, got: %v", username, resp)
 	}
 }
 
 func TestGetUser2(t *testing.T) {
 	username := "ethanfan"
-	if resp := userTest(username, t); resp != username {
+	if resp := getUserTest(username, t); resp != username {
 		t.Errorf("got invalid response, expected %v, got: %v", username, resp)
 	}
 }
 
 func TestGetUser3(t *testing.T) {
 	username := "stephencoomes"
-	if resp := userTest(username, t); resp != username {
+	if resp := getUserTest(username, t); resp != username {
 		t.Errorf("got invalid response, expected %v, got: %v", username, resp)
 	}
 }
 
 func TestGetUser4(t *testing.T) {
 	username := "matthew"
-	if resp := userTest(username, t); resp != username {
+	if resp := getUserTest(username, t); resp != username {
 		t.Errorf("got invalid response, expected %v, got: %v", username, resp)
 	}
 }
 
 func TestGetUser5(t *testing.T) {
 	username := "invalid-user"
-	if resp := userTest(username, t); resp != "" {
+	if resp := getUserTest(username, t); resp != "" {
 		t.Errorf("got invalid response, expected %v, got: %v", username, resp)
 	}
+}
+
+func TestCreateUser(t *testing.T) {
+	createTest("test-user", t)
+}
+
+func TestDeleteUser1(t *testing.T) {
+	if resp := getUserTest("test-user", t); resp == "test-user" {
+		deleteUserTest("test-user", t)
+	} else {
+		createTest("test-user", t)
+		deleteUserTest("test-user", t)
+	}
+}
+
+func TestDeleteUser2(t *testing.T) {
+	if resp := getUserTest("test-user", t); resp == "test-user" {
+		deleteUserTest("test-user", t)
+		deleteUserTest("test-user", t)
+	} else {
+		deleteUserTest("test-user", t)
+	}
+}
+
+func TestUpdateUser1(t *testing.T) {
+	if resp := getUserTest("test-user", t); resp == "test-user" {
+		deleteUserTest("test-user", t)
+	}
+	createTest("test-user", t)
+	updateUserTest("test-user", "new-password", t)
+	deleteUserTest("test-user", t)
+
+}
+
+func TestUpdateUser2(t *testing.T) {
+	deleteUserTest("test-user", t)
+	updateUserTest("test-user", "new-password", t)
 }
