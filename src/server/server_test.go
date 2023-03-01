@@ -93,7 +93,7 @@ func getUserTest(username string, t *testing.T) string {
 	return user.Username
 }
 
-func deleteTest(username string, t *testing.T) {
+func deleteUserTest(username string, t *testing.T) {
 	testInitMigration(t)
 	req, err := http.NewRequest("DELETE", "/api/users", nil)
 	if err != nil {
@@ -142,6 +142,37 @@ func createTest(username string, t *testing.T) {
 	}
 	rr := httptest.NewRecorder()
 	handler := http.HandlerFunc(mockCreateUser)
+
+	handler.ServeHTTP(rr, req)
+
+	if status := rr.Code; status != http.StatusOK {
+		t.Errorf("handler return wrong status code: got %v want %v", status, http.StatusOK)
+	}
+
+	var user User
+	if err := json.Unmarshal(rr.Body.Bytes(), &user); err != nil {
+		t.Errorf("got invalid reponse, expected a user, got: %v", rr.Body.String())
+	}
+}
+
+func updateUserTest(username string, password string, t *testing.T) {
+	testInitMigration(t)
+	req, err := http.NewRequest("PUT", "/api/users/{username}", nil)
+	if err != nil {
+		t.Error(err)
+	}
+
+	mockUpdateUser := func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+
+		var user User
+		db.First(&user, "Username = ?", username)
+		user.Password = password
+		db.Save(&user)
+		json.NewEncoder(w).Encode(user)
+	}
+	rr := httptest.NewRecorder()
+	handler := http.HandlerFunc(mockUpdateUser)
 
 	handler.ServeHTTP(rr, req)
 
@@ -226,22 +257,33 @@ func TestCreateUser(t *testing.T) {
 
 func TestDeleteUser1(t *testing.T) {
 	if resp := getUserTest("test-user", t); resp == "test-user" {
-		deleteTest("test-user", t)
+		deleteUserTest("test-user", t)
 	} else {
 		createTest("test-user", t)
-		deleteTest("test-user", t)
+		deleteUserTest("test-user", t)
 	}
 }
 
 func TestDeleteUser2(t *testing.T) {
 	if resp := getUserTest("test-user", t); resp == "test-user" {
-		deleteTest("test-user", t)
-		deleteTest("test-user", t)
+		deleteUserTest("test-user", t)
+		deleteUserTest("test-user", t)
 	} else {
-		deleteTest("test-user", t)
+		deleteUserTest("test-user", t)
 	}
 }
 
-func TestUpdateUser(t *testing.T) {
-	// TODO
+func TestUpdateUser1(t *testing.T) {
+	if resp := getUserTest("test-user", t); resp == "test-user" {
+		deleteUserTest("test-user", t)
+	}
+	createTest("test-user", t)
+	updateUserTest("test-user", "new-password", t)
+	deleteUserTest("test-user", t)
+
+}
+
+func TestUpdateUser2(t *testing.T) {
+	deleteUserTest("test-user", t)
+	updateUserTest("test-user", "new-password", t)
 }
