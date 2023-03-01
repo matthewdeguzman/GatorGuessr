@@ -32,7 +32,7 @@
 
 - Tests the createUser function by sending a POST request with a new user to the server
 
-### TestDeleteUser1(t *testing.T) 
+### TestDeleteUser1(t *testing.T)
 
 - Tests the deleteUser function by first creating a user with a GET request then deleting the user with a DELETE request
 
@@ -50,18 +50,22 @@
 
 ## API Documentation
 
-**func getUsers(w http.ResponseWriter, r *http.Request)**
+### func getUsers(w http.ResponseWriter, r *http.Request)
 
 Retrieves all the users from the database and encodes the data in JSON format into w.
 
-**func getUser(w http.ResponseWriter, r *http.Request)**
+### func getUser(w http.ResponseWriter, r *http.Request)
+
 Retrieves the username parameter from r and encodes the user with the matching username from the database in JSON format into w. If no user is found, then the JSON will have empty values.
 
-**func createUser(w http.ResponseWriter, r *http.Request)**
+### func createUser(w http.ResponseWriter, r *http.Request)
+
 Receives a JSON object from r and creates a new user with the corresponding fields, then encodes the user as a JSON object into w.
 
-**func updateUser(w http.ResponseWriter, r *http.Request)**
+### func updateUser(w http.ResponseWriter, r *http.Request)
+
 Retrieves a username from r, searches for the user with the matching username in the database, updates the fields that are different, then encodes the updated user object as a JSON object into w.
 
-**func deleteUser(w http.ResponseWriter, r *http.Request)**
+### func deleteUser(w http.ResponseWriter, r *http.Request)
+
 Retrieves the username from r, then searches for the user with the corresponding username and deletes the user from the database. The fields of the user are reset to the default values and encoded as a JSON object into w.
