@@ -29,7 +29,11 @@
                     placeholder = "Username"
                     formControlName = "username" />
                     <mat-icon matSuffix> sentiment_very_satisfied</mat-icon>
+                        <mat-error *ngIf="!showUserError()">
+                            Error: No User Found
+                        </mat-error>
                 </mat-form-field>
+                
             </div>
 
             <div>
@@ -54,8 +58,14 @@
             </p> -->
             <div class = "mat-button">
                 <button type = "submit" mat-raised-button (click)="submitLogin(username.value,password.value)">Login</button>
+                
             </div>
         </form>
+        <div>
+            <mat-card-subtitle *ngIf="showUserError()">
+                Error: No User Found
+            </mat-card-subtitle>
+        </div>
     </mat-card-content>
  </mat-card>
 <router-outlet></router-outlet>
