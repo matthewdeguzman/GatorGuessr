@@ -1,26 +1,22 @@
 package main
 
 import (
-	"encoding/json"
+	"bufio"
 	"fmt"
 	"log"
 	"net/http"
+	"os"
+	"path/filepath"
+	"strings"
 	"time"
 
 	"github.com/gorilla/mux"
-	"github.com/matthewdeguzman/GatorGuessr/src/server/credentials"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
 
 var db *gorm.DB
 var err error
-
-const DB_USERNAME = "cen3031"
-const DB_NAME = "user_database"
-const DB_HOST = "cen3031-server.mysql.database.azure.com"
-const DB_PORT = "3306"
-const DSN = DB_USERNAME + ":" + credentials.DB_PASSWORD + "@tcp" + "(" + DB_HOST + ":" + DB_PORT + ")/" + DB_NAME + "?" + "parseTime=true&loc=Local"
 
 type User struct {
 	ID        uint `gorm:"primarykey"`
@@ -30,56 +26,42 @@ type User struct {
 	UpdatedAt time.Time
 }
 
-// getUsers returns all the users from the database
-func getUsers(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	var users []User
-	db.Find(&users)
-	json.NewEncoder(w).Encode(users)
-}
+func getPassword() string {
+	// Get password from credentials.txt
+	ex, err := os.Executable()
+	if err != nil {
+		panic(err)
+	}
+	path := filepath.Join(filepath.Dir(filepath.Dir(filepath.Dir(filepath.Dir(ex)))), "credentials.txt")
+	file, err := os.Open(path)
+	if err != nil {
+		fmt.Println(err)
+	}
+	defer file.Close()
+	scanner := bufio.NewScanner(file)
+	password := ""
+	for scanner.Scan() {
+		password += scanner.Text()
+	}
+	password = strings.TrimSpace(password)
 
-// getUser returns a specified user from the database
-func getUser(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
+	if err := scanner.Err(); err != nil {
+		log.Fatal(err)
+	}
 
-	params := mux.Vars(r)
-	var user User
-	db.First(&user, "Username = ?", params["username"])
-	json.NewEncoder(w).Encode(user)
-}
-
-// createUser creates a new user and inserts into the database
-func createUser(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	var user User
-	json.NewDecoder(r.Body).Decode(&user)
-	db.Create(&user)
-	json.NewEncoder(w).Encode(user)
-}
-
-// updateUser updates a user with the sent information
-func updateUser(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	params := mux.Vars(r)
-	var user User
-	db.First(&user, "Username = ?", params["username"])
-	json.NewDecoder(r.Body).Decode(&user)
-	db.Save(&user)
-	json.NewEncoder(w).Encode(user)
-}
-
-// deleteUser deletes a user from the database
-func deleteUser(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	params := mux.Vars(r)
-	var user User
-	db.Delete(&user, "Username = ?", params["username"])
-	json.NewEncoder(w).Encode(user)
+	return password
 }
 
 func initializeMigration() {
 
+	const DB_USERNAME = "cen3031"
+	const DB_NAME = "user_database"
+	const DB_HOST = "cen3031-server.mysql.database.azure.com"
+	const DB_PORT = "3306"
+	var password = getPassword()
 	// Build connection string
+	DSN := DB_USERNAME + ":" + password + "@tcp" + "(" + DB_HOST + ":" + DB_PORT + ")/" + DB_NAME + "?" + "parseTime=true&loc=Local"
+
 	db, err = gorm.Open(mysql.Open(DSN), &gorm.Config{})
 	if err != nil {
 		fmt.Println(err.Error())
@@ -92,12 +74,6 @@ func initializeMigration() {
 	db.AutoMigrate(&User{})
 }
 
-func enableCors(w http.ResponseWriter) {
-	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:4200")
-	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
-	w.Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization")
-	w.Header().Set("Access-Control-Allow-Credentials", "true")
-}
 func initializeRouter() {
 	r := mux.NewRouter()
 
@@ -131,12 +107,6 @@ func initializeRouter() {
 			w.WriteHeader(http.StatusNotFound)
 		}
 	})
-
-	// r.HandleFunc("/api/users", getUsers).Methods("GET")
-	// r.HandleFunc("/api/users/{username}", getUser).Methods("GET")
-	// r.HandleFunc("/api/users", createUser).Methods("POST")
-	// r.HandleFunc("/api/users/{username}", updateUser).Methods("PUT")
-	// r.HandleFunc("/api/users/{username}", deleteUser).Methods("DELETE")
 
 	log.Fatal(http.ListenAndServe(":9000", r))
 }
