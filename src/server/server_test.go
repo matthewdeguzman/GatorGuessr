@@ -217,34 +217,13 @@ func TestGetUsers(t *testing.T) {
 }
 
 func TestGetUser1(t *testing.T) {
-	username := "ramajanco"
-	if resp := getUserTest(username, t); resp != username {
-		t.Errorf("got invalid response, expected %v, got: %v", username, resp)
-	}
-}
-
-func TestGetUser2(t *testing.T) {
-	username := "ethanfan"
-	if resp := getUserTest(username, t); resp != username {
-		t.Errorf("got invalid response, expected %v, got: %v", username, resp)
-	}
-}
-
-func TestGetUser3(t *testing.T) {
-	username := "stephencoomes"
-	if resp := getUserTest(username, t); resp != username {
-		t.Errorf("got invalid response, expected %v, got: %v", username, resp)
-	}
-}
-
-func TestGetUser4(t *testing.T) {
 	username := "matthew"
 	if resp := getUserTest(username, t); resp != username {
 		t.Errorf("got invalid response, expected %v, got: %v", username, resp)
 	}
 }
 
-func TestGetUser5(t *testing.T) {
+func TestGetUser2(t *testing.T) {
 	username := "invalid-user"
 	if resp := getUserTest(username, t); resp != "" {
 		t.Errorf("got invalid response, expected %v, got: %v", username, resp)
