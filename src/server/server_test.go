@@ -63,7 +63,7 @@ func testInitMigration(t *testing.T) {
 
 func getUserTest(username string, t *testing.T) string {
 	testInitMigration(t)
-	req, err := http.NewRequest("GET", "/api/users", nil)
+	req, err := http.NewRequest("GET", "/api/users/{username}", nil)
 	if err != nil {
 		t.Error(err)
 	}
@@ -95,7 +95,7 @@ func getUserTest(username string, t *testing.T) string {
 
 func deleteUserTest(username string, t *testing.T) {
 	testInitMigration(t)
-	req, err := http.NewRequest("DELETE", "/api/users", nil)
+	req, err := http.NewRequest("DELETE", "/api/users/{username}", nil)
 	if err != nil {
 		t.Error(err)
 	}
@@ -124,7 +124,7 @@ func deleteUserTest(username string, t *testing.T) {
 	}
 }
 
-func createTest(username string, t *testing.T) {
+func createUserTest(username string, t *testing.T) {
 	testInitMigration(t)
 	req, err := http.NewRequest("POST", "/api/users", nil)
 	if err != nil {
@@ -167,8 +167,10 @@ func updateUserTest(username string, password string, t *testing.T) {
 
 		var user User
 		db.First(&user, "Username = ?", username)
-		user.Password = password
-		db.Save(&user)
+		if user.Username != "" {
+			user.Password = password
+			db.Save(&user)
+		}
 		json.NewEncoder(w).Encode(user)
 	}
 	rr := httptest.NewRecorder()
@@ -231,14 +233,14 @@ func TestGetUser2(t *testing.T) {
 }
 
 func TestCreateUser(t *testing.T) {
-	createTest("test-user", t)
+	createUserTest("test-user", t)
 }
 
 func TestDeleteUser1(t *testing.T) {
 	if resp := getUserTest("test-user", t); resp == "test-user" {
 		deleteUserTest("test-user", t)
 	} else {
-		createTest("test-user", t)
+		createUserTest("test-user", t)
 		deleteUserTest("test-user", t)
 	}
 }
@@ -256,7 +258,7 @@ func TestUpdateUser1(t *testing.T) {
 	if resp := getUserTest("test-user", t); resp == "test-user" {
 		deleteUserTest("test-user", t)
 	}
-	createTest("test-user", t)
+	createUserTest("test-user", t)
 	updateUserTest("test-user", "new-password", t)
 	deleteUserTest("test-user", t)
 
