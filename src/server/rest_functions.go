@@ -47,8 +47,10 @@ func updateUser(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	var user User
 	db.First(&user, "Username = ?", params["username"])
-	json.NewDecoder(r.Body).Decode(&user)
-	db.Save(&user)
+	if user.Username != "" {
+		json.NewDecoder(r.Body).Decode(&user)
+		db.Save(&user)
+	}
 	json.NewEncoder(w).Encode(user)
 }
 
