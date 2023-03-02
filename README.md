@@ -14,3 +14,8 @@ guess was to their dropped off location.
 ## Requirements
 
 To run the server, you must have a file labeled `credentials.txt` directly outside of the GatorGuessr directory. The `credentials.txt` file should contain the password for the Azure MySql database. If you are having trouble, please contact my cell at `786-614-1426` or email me at `matthew.deguzman0613@gmail.com`.
+
+
+## Cypress
+
+Install Cypress using `npm install cypress --save-dev`, Cypress and the frontend unit tests can be accessed using `.\node_modules\.bin\cypress open`. Make sure to select e2e testing to view and run the avaliable unit tests.
