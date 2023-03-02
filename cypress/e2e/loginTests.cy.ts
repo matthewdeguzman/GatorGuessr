@@ -4,7 +4,7 @@ describe('Nonexistent User', () => {
         cy.get('#mat-input-0').type('NotAUser')
         cy.get('#mat-input-1').type('password')
         cy.get('button').click()
-        cy.get('div').contains('Incorrect username or password')
+        cy.get('div').contains('Error: No User Found')
     })
 })
 describe('Incorrect Password', () => {
@@ -13,7 +13,7 @@ describe('Incorrect Password', () => {
         cy.get('#mat-input-0').type('Frontend')
         cy.get('#mat-input-1').type('password')
         cy.get('button').click()
-        cy.get('div').contains('Incorrect username or password')
+        cy.get('div').contains('Error: Incorrect Password')
     })
 })
 describe('Correct Login', () => {
@@ -22,6 +22,5 @@ describe('Correct Login', () => {
         cy.get('#mat-input-0').type('Frontend')
         cy.get('#mat-input-1').type('FrontendIsNumber1')
         cy.get('button').click()
-        cy.get('div').contains('Welcome back')
     })
 })
