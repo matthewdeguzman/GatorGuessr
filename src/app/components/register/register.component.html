@@ -22,6 +22,11 @@
                     <mat-icon matSuffix> sentiment_very_satisfied</mat-icon>
                 </mat-form-field>
             </div>
+            <div>
+                <mat-card-footer *ngIf="showUserError()">
+                    Error: User already exists
+                </mat-card-footer>
+            </div>
 
             <div>
                 <mat-form-field class = "password" appearance = "outline">
