@@ -17,3 +17,12 @@ mat-card-title,
       display: flex;
       justify-content: center;
   }
+
+mat-card-footer {
+  color: red;
+  display: flex;
+  font-size: large;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+
