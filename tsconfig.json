@@ -6,6 +6,7 @@
     "**/*.spec.ts"
   ],
   "compilerOptions": {
+    "types": ["cypress"],
     "baseUrl": "./",
     "outDir": "./dist/out-tsc",
     "forceConsistentCasingInFileNames": true,

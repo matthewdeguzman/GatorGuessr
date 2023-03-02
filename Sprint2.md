@@ -14,3 +14,18 @@ changes the username and password of the user with the inputed id
 ### func deleteUser(w http.ResponseWriter, r *http.Request)
 takes the id parameter in the request
 deletes the user with the matching id
+
+## Front End
+### public showUserError - registration
+Returns a boolean on whether the username is already taken. If there is a matching display in an error message on the registration page.
+### submitRegistration
+Takes in user input of username and password for registration. Checks to see if there is a matching username through HTTP get and, if not, use HTTP post to create a user and navigate to the log-in page. If there is a match, it displays an error message through showUserError implemented in the HTML file. 
+### verifySubmit
+This checks whether the submit button will be enabled, depending on the user fulfilling username and password requirements.
+### showUserError
+This boolean displays an error message if the username is not found in the system during login.
+### showPassError
+This boolean displays an error message if there was a found user, but it was an incorrect password during login.
+
+### submitLogin
+Takes in user input of username and password for logging in. This checks whether it is a match for a defined user in the system and, if not, displays error messages utilizing the previous two boolean functions. It scans through an HTTP get. It logs in and navigates the user to the home page if it is a match.
