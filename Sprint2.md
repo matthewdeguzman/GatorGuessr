@@ -28,3 +28,17 @@ This boolean displays an error message if the username is not found in the syste
 This boolean displays an error message if there was a found user, but it was an incorrect password during login.
 ### submitLogin
 Takes in user input of username and password for logging in. This checks whether it is a match for a defined user in the system and, if not, displays error messages utilizing the previous two boolean functions. It scans through an HTTP get. It logs in and navigates the user to the home page if it is a match.
+## Cypress Tests
+We made 7 tests in total, each can be split up into their corresponding component
+### loginTests
+Tests if the proper error message comes up when logging in for 2 different cases:
+1. If a user enters a password incorrectly
+2. If the enetered user doesn't exist
+3. Or nothing comes up If the password and username are correct
+### registrationTests
+1. Tests that an error message comes up when someone tries to make a user with an already existing username
+### visitingPages
+Simplest tests, ensures that when a button for that page is clicked it visits the page correctly
+1. Home page
+2. Login page
+3. Register page
