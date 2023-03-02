@@ -5,6 +5,8 @@
 ### Front-end
 
 - Created Cypress Tests to test Frontend functionality 
+- Added error messages for invalid users during registration and login
+- Added routing and http post requests for new users and logins
 
 ### Back-end
 
