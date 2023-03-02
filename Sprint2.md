@@ -26,6 +26,5 @@ This checks whether the submit button will be enabled, depending on the user ful
 This boolean displays an error message if the username is not found in the system during login.
 ### showPassError
 This boolean displays an error message if there was a found user, but it was an incorrect password during login.
-
 ### submitLogin
 Takes in user input of username and password for logging in. This checks whether it is a match for a defined user in the system and, if not, displays error messages utilizing the previous two boolean functions. It scans through an HTTP get. It logs in and navigates the user to the home page if it is a match.
