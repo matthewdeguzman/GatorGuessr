@@ -3,14 +3,28 @@
     max-width: 500px;
     width: 100%;
   }
+  .banner {
+    background-color: #DDD0C8;
+  }
   
   .example-full-width {
     width: 100%;
   }
-  
-  .spacer {
+  .left {
+    flex: 1;
+    display: flex;
+    justify-content: flex-start;
+}
 
-    flex: 1 1 auto;
-  
-  }
-  
+.center {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    font-size: 28px;
+}
+
+.right {
+    flex: 1;
+    display: flex;
+    justify-content: flex-end;
+}
