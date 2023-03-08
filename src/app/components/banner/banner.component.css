@@ -14,12 +14,14 @@
     flex: 1;
     display: flex;
     justify-content: flex-start;
+    align-items: center;
 }
 
 .center {
     flex: 1;
     display: flex;
     justify-content: center;
+    align-items: center;
     font-size: 28px;
 }
 
@@ -27,4 +29,9 @@
     flex: 1;
     display: flex;
     justify-content: flex-end;
+    align-items: center;
+}
+
+a {
+  text-decoration: none;
 }

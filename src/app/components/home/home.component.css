@@ -1,0 +1,15 @@
+.tile {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  
+}
+
+.tile-text {
+  text-align: center;
+  color: beige;
+  font-size: 30px;
+  font-weight: bold;
+}
+
+
