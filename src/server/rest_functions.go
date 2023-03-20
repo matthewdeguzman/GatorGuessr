@@ -25,8 +25,24 @@ type hashParams struct {
 
 var (
 	HashErr   = []byte("500 - Error with hashing. User not created.")
-	UserDNErr = []byte("400 - Username not found.")
+	UserDNErr = []byte("404 - User not found.")
+	LoginErr  = []byte("404 - Username or Password Incorrect.")
 )
+
+func hashErr(w http.ResponseWriter) {
+	w.WriteHeader(http.StatusInternalServerError)
+	w.Write(HashErr)
+}
+
+func userDNErr(w http.ResponseWriter) {
+	w.WriteHeader(http.StatusNotFound)
+	w.Write(UserDNErr)
+}
+
+func loginErr(w http.ResponseWriter) {
+	w.WriteHeader(http.StatusNotFound)
+	w.Write(LoginErr)
+}
 
 // generates a hashed version of the given password using argon2
 func encodePassword(password string) (encodedHash string, err error) {
@@ -111,7 +127,6 @@ func decodePasswordAndMatch(password, encodedHash string) (match bool, err error
 
 	// the passwords do not match
 	return false, nil
-
 }
 
 func EnableCors(w http.ResponseWriter) {
@@ -137,9 +152,10 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 	var user User
 	db.First(&user, "Username = ?", params["username"])
 
+	// if user does not exist, the username will be empty, so
+	// we send back an invalid request
 	if user.Username == "" {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write(UserDNErr)
+		userDNErr(w)
 		return
 	}
 	json.NewEncoder(w).Encode(user)
@@ -148,13 +164,15 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 // createUser creates a new user and inserts into the database
 func CreateUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	var user User
 
+	// decodes user
+	var user User
 	json.NewDecoder(r.Body).Decode(&user)
 
 	// use argon2 to hash the passwords
 	hash, err := encodePassword(user.Password)
 
+	// if there is an error, respond with an internal server error
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write(HashErr)
@@ -162,6 +180,7 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 	}
 	user.Password = hash // stores password as encoded password
 
+	// create and encode the user
 	db.Create(&user)
 	json.NewEncoder(w).Encode(user)
 }
@@ -169,25 +188,34 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 // updateUser updates a user with the sent information
 func UpdateUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	params := mux.Vars(r)
+	params := mux.Vars(r) // receives the given parameters in the request
+
+	// finds the user based on the parameters
 	var user User
 	db.First(&user, "Username = ?", params["username"])
 
-	// if the username is not empty, then we have retrieved an existing user
-	if user.Username != "" {
-		json.NewDecoder(r.Body).Decode(&user)
-
-		// use argon2 to hash the passwords
-		hash, err := encodePassword(user.Password)
-		if err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
-			w.Write(HashErr)
-			return
-		}
-		user.Password = hash
-
-		db.Save(&user)
+	// if the username is empty, then the user does not exist
+	// respond with a 400 bad request error
+	if user.Username == "" {
+		userDNErr(w)
+		return
 	}
+
+	// decode the user
+	json.NewDecoder(r.Body).Decode(&user)
+
+	// use argon2 to hash the passwords
+	hash, err := encodePassword(user.Password)
+
+	// if there is an error with hashing, respond with error
+	if err != nil {
+		hashErr(w)
+		return
+	}
+
+	// store hashed password then save and encode the user
+	user.Password = hash
+	db.Save(&user)
 	json.NewEncoder(w).Encode(user)
 }
 
@@ -201,5 +229,37 @@ func DeleteUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func ValidateUser(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
 
+	// decode user object and store the given password
+	var user User
+	var givenPassword string
+	var hashedPassword string
+
+	json.NewDecoder(r.Body).Decode(&user)
+	givenPassword = user.Password
+
+	// retrieve user from db
+	db.First(&user, "Username = ?", user.Username)
+
+	// if user does not exist, the username will be empty, so
+	// we send back an invalid request
+	if user.Username == "" {
+		userDNErr(w)
+		return
+	}
+	hashedPassword = user.Password
+
+	match, err := decodePasswordAndMatch(givenPassword, hashedPassword)
+	if err != nil {
+		hashErr(w)
+		return
+	}
+	if !match {
+		loginErr(w)
+		return
+	}
+
+	w.WriteHeader(http.StatusAccepted)
+	w.Write([]byte("202 - Username and Password Match"))
 }

@@ -78,7 +78,7 @@ func initializeRouter() {
 	r := mux.NewRouter()
 
 	// Route Handlers / Endpoints
-	r.HandleFunc("/api/users", func(w http.ResponseWriter, r *http.Request) {
+	r.HandleFunc("/api/users/", func(w http.ResponseWriter, r *http.Request) {
 		EnableCors(w)
 		switch r.Method {
 		case "GET":
@@ -92,7 +92,7 @@ func initializeRouter() {
 		}
 	})
 
-	r.HandleFunc("/api/users/{username}", func(w http.ResponseWriter, r *http.Request) {
+	r.HandleFunc("/api/users/{username}/", func(w http.ResponseWriter, r *http.Request) {
 		EnableCors(w)
 		switch r.Method {
 		case "GET":
@@ -108,6 +108,15 @@ func initializeRouter() {
 		}
 	})
 
+	r.HandleFunc("/api/login/", func(w http.ResponseWriter, r *http.Request) {
+		EnableCors(w)
+		switch r.Method {
+		case "POST":
+			ValidateUser(w, r)
+		default:
+			w.WriteHeader(http.StatusNotFound)
+		}
+	})
 	log.Fatal(http.ListenAndServe(":9000", r))
 }
 
