@@ -1,6 +1,8 @@
-//import { BannerComponent } from './components/banner/banner.component';
 import { LoginComponent } from './components/login/login.component';
 import { RegisterComponent } from './components/register/register.component';
+import { PageNotFoundComponent } from './components/page-not-found/page-not-found.component';
+import { LandingPageComponent } from './components/landing-page/landing-page.component';
+
 import { NgModule, Component } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
@@ -15,10 +17,13 @@ import { BannerComponent } from './components/banner/banner.component';
 
 import { IssueService } from './issue.service';
 import { HttpClientModule } from '@angular/common/http';
+import { CookieService } from 'ngx-cookie-service';
 
 const routes: Routes = [
   { path: 'login', title: 'Login' , component: LoginComponent },
   { path: 'register', title:'Register', component: RegisterComponent},
+  { path: 'landing-page', title:'GatorGuessr', component: LandingPageComponent},
+  { path: 'page-not-found', title:'404 Error', component: PageNotFoundComponent},
   // Add additional routes here
 ];
 
@@ -39,7 +44,8 @@ const routes: Routes = [
     MaterialModule,
     RouterModule.forRoot(routes),
   ],
-  providers: [IssueService],
+  providers: [IssueService,
+    CookieService],
   bootstrap: [AppComponent],
   exports: [
     RouterModule

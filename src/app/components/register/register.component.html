@@ -15,6 +15,10 @@
                         Username must be at least 4 characters long
                     </mat-error>
                     <mat-error
+                        *ngIf="usernameRequirements.errors?.['maxlength']"> 
+                        Username can't be longer then 20 characters
+                    </mat-error>
+                    <mat-error
                         *ngIf="usernameRequirements.errors?.['required']">
                         Username is required
                     </mat-error>
@@ -43,12 +47,16 @@
                         Password must be at least 8 characters long
                     </mat-error>
                     <mat-error
+                        *ngIf="passwordRequirements.errors?.['maxlength']">
+                        Password can't be longer then 25 characters
+                    </mat-error>
+                    <mat-error
                         *ngIf="passwordRequirements.errors?.['required']">
                         Password is required
                     </mat-error>
                     <mat-error
                         *ngIf="passwordRequirements.errors?.['pattern']">
-                        Must an uppercase and a number
+                        Must have lowercase, uppercase and a number
                     </mat-error>
 
                     <mat-icon matSuffix (click)="togglePasswordVisibility()">

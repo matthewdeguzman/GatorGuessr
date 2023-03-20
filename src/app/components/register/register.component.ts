@@ -13,11 +13,12 @@ export class RegisterComponent{
     username: new FormControl(''),
     password: new FormControl(''),
   });
-  usernameRequirements = new FormControl('',[Validators.required, Validators.minLength(4)]);
+  usernameRequirements = new FormControl('',[Validators.required, Validators.minLength(4), Validators.maxLength(20)]);
   passwordRequirements = new FormControl('',[
     Validators.required, 
     Validators.minLength(8),
-    Validators.pattern(/^(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$/)
+    Validators.maxLength(25),
+    Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]$/)
   ]);
   constructor(private IssueService: IssueService, private router: Router) { }
   // @Input() error: string | null;

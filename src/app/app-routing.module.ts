@@ -1,3 +1,5 @@
+import { PageNotFoundComponent } from './components/page-not-found/page-not-found.component';
+import { LandingPageComponent } from './components/landing-page/landing-page.component';
 import { LoginComponent } from './components/login/login.component';
 import { AppComponent } from './app.component';
 import { NgModule, Component } from '@angular/core';
@@ -9,9 +11,11 @@ const routes: Routes = [
   { path: 'home', title:'Home', component: HomeComponent},
   { path: 'login', title:'Login', component: LoginComponent },
   { path: 'register', title:'Register', component: RegisterComponent},
+  { path: 'landing-page', title:'GatorGuessr', component: LandingPageComponent},
+  { path: 'page-not-found', title:'404 Error', component: PageNotFoundComponent},
 
   //redirect
-  { path: '**', redirectTo: 'home'}
+  { path: '**', redirectTo: 'page-not-found'}
 ];
 
 @NgModule({

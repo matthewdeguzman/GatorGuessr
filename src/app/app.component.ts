@@ -1,6 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { IssueService } from './issue.service';
-//import { HttpClient } from '@angular/common/http';
 
 type User = {
   ID : number

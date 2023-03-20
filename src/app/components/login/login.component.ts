@@ -61,7 +61,7 @@ submitLogin(username:string,password:string){
       else{
         console.log("Login successful");
         this.invalidUser = false;
-        this.router.navigate(['/home']);
+        this.router.navigate(['/landing-page']);
         
     }
     } 
