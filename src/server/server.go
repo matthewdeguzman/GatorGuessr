@@ -79,12 +79,12 @@ func initializeRouter() {
 
 	// Route Handlers / Endpoints
 	r.HandleFunc("/api/users", func(w http.ResponseWriter, r *http.Request) {
-		enableCors(w)
+		EnableCors(w)
 		switch r.Method {
 		case "GET":
-			getUsers(w, r)
+			GetUsers(w, r)
 		case "POST":
-			createUser(w, r)
+			CreateUser(w, r)
 		case "OPTIONS":
 			w.WriteHeader(http.StatusOK)
 		default:
@@ -93,14 +93,14 @@ func initializeRouter() {
 	})
 
 	r.HandleFunc("/api/users/{username}", func(w http.ResponseWriter, r *http.Request) {
-		enableCors(w)
+		EnableCors(w)
 		switch r.Method {
 		case "GET":
-			getUser(w, r)
+			GetUser(w, r)
 		case "PUT":
-			updateUser(w, r)
+			UpdateUser(w, r)
 		case "DELETE":
-			deleteUser(w, r)
+			DeleteUser(w, r)
 		case "OPTIONS":
 			w.WriteHeader(http.StatusOK)
 		default:

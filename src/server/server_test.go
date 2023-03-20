@@ -201,7 +201,7 @@ func TestGetUsers(t *testing.T) {
 
 	// creates rr to get the response recorder and makes the handler for the getUser api
 	rr := httptest.NewRecorder()
-	handler := http.HandlerFunc(getUsers)
+	handler := http.HandlerFunc(GetUsers)
 
 	// passes in the response recorder and the request
 	handler.ServeHTTP(rr, req)
