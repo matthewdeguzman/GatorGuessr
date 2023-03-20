@@ -15,7 +15,8 @@ const routes: Routes = [
   { path: 'page-not-found', title:'404 Error', component: PageNotFoundComponent},
 
   //redirect
-  { path: '**', redirectTo: 'page-not-found'}
+  { path: '', redirectTo: 'home', pathMatch: 'full' },
+  { path: '**', redirectTo: 'page-not-found'},
 ];
 
 @NgModule({

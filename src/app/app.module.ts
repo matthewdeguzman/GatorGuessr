@@ -24,6 +24,10 @@ const routes: Routes = [
   { path: 'register', title:'Register', component: RegisterComponent},
   { path: 'landing-page', title:'GatorGuessr', component: LandingPageComponent},
   { path: 'page-not-found', title:'404 Error', component: PageNotFoundComponent},
+
+  //redirect
+  { path: '', redirectTo: 'home', pathMatch: 'full' },
+  { path: '**', redirectTo: 'page-not-found'},
   // Add additional routes here
 ];
 
