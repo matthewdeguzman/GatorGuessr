@@ -190,33 +190,36 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	params := mux.Vars(r) // receives the given parameters in the request
 
-	// finds the user based on the parameters
-	var user User
-	db.First(&user, "Username = ?", params["username"])
+	var oldUser User
+	var updatedUser User
 
 	// if the username is empty, then the user does not exist
 	// respond with a 400 bad request error
-	if user.Username == "" {
+	db.First(&oldUser, "Username = ?", params["username"])
+	if oldUser.Username == "" {
 		userDNErr(w)
 		return
 	}
 
 	// decode the user
-	json.NewDecoder(r.Body).Decode(&user)
+	json.NewDecoder(r.Body).Decode(&updatedUser)
 
-	// use argon2 to hash the passwords
-	hash, err := encodePassword(user.Password)
-
-	// if there is an error with hashing, respond with error
+	// throw error if ID is being changed
+	if oldUser.ID != updatedUser.ID {
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		w.Write([]byte("405 - ID Cannot be changed "))
+		return
+	}
+	// use argon2 to update the password
+	hash, err := encodePassword(updatedUser.Password)
 	if err != nil {
 		hashErr(w)
 		return
 	}
+	updatedUser.Password = hash
 
-	// store hashed password then save and encode the user
-	user.Password = hash
-	db.Save(&user)
-	json.NewEncoder(w).Encode(user)
+	db.Save(&updatedUser)
+	json.NewEncoder(w).Encode(updatedUser)
 }
 
 // deleteUser deletes a user from the database
@@ -224,6 +227,12 @@ func DeleteUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	params := mux.Vars(r)
 	var user User
+
+	db.First(&user, "Username = ?", params["username"])
+	if user.Username == "" {
+		userDNErr(w)
+		return
+	}
 	db.Delete(&user, "Username = ?", params["username"])
 	json.NewEncoder(w).Encode(user)
 }
