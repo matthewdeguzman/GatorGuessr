@@ -2,7 +2,6 @@ import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 
 export type User = {
-export type User = {
   ID: number;
   Username: string;
   Password: string;
@@ -22,7 +21,9 @@ export class IssueService {
     this.http
       .post(`${this.uri}/api/login/`, user, { observe: "response" })
       .subscribe((response) => {
-        console.log(response.status);
+        response.status
+          ? console.log("Login successful")
+          : console.log("Login failed");
       });
   }
   createUser(username: string, password: string) {
