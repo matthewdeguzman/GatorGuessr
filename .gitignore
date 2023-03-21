@@ -1,7 +1,16 @@
+# node modules
 **/node_modules
+
+# angular
 **/.angular
-src/server/server
-src/server/credentials/credentials.go
-.vscode/
+
+# server
+/src/server/server
+/src/server/credentials/credentials.go
+
+# vscode settings
+/.vscode
+
+# executable files
 *.exe
 src/assets/images

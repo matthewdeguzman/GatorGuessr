@@ -78,13 +78,13 @@ func initializeRouter() {
 	r := mux.NewRouter()
 
 	// Route Handlers / Endpoints
-	r.HandleFunc("/api/users", func(w http.ResponseWriter, r *http.Request) {
-		enableCors(w)
+	r.HandleFunc("/api/users/", func(w http.ResponseWriter, r *http.Request) {
+		EnableCors(w)
 		switch r.Method {
 		case "GET":
-			getUsers(w, r)
+			GetUsers(w, r)
 		case "POST":
-			createUser(w, r)
+			CreateUser(w, r)
 		case "OPTIONS":
 			w.WriteHeader(http.StatusOK)
 		default:
@@ -92,15 +92,15 @@ func initializeRouter() {
 		}
 	})
 
-	r.HandleFunc("/api/users/{username}", func(w http.ResponseWriter, r *http.Request) {
-		enableCors(w)
+	r.HandleFunc("/api/users/{username}/", func(w http.ResponseWriter, r *http.Request) {
+		EnableCors(w)
 		switch r.Method {
 		case "GET":
-			getUser(w, r)
+			GetUser(w, r)
 		case "PUT":
-			updateUser(w, r)
+			UpdateUser(w, r)
 		case "DELETE":
-			deleteUser(w, r)
+			DeleteUser(w, r)
 		case "OPTIONS":
 			w.WriteHeader(http.StatusOK)
 		default:
@@ -108,6 +108,15 @@ func initializeRouter() {
 		}
 	})
 
+	r.HandleFunc("/api/login/", func(w http.ResponseWriter, r *http.Request) {
+		EnableCors(w)
+		switch r.Method {
+		case "POST":
+			ValidateUser(w, r)
+		default:
+			w.WriteHeader(http.StatusNotFound)
+		}
+	})
 	log.Fatal(http.ListenAndServe(":9000", r))
 }
 
