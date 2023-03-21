@@ -1,13 +1,10 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
 	"log"
 	"net/http"
 	"os"
-	"path/filepath"
-	"strings"
 	"time"
 
 	"github.com/gorilla/mux"
@@ -19,37 +16,15 @@ var db *gorm.DB
 var err error
 
 type User struct {
-	ID        uint `gorm:"primarykey"`
-	Username  string
-	Password  string
-	CreatedAt time.Time
-	UpdatedAt time.Time
-}
-
-func getPassword() string {
-	// Get password from credentials.txt
-	ex, err := os.Executable()
-	if err != nil {
-		panic(err)
-	}
-	path := filepath.Join(filepath.Dir(filepath.Dir(filepath.Dir(filepath.Dir(ex)))), "credentials.txt")
-	file, err := os.Open(path)
-	if err != nil {
-		fmt.Println(err)
-	}
-	defer file.Close()
-	scanner := bufio.NewScanner(file)
-	password := ""
-	for scanner.Scan() {
-		password += scanner.Text()
-	}
-	password = strings.TrimSpace(password)
-
-	if err := scanner.Err(); err != nil {
-		log.Fatal(err)
-	}
-
-	return password
+	ID           uint `gorm:"primarykey"`
+	Username     string
+	Password     string
+	DailyScore   uint
+	WeeklyScore  uint
+	MonthlyScore uint
+	TotalScore   uint
+	CreatedAt    time.Time
+	UpdatedAt    time.Time
 }
 
 func initializeMigration() {
@@ -58,7 +33,7 @@ func initializeMigration() {
 	const DB_NAME = "user_database"
 	const DB_HOST = "cen3031-server.mysql.database.azure.com"
 	const DB_PORT = "3306"
-	var password = getPassword()
+	var password = os.Getenv("DB_PASSWORD")
 	// Build connection string
 	DSN := DB_USERNAME + ":" + password + "@tcp" + "(" + DB_HOST + ":" + DB_PORT + ")/" + DB_NAME + "?" + "parseTime=true&loc=Local"
 
