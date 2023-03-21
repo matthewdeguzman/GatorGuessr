@@ -42,17 +42,17 @@ export class RegisterComponent {
   }
 
   submitRegistration(username: string, password: string) {
-    this.IssueService.getUsersWithUsername(username).subscribe((res: User) => {
-      if (res.ID != 0) {
-        console.log("User already exists");
-        this.invalidUser = true;
-      } else {
-        this.IssueService.createUser(username, password).subscribe((res) => {
-          console.log(res);
-          this.invalidUser = false;
-          this.router.navigate(["/login"]);
-        });
-      }
+    this.IssueService.getUser(username).subscribe((res) => {
+      // if (res.ID != 0) {
+      //   console.log("User already exists");
+      //   this.invalidUser = true;
+      // } else {
+      //   this.IssueService.createUser(username, password).subscribe((res) => {
+      //     console.log(res);
+      //     this.invalidUser = false;
+      //     this.router.navigate(["/login"]);
+      //   });
+      // }
     });
   }
   verifySubmit(): boolean {

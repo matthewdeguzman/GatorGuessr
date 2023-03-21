@@ -5,8 +5,6 @@ export type User = {
   ID: number;
   Username: string;
   Password: string;
-  CreatedAt: string;
-  UpdatedAt: string;
 };
 
 @Injectable({
@@ -15,14 +13,29 @@ export type User = {
 export class IssueService {
   uri = "http://localhost:9000";
   constructor(private http: HttpClient) {}
-  getUsersWithUsername(username: string) {
-    return this.http.get<User>(`${this.uri}/api/users/${username}`);
+  validateUser(username: string, password: string) {
+    const user = {
+      username: username,
+      password: password,
+    };
+    this.http
+      .post(`${this.uri}/api/login/`, user, { observe: "response" })
+      .subscribe((response) => {
+        console.log(response.status);
+      });
   }
   createUser(username: string, password: string) {
     const user = {
       username: username,
       password: password,
     };
-    return this.http.post(`${this.uri}/api/users`, user);
+    return this.http
+      .post(`${this.uri}/api/users`, user, { observe: "response" })
+      .subscribe((response) => {
+        console.log(response.status);
+      });
+  }
+  getUser(username: string) {
+    return this.http.get(`${this.uri}/api/login/${username}`);
   }
 }

@@ -38,9 +38,8 @@ export class LoginComponent {
   }
 
   submitLogin(username: string, password: string) {
-    this.IssueService.getUsersWithUsername(username).subscribe((res) => {
-      console.log(res);
-      if (res.Username != username) {
+    this.IssueService.validateUser(username, password);
+    /*if (res.Username != username) {
         console.log("Username does not exist");
         this.invalidName = true;
       } else {
@@ -53,7 +52,6 @@ export class LoginComponent {
           this.invalidUser = false;
           this.router.navigate(["/landing-page"]);
         }
-      }
-    });
+      }*/
   }
 }
