@@ -191,8 +191,6 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r) // receives the given parameters in the request
 
 	var oldUser User
-	var updatedUser User
-
 	// if the username is empty, then the user does not exist
 	// respond with a 400 bad request error
 	db.First(&oldUser, "Username = ?", params["username"])
@@ -201,13 +199,18 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	updatedUser := User{
+		ID:        oldUser.ID,
+		Username:  oldUser.Username,
+		CreatedAt: oldUser.CreatedAt,
+	}
 	// decode the user
 	json.NewDecoder(r.Body).Decode(&updatedUser)
 
 	// throw error if ID is being changed
 	if oldUser.ID != updatedUser.ID {
 		w.WriteHeader(http.StatusMethodNotAllowed)
-		w.Write([]byte("405 - ID Cannot be changed "))
+		w.Write([]byte("405 - Cannot change immutable field "))
 		return
 	}
 	// use argon2 to update the password
@@ -217,6 +220,8 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	updatedUser.Password = hash
+
+	updatedUser.CreatedAt = oldUser.CreatedAt
 
 	db.Save(&updatedUser)
 	json.NewEncoder(w).Encode(updatedUser)
