@@ -1,5 +1,3 @@
-/* 404.component.css */
-
 .container {
   display: flex;
   flex-direction: column;
@@ -15,4 +13,7 @@ h1 {
 img {
   max-width: 100%;
   height: auto;
+}
+mat-raised-button {
+  margin: 10px;
 }
