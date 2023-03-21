@@ -274,6 +274,6 @@ func ValidateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.WriteHeader(http.StatusOK)
-	w.Write([]byte("200 - Username and Password Match"))
+	// w.WriteHeader(http.StatusOK)
+	// w.Write([]byte("200 - Username and Password Match"))
 }

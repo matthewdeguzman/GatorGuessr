@@ -21,7 +21,7 @@ export class IssueService {
     this.http
       .post(`${this.uri}/api/login/`, user, { observe: "response" })
       .subscribe((response) => {
-        response.status
+        response && response.status
           ? console.log("Login successful")
           : console.log("Login failed");
       });
