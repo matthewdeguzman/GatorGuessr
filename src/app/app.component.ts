@@ -18,5 +18,4 @@ export class AppComponent {
   Users: User[] = [];
   title = "GatorGuessr";
   constructor(private IssueService: IssueService) {}
-  ngOnInit() {}
 }

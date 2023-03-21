@@ -1,22 +1,3 @@
-<!-- <mat-card>
-    <mat-card-title>Login</mat-card-title>
-    <mat-card-content>
-       
-        <form [formGroup]="loginForm" (ngSubmit)="submitLogin()">
-            <label>
-                username:
-                <input type="text" formControlName="username" />
-            </label>
-            <label>
-                password:
-                <input type="text" formControlName="password" />
-            
-        </mat-card-content>
-</mat-card>
- -->
-
-<!-- <my-login-form (menu)='open($event)'>Your Form</my-login-form> -->
-
 <mat-card>
   <mat-card-title>Login</mat-card-title>
   <mat-card-content>
@@ -31,9 +12,6 @@
             formControlName="username"
           />
           <mat-icon matSuffix> sentiment_very_satisfied</mat-icon>
-          <!-- <mat-error *ngIf="!showUserError()">
-                            Error: No User Found
-                        </mat-error> -->
         </mat-form-field>
       </div>
       <div>
@@ -51,8 +29,6 @@
             [type]="showPassword ? 'text' : 'password'"
             placeholder="password"
           />
-          <!-- <input matInput placeholder = "Password" 
-                        formControlName = "password" /> -->
           <mat-icon matSuffix (click)="togglePasswordVisibility()">
             {{ showPassword ? "visibility_off" : "visibility" }}
           </mat-icon>
@@ -64,10 +40,6 @@
           Error: Incorrect Password
         </mat-card-footer>
       </div>
-
-      <!-- <p *ngIf = "error" class = "error">
-                {{error}}
-            </p> -->
       <div class="mat-button">
         <button
           type="submit"
