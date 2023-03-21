@@ -1,24 +1,24 @@
 //import { BannerComponent } from './components/banner/banner.component';
-import { LoginComponent } from './components/login/login.component';
-import { RegisterComponent } from './components/register/register.component';
-import { NgModule, Component } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
+import { LoginComponent } from "./components/login/login.component";
+import { RegisterComponent } from "./components/register/register.component";
+import { NgModule, Component } from "@angular/core";
+import { BrowserModule } from "@angular/platform-browser";
 
-import { RouterModule, Routes } from '@angular/router';
-import { AppRoutingModule } from './app-routing.module';
+import { RouterModule, Routes } from "@angular/router";
+import { AppRoutingModule } from "./app-routing.module";
 
-import { AppComponent } from './app.component';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { MaterialModule } from './material.module';
-import { HomeComponent } from './components/home/home.component';
-import { BannerComponent } from './components/banner/banner.component';
+import { AppComponent } from "./app.component";
+import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
+import { MaterialModule } from "./material.module";
+import { HomeComponent } from "./components/home/home.component";
+import { BannerComponent } from "./components/banner/banner.component";
 
-import { IssueService } from './issue.service';
-import { HttpClientModule } from '@angular/common/http';
+import { IssueService } from "./issue.service";
+import { HttpClientModule } from "@angular/common/http";
 
 const routes: Routes = [
-  { path: 'login', title: 'Login' , component: LoginComponent },
-  { path: 'register', title:'Register', component: RegisterComponent},
+  { path: "login", title: "Login", component: LoginComponent },
+  { path: "register", title: "Register", component: RegisterComponent },
   // Add additional routes here
 ];
 
@@ -29,7 +29,6 @@ const routes: Routes = [
     BannerComponent,
     RegisterComponent,
     HomeComponent,
-    
   ],
   imports: [
     BrowserModule,
@@ -41,8 +40,6 @@ const routes: Routes = [
   ],
   providers: [IssueService],
   bootstrap: [AppComponent],
-  exports: [
-    RouterModule
-  ]
+  exports: [RouterModule],
 })
-export class AppModule { }
+export class AppModule {}

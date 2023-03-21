@@ -1,7 +1,7 @@
-import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { Injectable } from "@angular/core";
+import { HttpClient } from "@angular/common/http";
 
-export type User ={
+export type User = {
   ID: number;
   Username: string;
   Password: string;
@@ -10,13 +10,13 @@ export type User ={
 };
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root",
 })
 export class IssueService {
-  uri = 'http://localhost:9000';
-  constructor(private http: HttpClient) { }
+  uri = "http://localhost:9000";
+  constructor(private http: HttpClient) {}
   getUsersWithUsername(username: string) {
-    return this.http.get<User>(`${this.uri}/api/users/${username}`)
+    return this.http.get<User>(`${this.uri}/api/users/${username}/`);
   }
   // createUser(username, password) {
   //   const user = {
@@ -30,8 +30,6 @@ export class IssueService {
       username: username,
       password: password,
     };
-    return this.http.post(`${this.uri}/api/users`, user);
+    return this.http.post(`${this.uri}/api/users/`, user);
   }
-
-
 }
