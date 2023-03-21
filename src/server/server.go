@@ -113,6 +113,8 @@ func initializeRouter() {
 		switch r.Method {
 		case "POST":
 			ValidateUser(w, r)
+		case "OPTIONS":
+			w.WriteHeader(http.StatusOK)
 		default:
 			w.WriteHeader(http.StatusNotFound)
 		}
