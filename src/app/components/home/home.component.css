@@ -2,7 +2,6 @@
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  
 }
 
 .tile-text {
@@ -11,5 +10,3 @@
   font-size: 30px;
   font-weight: bold;
 }
-
-

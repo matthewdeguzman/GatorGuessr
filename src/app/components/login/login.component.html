@@ -15,68 +15,69 @@
 </mat-card>
  -->
 
- <!-- <my-login-form (menu)='open($event)'>Your Form</my-login-form> -->
+<!-- <my-login-form (menu)='open($event)'>Your Form</my-login-form> -->
 
- <mat-card>
-    <mat-card-title>Login</mat-card-title>
-    <mat-card-content>
-        <form [formGroup] = "loginForm">
-            <div>
-                <mat-form-field appearance="outline">
-                    <mat-label>Username</mat-label>
-                    <input matInput 
-                    #username
-                    placeholder = "Username"
-                    formControlName = "username" />
-                    <mat-icon matSuffix> sentiment_very_satisfied</mat-icon>
-                        <!-- <mat-error *ngIf="!showUserError()">
+<mat-card>
+  <mat-card-title>Login</mat-card-title>
+  <mat-card-content>
+    <form [formGroup]="loginForm">
+      <div>
+        <mat-form-field appearance="outline">
+          <mat-label>Username</mat-label>
+          <input
+            matInput
+            #username
+            placeholder="Username"
+            formControlName="username"
+          />
+          <mat-icon matSuffix> sentiment_very_satisfied</mat-icon>
+          <!-- <mat-error *ngIf="!showUserError()">
                             Error: No User Found
                         </mat-error> -->
-                </mat-form-field>
-                
-            </div>
-                <div>
-                    <mat-card-footer *ngIf="showUserError()">
-                        Error: No User Found
-                    </mat-card-footer>
-                </div>
+        </mat-form-field>
+      </div>
+      <div>
+        <mat-card-footer *ngIf="showUserError()">
+          Error: No User Found
+        </mat-card-footer>
+      </div>
 
-            <div>
-                <mat-form-field appearance = "outline">
-                    <mat-label>Password</mat-label>
-                    <input matInput 
-                    #password
-                    [type]="showPassword ? 'text' : 'password'" 
-                    placeholder="password"
-                    >
-                    <!-- <input matInput placeholder = "Password" 
+      <div>
+        <mat-form-field appearance="outline">
+          <mat-label>Password</mat-label>
+          <input
+            matInput
+            #password
+            [type]="showPassword ? 'text' : 'password'"
+            placeholder="password"
+          />
+          <!-- <input matInput placeholder = "Password" 
                         formControlName = "password" /> -->
-                        <mat-icon matSuffix (click)="togglePasswordVisibility()">
-                            {{showPassword?'visibility_off':'visibility'}}
-                        </mat-icon>
+          <mat-icon matSuffix (click)="togglePasswordVisibility()">
+            {{ showPassword ? "visibility_off" : "visibility" }}
+          </mat-icon>
+        </mat-form-field>
+      </div>
 
-                    
-                </mat-form-field>
-            </div>
+      <div>
+        <mat-card-footer *ngIf="showPassError()">
+          Error: Incorrect Password
+        </mat-card-footer>
+      </div>
 
-            <div>
-                <mat-card-footer *ngIf="showPassError()">
-                    Error: Incorrect Password
-                </mat-card-footer>
-            </div>
-
-            <!-- <p *ngIf = "error" class = "error">
+      <!-- <p *ngIf = "error" class = "error">
                 {{error}}
             </p> -->
-            <div class = "mat-button">
-                <button type = "submit" mat-raised-button (click)="submitLogin(username.value,password.value)">Login</button>
-            
-            </div>
-        </form>
-        
-    </mat-card-content>
- </mat-card>
+      <div class="mat-button">
+        <button
+          type="submit"
+          mat-raised-button
+          (click)="submitLogin(username.value, password.value)"
+        >
+          Login
+        </button>
+      </div>
+    </form>
+  </mat-card-content>
+</mat-card>
 <router-outlet></router-outlet>
-
-
- 

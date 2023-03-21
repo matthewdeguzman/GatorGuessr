@@ -1,72 +1,59 @@
-import { IssueService } from './../../issue.service';
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
-
-
+import { IssueService } from "./../../issue.service";
+import { Component, OnInit, Input, Output, EventEmitter } from "@angular/core";
+import { FormGroup, FormControl, Validators } from "@angular/forms";
+import { Router } from "@angular/router";
 
 @Component({
-  selector: 'app-login',
-  templateUrl: './login.component.html',
-  styleUrls: ['./login.component.css']
+  selector: "app-login",
+  templateUrl: "./login.component.html",
+  styleUrls: ["./login.component.css"],
 })
-
-export class LoginComponent{
-
+export class LoginComponent {
   loginForm = new FormGroup({
-    username: new FormControl(''),
-    password: new FormControl(''),
+    username: new FormControl(""),
+    password: new FormControl(""),
   });
 
-  constructor(private IssueService: IssueService, private router: Router) { }
-  
+  constructor(private IssueService: IssueService, private router: Router) {}
 
-// @Input() error: string | null;
-@Output() submitEM = new EventEmitter();
-  
-public showPassword: boolean = false;
+  // @Input() error: string | null;
+  @Output() submitEM = new EventEmitter();
 
-public invalidName: boolean = false;
+  public showPassword: boolean = false;
 
-public invalidUser: boolean = false;
+  public invalidName: boolean = false;
 
-public showUserError(): boolean {
- return this.invalidName;
-  
-}
+  public invalidUser: boolean = false;
 
-public showPassError(): boolean {
-  return this.invalidUser;
-   
- }
+  public showUserError(): boolean {
+    return this.invalidName;
+  }
 
+  public showPassError(): boolean {
+    return this.invalidUser;
+  }
 
-public togglePasswordVisibility(): void {
+  public togglePasswordVisibility(): void {
     this.showPassword = !this.showPassword;
   }
 
-submitLogin(username:string,password:string){
-  this.IssueService.getUsersWithUsername(username).subscribe((res) => {
-    console.log(res);
-    if (res.Username != username){
-      console.log("Username does not exist");
-      this.invalidName = true;
-    }
-    else{
-      this.invalidName = false;
-      if(res.Password != password){
-        console.log("Incorrect password");
-        this.invalidUser = true;
+  submitLogin(username: string, password: string) {
+    this.IssueService.getUsersWithUsername(username).subscribe((res) => {
+      console.log(res);
+      if (res.Username != username) {
+        console.log("Username does not exist");
+        this.invalidName = true;
+      } else {
+        this.invalidName = false;
+        if (res.Password != password) {
+          console.log("Incorrect password");
+          this.invalidUser = true;
+        } else {
+          console.log("Login successful");
+          this.invalidUser = false;
+          this.router.navigate(["/landing-page"]);
+        }
       }
-      else{
-        console.log("Login successful");
-        this.invalidUser = false;
-        this.router.navigate(['/landing-page']);
-        
-    }
-    } 
-    
-  });
+    });
+  }
 }
-}
-
