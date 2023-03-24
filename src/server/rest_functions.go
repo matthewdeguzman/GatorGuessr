@@ -200,9 +200,13 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	updatedUser := User{
-		ID:        oldUser.ID,
-		Username:  oldUser.Username,
-		CreatedAt: oldUser.CreatedAt,
+		ID:           oldUser.ID,
+		Username:     oldUser.Username,
+		CreatedAt:    oldUser.CreatedAt,
+		DailyScore:   oldUser.DailyScore,
+		WeeklyScore:  oldUser.WeeklyScore,
+		MonthlyScore: oldUser.MonthlyScore,
+		TotalScore:   oldUser.TotalScore,
 	}
 	// decode the user
 	json.NewDecoder(r.Body).Decode(&updatedUser)

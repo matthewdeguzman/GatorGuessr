@@ -16,11 +16,15 @@ var db *gorm.DB
 var err error
 
 type User struct {
-	ID        uint `gorm:"primarykey"`
-	Username  string
-	Password  string
-	CreatedAt time.Time
-	UpdatedAt time.Time
+	ID           uint `gorm:"primarykey"`
+	Username     string
+	Password     string
+	DailyScore   uint
+	WeeklyScore  uint
+	MonthlyScore uint
+	TotalScore   uint
+	CreatedAt    time.Time
+	UpdatedAt    time.Time
 }
 
 func initializeMigration() {
