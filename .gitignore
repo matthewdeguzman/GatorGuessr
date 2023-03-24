@@ -4,6 +4,9 @@
 # angular
 **/.angular
 
+# assets 
+/src/assets/images
+
 # server
 /src/server/server
 /src/server/credentials/credentials.go
@@ -13,4 +16,3 @@
 
 # executable files
 *.exe
-src/assets/images
