@@ -24,11 +24,6 @@ const routes: Routes = [
   },
   { path: "register", title: "Register", component: RegisterComponent },
   {
-    path: "landing-page",
-    title: "GatorGuessr",
-    component: LandingPageComponent,
-  },
-  {
     path: "page-not-found",
     title: "404 Error",
     component: PageNotFoundComponent,

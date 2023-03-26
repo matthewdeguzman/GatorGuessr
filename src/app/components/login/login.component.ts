@@ -38,20 +38,21 @@ export class LoginComponent {
   }
 
   submitLogin(username: string, password: string) {
-    this.IssueService.validateUser(username, password);
-    /*if (res.Username != username) {
-        console.log("Username does not exist");
-        this.invalidName = true;
-      } else {
-        this.invalidName = false;
-        if (res.Password != password) {
-          console.log("Incorrect password");
-          this.invalidUser = true;
-        } else {
-          console.log("Login successful");
-          this.invalidUser = false;
-          this.router.navigate(["/landing-page"]);
+    this.IssueService.validateUser(username, password).subscribe(
+      (res) => {
+        if (res == 200) {
+          this.router.navigate(["/login/landing-page"]);
         }
-      }*/
+      },
+      (error) => {
+        if (error.status == 500) {
+          this.invalidName = true;
+          this.invalidUser = false;
+        } else if (error.status == 404) {
+          this.invalidUser = true;
+          this.invalidName = false;
+        }
+      }
+    );
   }
 }
