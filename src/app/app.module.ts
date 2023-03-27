@@ -15,7 +15,7 @@ import { MaterialModule } from "./material.module";
 import { HomeComponent } from "./components/home/home.component";
 import { BannerComponent } from "./components/banner/banner.component";
 
-import { IssueService } from "./issue.service";
+import { IssueService } from "./services/issue.service";
 import { HttpClientModule } from "@angular/common/http";
 import { CookieService } from "ngx-cookie-service";
 

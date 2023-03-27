@@ -1,7 +1,7 @@
 import { Router } from "@angular/router";
 import { Component, OnInit, Input, Output, EventEmitter } from "@angular/core";
 import { FormGroup, FormControl, Validators } from "@angular/forms";
-import { IssueService, User } from "../../issue.service";
+import { IssueService } from "../../services/issue.service";
 
 @Component({
   selector: "app-register",

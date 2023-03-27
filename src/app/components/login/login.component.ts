@@ -1,4 +1,4 @@
-import { IssueService } from "./../../issue.service";
+import { IssueService } from "../../services/issue.service";
 import { Component, OnInit, Input, Output, EventEmitter } from "@angular/core";
 import { FormGroup, FormControl, Validators } from "@angular/forms";
 import { Router } from "@angular/router";

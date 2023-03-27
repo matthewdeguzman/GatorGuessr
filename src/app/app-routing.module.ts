@@ -6,16 +6,17 @@ import { NgModule, Component } from "@angular/core";
 import { RouterModule, Routes } from "@angular/router";
 import { RegisterComponent } from "./components/register/register.component";
 import { HomeComponent } from "./components/home/home.component";
+import { AuthGuard } from "./guards/auth/auth.guard";
 
 const routes: Routes = [
   { path: "home", title: "Home", component: HomeComponent },
   {
     path: "login",
     title: "Login",
-    // canActivate: [AppGuard],
     component: LoginComponent,
     children: [
       {
+        canActivate: [AuthGuard],
         path: "landing-page",
         title: "GatorGuessr",
         component: LandingPageComponent,
