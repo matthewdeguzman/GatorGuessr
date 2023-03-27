@@ -24,9 +24,9 @@ type hashParams struct {
 }
 
 var (
-	HashErr   = []byte("500 - Error with hashing. User not created.")
-	UserDNErr = []byte("404 - User not found.")
-	LoginErr  = []byte("404 - Username or Password Incorrect.")
+	HashErr   = "500 - Error with hashing. User not created."
+	UserDNErr = "404 - User not found."
+	LoginErr  = "404 - Username or Password Incorrect."
 )
 
 func writeErr(w http.ResponseWriter, status int, message string) {
@@ -35,18 +35,15 @@ func writeErr(w http.ResponseWriter, status int, message string) {
 }
 
 func hashErr(w http.ResponseWriter) {
-	w.WriteHeader(http.StatusInternalServerError)
-	w.Write(HashErr)
+	writeErr(w, http.StatusInternalServerError, HashErr)
 }
 
 func userDNErr(w http.ResponseWriter) {
-	w.WriteHeader(http.StatusNotFound)
-	w.Write(UserDNErr)
+	writeErr(w, http.StatusNotFound, UserDNErr)
 }
 
 func loginErr(w http.ResponseWriter) {
-	w.WriteHeader(http.StatusNotFound)
-	w.Write(LoginErr)
+	writeErr(w, http.StatusNotFound, LoginErr)
 }
 
 func userExists(username string) bool {
@@ -57,6 +54,18 @@ func userExists(username string) bool {
 	} else {
 		return true
 	}
+}
+
+func fetchUser(user *User, username string) {
+	db.First(user, "Username = ?", username)
+}
+
+func decodeUser(user *User, r *http.Request) {
+	json.NewDecoder(r.Body).Decode(user)
+}
+
+func encodeUser(user User, w http.ResponseWriter) {
+	json.NewEncoder(w).Encode(user)
 }
 
 // generates a hashed version of the given password using argon2
@@ -163,20 +172,20 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 
 	params := mux.Vars(r)
 	var user User
-	db.First(&user, "Username = ?", params["username"])
+	fetchUser(&user, params["username"])
 
 	if user.Username == "" {
 		userDNErr(w)
 		return
 	}
-	json.NewEncoder(w).Encode(user)
+	encodeUser(user, w)
 }
 
 func CreateUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	var user User
-	json.NewDecoder(r.Body).Decode(&user)
+	decodeUser(&user, r)
 
 	if userExists(user.Username) {
 		writeErr(w, http.StatusBadRequest, "400 - User already exists")
@@ -186,14 +195,13 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 	hash, err := encodePassword(user.Password)
 
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write(HashErr)
+		writeErr(w, http.StatusInternalServerError, HashErr)
 		return
 	}
 	user.Password = hash
 
 	db.Create(&user)
-	json.NewEncoder(w).Encode(user)
+	encodeUser(user, w)
 }
 
 func UpdateUser(w http.ResponseWriter, r *http.Request) {
@@ -202,13 +210,16 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 
 	var oldUser User
 	var updatedUser User
-	db.First(&oldUser, "Username = ?", params["username"])
+
+	fetchUser(&oldUser, params["username"])
+	fetchUser(&updatedUser, params["username"])
+
 	if oldUser.Username == "" {
 		userDNErr(w)
 		return
 	}
 
-	json.NewDecoder(r.Body).Decode(&updatedUser)
+	decodeUser(&updatedUser, r)
 
 	if oldUser.ID != updatedUser.ID {
 		writeErr(w, http.StatusMethodNotAllowed, "405 - Cannot change immutable field")
@@ -224,7 +235,7 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 	updatedUser.CreatedAt = oldUser.CreatedAt
 
 	db.Save(&updatedUser)
-	json.NewEncoder(w).Encode(updatedUser)
+	encodeUser(updatedUser, w)
 }
 
 func DeleteUser(w http.ResponseWriter, r *http.Request) {
@@ -232,13 +243,13 @@ func DeleteUser(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	var user User
 
-	db.First(&user, "Username = ?", params["username"])
+	fetchUser(&user, params["username"])
 	if user.Username == "" {
 		userDNErr(w)
 		return
 	}
 	db.Delete(&user, "Username = ?", params["username"])
-	json.NewEncoder(w).Encode(user)
+	encodeUser(user, w)
 }
 
 func ValidateUser(w http.ResponseWriter, r *http.Request) {
@@ -248,10 +259,9 @@ func ValidateUser(w http.ResponseWriter, r *http.Request) {
 	var givenPassword string
 	var hashedPassword string
 
-	json.NewDecoder(r.Body).Decode(&user)
+	decodeUser(&user, r)
 	givenPassword = user.Password
-
-	db.First(&user, "Username = ?", user.Username)
+	fetchUser(&user, user.Username)
 
 	if user.Username == "" {
 		userDNErr(w)
