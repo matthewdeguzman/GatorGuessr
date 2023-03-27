@@ -19,7 +19,8 @@ import { IssueService } from "./services/issue.service";
 import { HttpClientModule } from "@angular/common/http";
 import { CookieService } from "ngx-cookie-service";
 
-const routes: Routes = [
+//Don't know if we will still need this
+/*const routes: Routes = [
   {
     path: "login",
     title: "Login",
@@ -44,7 +45,7 @@ const routes: Routes = [
   { path: "", redirectTo: "home", pathMatch: "full" },
   { path: "**", redirectTo: "page-not-found" },
   // Add additional routes here
-];
+];*/
 
 @NgModule({
   declarations: [
@@ -60,7 +61,7 @@ const routes: Routes = [
     BrowserAnimationsModule,
     HttpClientModule,
     MaterialModule,
-    RouterModule.forRoot(routes),
+    //RouterModule.forRoot(routes),
   ],
   providers: [IssueService, CookieService],
   bootstrap: [AppComponent],

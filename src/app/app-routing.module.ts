@@ -1,8 +1,7 @@
 import { PageNotFoundComponent } from "./components/page-not-found/page-not-found.component";
 import { LandingPageComponent } from "./components/landing-page/landing-page.component";
 import { LoginComponent } from "./components/login/login.component";
-import { AppComponent } from "./app.component";
-import { NgModule, Component } from "@angular/core";
+import { NgModule } from "@angular/core";
 import { RouterModule, Routes } from "@angular/router";
 import { RegisterComponent } from "./components/register/register.component";
 import { HomeComponent } from "./components/home/home.component";
@@ -16,7 +15,7 @@ const routes: Routes = [
     component: LoginComponent,
     children: [
       {
-        canActivate: [AuthGuard],
+        //canActivate: [AuthGuard],
         path: "landing-page",
         title: "GatorGuessr",
         component: LandingPageComponent,
