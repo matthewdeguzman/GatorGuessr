@@ -29,6 +29,11 @@ var (
 	LoginErr  = []byte("404 - Username or Password Incorrect.")
 )
 
+func writeErr(w http.ResponseWriter, status int, message string) {
+	w.WriteHeader(status)
+	w.Write([]byte(message))
+}
+
 func hashErr(w http.ResponseWriter) {
 	w.WriteHeader(http.StatusInternalServerError)
 	w.Write(HashErr)
@@ -42,6 +47,16 @@ func userDNErr(w http.ResponseWriter) {
 func loginErr(w http.ResponseWriter) {
 	w.WriteHeader(http.StatusNotFound)
 	w.Write(LoginErr)
+}
+
+func userExists(w http.ResponseWriter, username string) bool {
+	var user User
+	db.First(&user, "Username = ?", username)
+	if user.Username == "" {
+		return false
+	} else {
+		return true
+	}
 }
 
 // generates a hashed version of the given password using argon2
