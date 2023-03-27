@@ -151,7 +151,6 @@ func EnableCors(w http.ResponseWriter) {
 	w.Header().Set("Access-Control-Allow-Credentials", "true")
 }
 
-// GetUsers returns all the users from the database
 func GetUsers(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var users []User
@@ -159,7 +158,6 @@ func GetUsers(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(users)
 }
 
-// GetUser returns a specified user from the database
 func GetUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
@@ -167,8 +165,6 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 	var user User
 	db.First(&user, "Username = ?", params["username"])
 
-	// if user does not exist, the username will be empty, so
-	// we send back an invalid request
 	if user.Username == "" {
 		userDNErr(w)
 		return
@@ -200,53 +196,37 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(user)
 }
 
-// updateUser updates a user with the sent information
 func UpdateUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	params := mux.Vars(r) // receives the given parameters in the request
+	params := mux.Vars(r)
 
 	var oldUser User
-	// if the username is empty, then the user does not exist
-	// respond with a 400 bad request error
+	var updatedUser User
 	db.First(&oldUser, "Username = ?", params["username"])
 	if oldUser.Username == "" {
 		userDNErr(w)
 		return
 	}
 
-	updatedUser := User{
-		ID:           oldUser.ID,
-		Username:     oldUser.Username,
-		CreatedAt:    oldUser.CreatedAt,
-		DailyScore:   oldUser.DailyScore,
-		WeeklyScore:  oldUser.WeeklyScore,
-		MonthlyScore: oldUser.MonthlyScore,
-		TotalScore:   oldUser.TotalScore,
-	}
-	// decode the user
 	json.NewDecoder(r.Body).Decode(&updatedUser)
 
-	// throw error if ID is being changed
 	if oldUser.ID != updatedUser.ID {
-		w.WriteHeader(http.StatusMethodNotAllowed)
-		w.Write([]byte("405 - Cannot change immutable field "))
+		writeErr(w, http.StatusMethodNotAllowed, "405 - Cannot change immutable field")
 		return
 	}
-	// use argon2 to update the password
+
 	hash, err := encodePassword(updatedUser.Password)
 	if err != nil {
 		hashErr(w)
 		return
 	}
 	updatedUser.Password = hash
-
 	updatedUser.CreatedAt = oldUser.CreatedAt
 
 	db.Save(&updatedUser)
 	json.NewEncoder(w).Encode(updatedUser)
 }
 
-// deleteUser deletes a user from the database
 func DeleteUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	params := mux.Vars(r)
@@ -264,7 +244,6 @@ func DeleteUser(w http.ResponseWriter, r *http.Request) {
 func ValidateUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
-	// decode user object and store the given password
 	var user User
 	var givenPassword string
 	var hashedPassword string
@@ -272,11 +251,8 @@ func ValidateUser(w http.ResponseWriter, r *http.Request) {
 	json.NewDecoder(r.Body).Decode(&user)
 	givenPassword = user.Password
 
-	// retrieve user from db
 	db.First(&user, "Username = ?", user.Username)
 
-	// if user does not exist, the username will be empty, so
-	// we send back an invalid request
 	if user.Username == "" {
 		userDNErr(w)
 		return
@@ -292,7 +268,4 @@ func ValidateUser(w http.ResponseWriter, r *http.Request) {
 		loginErr(w)
 		return
 	}
-
-	// w.WriteHeader(http.StatusOK)
-	// w.Write([]byte("200 - Username and Password Match"))
 }
