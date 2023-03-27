@@ -49,7 +49,7 @@ func loginErr(w http.ResponseWriter) {
 	w.Write(LoginErr)
 }
 
-func userExists(w http.ResponseWriter, username string) bool {
+func userExists(username string) bool {
 	var user User
 	db.First(&user, "Username = ?", username)
 	if user.Username == "" {
@@ -176,26 +176,26 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(user)
 }
 
-// createUser creates a new user and inserts into the database
 func CreateUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
-	// decodes user
 	var user User
 	json.NewDecoder(r.Body).Decode(&user)
 
-	// use argon2 to hash the passwords
+	if userExists(user.Username) {
+		writeErr(w, http.StatusBadRequest, "400 - User already exists")
+		return
+	}
+
 	hash, err := encodePassword(user.Password)
 
-	// if there is an error, respond with an internal server error
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write(HashErr)
 		return
 	}
-	user.Password = hash // stores password as encoded password
+	user.Password = hash
 
-	// create and encode the user
 	db.Create(&user)
 	json.NewEncoder(w).Encode(user)
 }
