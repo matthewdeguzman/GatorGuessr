@@ -10,7 +10,7 @@ import (
 	"net/http"
 	"strings"
 
-	u "github.com/matthewdeguzman/GatorGuessr/src/server/db_user"
+	u "github.com/matthewdeguzman/GatorGuessr/src/server/structs"
 	"golang.org/x/crypto/argon2"
 	"gorm.io/gorm"
 )
@@ -66,6 +66,18 @@ func decodeUser(user *u.User, r *http.Request) {
 
 func encodeUser(user u.User, w http.ResponseWriter) {
 	json.NewEncoder(w).Encode(user)
+}
+
+func encodeUsers(users []u.User, w http.ResponseWriter) {
+	json.NewEncoder(w).Encode(users)
+}
+func decodeLimit(limit *uint, r *http.Request) (err error) {
+	err = json.NewDecoder(r.Body).Decode(limit)
+	if err != nil {
+		return err
+	} else {
+		return nil
+	}
 }
 
 func encodePassword(password string) (encodedHash string, err error) {
@@ -150,6 +162,10 @@ func decodePasswordAndMatch(password, encodedHash string) (match bool, err error
 
 	// the passwords do not match
 	return false, nil
+}
+
+func setHeader(w http.ResponseWriter) {
+	w.Header().Set("Content-Type", "application/json")
 }
 
 func EnableCors(w http.ResponseWriter) {

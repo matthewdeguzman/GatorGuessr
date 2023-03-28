@@ -5,19 +5,19 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
-	u "github.com/matthewdeguzman/GatorGuessr/src/server/db_user"
+	u "github.com/matthewdeguzman/GatorGuessr/src/server/structs"
 	"gorm.io/gorm"
 )
 
 func GetUsers(w http.ResponseWriter, r *http.Request, db *gorm.DB) {
-	w.Header().Set("Content-Type", "application/json")
+	setHeader(w)
 	var users []u.User
 	db.Find(&users)
 	json.NewEncoder(w).Encode(users)
 }
 
 func GetUser(w http.ResponseWriter, r *http.Request, db *gorm.DB) {
-	w.Header().Set("Content-Type", "application/json")
+	setHeader(w)
 
 	params := mux.Vars(r)
 	var user u.User
@@ -31,7 +31,7 @@ func GetUser(w http.ResponseWriter, r *http.Request, db *gorm.DB) {
 }
 
 func CreateUser(w http.ResponseWriter, r *http.Request, db *gorm.DB) {
-	w.Header().Set("Content-Type", "application/json")
+	setHeader(w)
 
 	var user u.User
 	decodeUser(&user, r)
@@ -54,7 +54,7 @@ func CreateUser(w http.ResponseWriter, r *http.Request, db *gorm.DB) {
 }
 
 func UpdateUser(w http.ResponseWriter, r *http.Request, db *gorm.DB) {
-	w.Header().Set("Content-Type", "application/json")
+	setHeader(w)
 	params := mux.Vars(r)
 
 	var oldUser u.User
@@ -88,7 +88,7 @@ func UpdateUser(w http.ResponseWriter, r *http.Request, db *gorm.DB) {
 }
 
 func DeleteUser(w http.ResponseWriter, r *http.Request, db *gorm.DB) {
-	w.Header().Set("Content-Type", "application/json")
+	setHeader(w)
 	params := mux.Vars(r)
 	var user u.User
 
@@ -102,7 +102,7 @@ func DeleteUser(w http.ResponseWriter, r *http.Request, db *gorm.DB) {
 }
 
 func ValidateUser(w http.ResponseWriter, r *http.Request, db *gorm.DB) {
-	w.Header().Set("Content-Type", "application/json")
+	setHeader(w)
 
 	var user u.User
 	var givenPassword string

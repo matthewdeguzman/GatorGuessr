@@ -7,8 +7,8 @@ import (
 	"os"
 
 	"github.com/gorilla/mux"
-	"github.com/matthewdeguzman/GatorGuessr/src/server/db_user"
 	"github.com/matthewdeguzman/GatorGuessr/src/server/endpoints"
+	db_user "github.com/matthewdeguzman/GatorGuessr/src/server/structs"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
@@ -79,6 +79,18 @@ func initializeRouter() {
 			endpoints.ValidateUser(w, r, db)
 		case "OPTIONS":
 			w.WriteHeader(http.StatusOK)
+		default:
+			w.WriteHeader(http.StatusNotFound)
+		}
+	})
+
+	r.HandleFunc("/api/leaderboard/{limit}/", func(w http.ResponseWriter, r *http.Request) {
+		endpoints.EnableCors(w)
+		switch r.Method {
+		case "GET":
+			endpoints.GetTopUsers(w, r, db)
+		case "OPTIONS":
+			w.WriteHeader(http.StatusNotFound)
 		default:
 			w.WriteHeader(http.StatusNotFound)
 		}
