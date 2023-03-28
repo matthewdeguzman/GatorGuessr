@@ -10,3 +10,15 @@
   font-size: 30px;
   font-weight: bold;
 }
+
+mat-grid-tile .tile-content {
+  padding: 16px;
+  height: calc(100% - 48px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+mat-grid-tile {
+  border: solid 1px #000;
+}

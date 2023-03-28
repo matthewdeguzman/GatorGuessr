@@ -1,7 +1,33 @@
-<mat-grid-list cols="3" rowHeight="90%">
-  <mat-grid-tile *ngFor="let tile of tiles" [colspan]="tile.cols" [rowspan]="1">
-    <mat-grid-tile-header class="tile-text"
-      >{{ tile.title }}
-    </mat-grid-tile-header>
+<mat-grid-list cols="3" rowHeight="95%">
+  <mat-grid-tile [colspan]="2">
+    <mat-grid-tile-header class="tile-text"> About </mat-grid-tile-header>
+    <div class="tile-content">
+      <p>This is the point of the game</p>
+    </div>
+  </mat-grid-tile>
+  <mat-grid-tile [colspan]="1">
+    <mat-grid-tile-header class="tile-text"> Leaderboard </mat-grid-tile-header>
+    <!--Position-->
+    <table mat-table [dataSource]="dataSource" class="mat-elevation-z0">
+      <ng-container matColumnDef="position">
+        <th mat-header-cell *matHeaderCellDef>No.</th>
+        <td mat-cell *matCellDef="let element">{{ element.position }}</td>
+      </ng-container>
+
+      <!--Name-->
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef>Name</th>
+        <td mat-cell *matCellDef="let element">{{ element.name }}</td>
+      </ng-container>
+
+      <!--Score-->
+      <ng-container matColumnDef="score">
+        <th mat-header-cell *matHeaderCellDef>Score</th>
+        <td mat-cell *matCellDef="let element">{{ element.score }}</td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    </table>
   </mat-grid-tile>
 </mat-grid-list>

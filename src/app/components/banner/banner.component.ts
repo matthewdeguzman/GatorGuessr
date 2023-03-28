@@ -6,6 +6,13 @@ import { Component, OnInit } from "@angular/core";
   styleUrls: ["./banner.component.css"],
 })
 export class BannerComponent implements OnInit {
-  constructor() {}
-  ngOnInit(): void {}
+  selectedValue = "Light";
+
+  ngOnInit() {
+    this.selectedValue = localStorage.getItem("selectedTheme") || "Light";
+  }
+
+  onToggleChange(event: any) {
+    localStorage.setItem("selectedTheme", event.value);
+  }
 }

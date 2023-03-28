@@ -8,6 +8,8 @@ import { MatIconModule } from "@angular/material/icon";
 import { ReactiveFormsModule } from "@angular/forms";
 import { MatGridListModule } from "@angular/material/grid-list";
 import { MatMenuModule } from "@angular/material/menu";
+import { MatTableModule } from "@angular/material/table";
+import { MatButtonToggleModule } from "@angular/material/button-toggle";
 
 const MaterialComponents = [
   MatButtonModule,
@@ -19,6 +21,8 @@ const MaterialComponents = [
   ReactiveFormsModule,
   MatGridListModule,
   MatMenuModule,
+  MatTableModule,
+  MatButtonToggleModule,
 ];
 
 @NgModule({
