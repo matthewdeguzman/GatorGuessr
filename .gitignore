@@ -5,3 +5,6 @@ src/server/credentials/credentials.go
 .vscode/
 *.exe
 src/assets/images
+envrionment.prod.ts
+envrionment.ts
+env.txt
