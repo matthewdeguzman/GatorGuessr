@@ -13,9 +13,9 @@ const routes: Routes = [
     path: "login",
     title: "Login",
     component: LoginComponent,
+    canActivateChild: [AuthGuard],
     children: [
       {
-        //canActivate: [AuthGuard],
         path: "landing-page",
         title: "GatorGuessr",
         component: LandingPageComponent,
