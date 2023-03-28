@@ -7,18 +7,14 @@
           <mat-icon>home</mat-icon>
         </button>
       </a>
-      <mat-button-toggle-group
+      <button
+        mat-icon-button
         name="Theme"
-        [value]="selectedValue"
-        (change)="onToggleChange($event)"
+        value="selectedValue"
+        (click)="toggleTheme()"
       >
-        <mat-button-toggle value="Light">
-          <mat-icon>light_mode</mat-icon>
-        </mat-button-toggle>
-        <mat-button-toggle value="Dark">
-          <mat-icon>dark_mode</mat-icon>
-        </mat-button-toggle>
-      </mat-button-toggle-group>
+        <mat-icon>{{ selectedTheme }}</mat-icon>
+      </button>
     </span>
     <span class="center">
       <img src="assets/favicon/favicon-64x64.png" />
