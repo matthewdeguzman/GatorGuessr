@@ -1,3 +1,5 @@
+//import { GoogleMapsModule } from "@angular/google-maps";
+
 import { LoginComponent } from "./components/login/login.component";
 import { RegisterComponent } from "./components/register/register.component";
 import { PageNotFoundComponent } from "./components/page-not-found/page-not-found.component";
@@ -53,6 +55,7 @@ const routes: Routes = [
     BannerComponent,
     RegisterComponent,
     HomeComponent,
+    LandingPageComponent,
   ],
   imports: [
     BrowserModule,
@@ -60,6 +63,7 @@ const routes: Routes = [
     BrowserAnimationsModule,
     HttpClientModule,
     MaterialModule,
+    //GoogleMapsModule,
     RouterModule.forRoot(routes),
   ],
   providers: [IssueService, CookieService],
