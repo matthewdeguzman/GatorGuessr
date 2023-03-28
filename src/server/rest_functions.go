@@ -24,24 +24,48 @@ type hashParams struct {
 }
 
 var (
-	HashErr   = []byte("500 - Error with hashing. User not created.")
-	UserDNErr = []byte("404 - User not found.")
-	LoginErr  = []byte("404 - Username or Password Incorrect.")
+	HashErr   = "500 - Error with hashing. User not created."
+	UserDNErr = "404 - User not found."
+	LoginErr  = "404 - Username or Password Incorrect."
 )
 
+func writeErr(w http.ResponseWriter, status int, message string) {
+	w.WriteHeader(status)
+	w.Write([]byte(message))
+}
+
 func hashErr(w http.ResponseWriter) {
-	w.WriteHeader(http.StatusInternalServerError)
-	w.Write(HashErr)
+	writeErr(w, http.StatusInternalServerError, HashErr)
 }
 
 func userDNErr(w http.ResponseWriter) {
-	w.WriteHeader(http.StatusNotFound)
-	w.Write(UserDNErr)
+	writeErr(w, http.StatusNotFound, UserDNErr)
 }
 
 func loginErr(w http.ResponseWriter) {
-	w.WriteHeader(http.StatusNotFound)
-	w.Write(LoginErr)
+	writeErr(w, http.StatusNotFound, LoginErr)
+}
+
+func userExists(username string) bool {
+	var user User
+	db.First(&user, "Username = ?", username)
+	if user.Username == "" {
+		return false
+	} else {
+		return true
+	}
+}
+
+func fetchUser(user *User, username string) {
+	db.First(user, "Username = ?", username)
+}
+
+func decodeUser(user *User, r *http.Request) {
+	json.NewDecoder(r.Body).Decode(user)
+}
+
+func encodeUser(user User, w http.ResponseWriter) {
+	json.NewEncoder(w).Encode(user)
 }
 
 // generates a hashed version of the given password using argon2
@@ -136,7 +160,6 @@ func EnableCors(w http.ResponseWriter) {
 	w.Header().Set("Access-Control-Allow-Credentials", "true")
 }
 
-// GetUsers returns all the users from the database
 func GetUsers(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var users []User
@@ -144,106 +167,102 @@ func GetUsers(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(users)
 }
 
-// GetUser returns a specified user from the database
 func GetUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	params := mux.Vars(r)
 	var user User
-	db.First(&user, "Username = ?", params["username"])
+	fetchUser(&user, params["username"])
 
-	// if user does not exist, the username will be empty, so
-	// we send back an invalid request
 	if user.Username == "" {
 		userDNErr(w)
 		return
 	}
-	json.NewEncoder(w).Encode(user)
+	encodeUser(user, w)
 }
 
-// createUser creates a new user and inserts into the database
 func CreateUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
-	// decodes user
 	var user User
-	json.NewDecoder(r.Body).Decode(&user)
+	decodeUser(&user, r)
 
-	// use argon2 to hash the passwords
-	hash, err := encodePassword(user.Password)
-
-	// if there is an error, respond with an internal server error
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write(HashErr)
+	if userExists(user.Username) {
+		writeErr(w, http.StatusBadRequest, "400 - User already exists")
 		return
 	}
-	user.Password = hash // stores password as encoded password
 
-	// create and encode the user
+	hash, err := encodePassword(user.Password)
+
+	if err != nil {
+		writeErr(w, http.StatusInternalServerError, HashErr)
+		return
+	}
+	user.Password = hash
+
 	db.Create(&user)
-	json.NewEncoder(w).Encode(user)
+	encodeUser(user, w)
 }
 
-// updateUser updates a user with the sent information
 func UpdateUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	params := mux.Vars(r) // receives the given parameters in the request
+	params := mux.Vars(r)
 
-	// finds the user based on the parameters
-	var user User
-	db.First(&user, "Username = ?", params["username"])
+	var oldUser User
+	var updatedUser User
 
-	// if the username is empty, then the user does not exist
-	// respond with a 400 bad request error
-	if user.Username == "" {
+	fetchUser(&oldUser, params["username"])
+	fetchUser(&updatedUser, params["username"])
+
+	if oldUser.Username == "" {
 		userDNErr(w)
 		return
 	}
 
-	// decode the user
-	json.NewDecoder(r.Body).Decode(&user)
+	decodeUser(&updatedUser, r)
 
-	// use argon2 to hash the passwords
-	hash, err := encodePassword(user.Password)
+	if oldUser.ID != updatedUser.ID {
+		writeErr(w, http.StatusMethodNotAllowed, "405 - Cannot change immutable field")
+		return
+	}
 
-	// if there is an error with hashing, respond with error
+	hash, err := encodePassword(updatedUser.Password)
 	if err != nil {
 		hashErr(w)
 		return
 	}
+	updatedUser.Password = hash
+	updatedUser.CreatedAt = oldUser.CreatedAt
 
-	// store hashed password then save and encode the user
-	user.Password = hash
-	db.Save(&user)
-	json.NewEncoder(w).Encode(user)
+	db.Save(&updatedUser)
+	encodeUser(updatedUser, w)
 }
 
-// deleteUser deletes a user from the database
 func DeleteUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	params := mux.Vars(r)
 	var user User
+
+	fetchUser(&user, params["username"])
+	if user.Username == "" {
+		userDNErr(w)
+		return
+	}
 	db.Delete(&user, "Username = ?", params["username"])
-	json.NewEncoder(w).Encode(user)
+	encodeUser(user, w)
 }
 
 func ValidateUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
-	// decode user object and store the given password
 	var user User
 	var givenPassword string
 	var hashedPassword string
 
-	json.NewDecoder(r.Body).Decode(&user)
+	decodeUser(&user, r)
 	givenPassword = user.Password
+	fetchUser(&user, user.Username)
 
-	// retrieve user from db
-	db.First(&user, "Username = ?", user.Username)
-
-	// if user does not exist, the username will be empty, so
-	// we send back an invalid request
 	if user.Username == "" {
 		userDNErr(w)
 		return
@@ -259,7 +278,4 @@ func ValidateUser(w http.ResponseWriter, r *http.Request) {
 		loginErr(w)
 		return
 	}
-
-	w.WriteHeader(http.StatusOK)
-	w.Write([]byte("200 - Username and Password Match"))
 }
