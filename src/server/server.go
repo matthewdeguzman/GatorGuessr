@@ -84,12 +84,6 @@ func initializeRouter() {
 		}
 	})
 
-	// r.HandleFunc("/api/leaderboard/", func(w http.ResponseWriter, r *http.Request) {
-	// 	endpoints.EnableCors(w)
-	// 	switch r.Method {
-	// 		case
-	// 	}
-	// })
 	r.HandleFunc("/api/leaderboard/{limit}/", func(w http.ResponseWriter, r *http.Request) {
 		endpoints.EnableCors(w)
 		switch r.Method {

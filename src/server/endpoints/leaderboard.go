@@ -19,7 +19,7 @@ func GetTopUsers(w http.ResponseWriter, r *http.Request, db *gorm.DB) {
 		return
 	}
 	if limit <= 0 {
-		writeErr(w, http.StatusBadRequest, "Limit must be a positive integer")
+		writeErr(w, http.StatusBadRequest, "400 - Limit must be a positive integer")
 		return
 	}
 
