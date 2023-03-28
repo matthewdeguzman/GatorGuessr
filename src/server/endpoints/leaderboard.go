@@ -20,8 +20,9 @@ func GetTopUsers(w http.ResponseWriter, r *http.Request, db *gorm.DB) {
 	}
 	if limit <= 0 {
 		writeErr(w, http.StatusBadRequest, "Limit must be a positive integer")
+		return
 	}
 
-	db.Limit(limit).Order("score").Find(&users)
+	db.Limit(limit).Order("score desc").Find(&users)
 	encodeUsers(users, w)
 }
