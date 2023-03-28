@@ -1,64 +1,40 @@
-package main
+package tests
 
 import (
-	"bufio"
 	"encoding/json"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"os"
-	"path/filepath"
-	"runtime"
-	"strings"
 	"testing"
 
+	u "github.com/matthewdeguzman/GatorGuessr/src/server/db_user"
+	login "github.com/matthewdeguzman/GatorGuessr/src/server/endpoints"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
 
-func testGetPassword(t *testing.T) string {
-	// Get password from credentials.txt
-	if err != nil {
-		panic(err)
-	}
-	_, filename, _, _ := runtime.Caller(0)
-	path := filepath.Join(filepath.Dir(filepath.Dir(filepath.Dir(filepath.Dir(filename)))), "credentials.txt")
-	file, err := os.Open(path)
-	if err != nil {
-		t.Error(err)
-	}
-	defer file.Close()
-	scanner := bufio.NewScanner(file)
-	password := ""
-	for scanner.Scan() {
-		password += scanner.Text()
-	}
-	password = strings.TrimSpace(password)
-
-	if err := scanner.Err(); err != nil {
-		t.Error(err)
-	}
-
-	return password
-}
+var (
+	db *gorm.DB
+)
 
 func testInitMigration(t *testing.T) {
 	const DB_USERNAME = "cen3031"
 	const DB_NAME = "user_database"
 	const DB_HOST = "cen3031-server.mysql.database.azure.com"
 	const DB_PORT = "3306"
-	var password = testGetPassword(t)
+	var password = os.Getenv("DB_PASSWORD")
 	// Build connection string
 	DSN := DB_USERNAME + ":" + password + "@tcp" + "(" + DB_HOST + ":" + DB_PORT + ")/" + DB_NAME + "?" + "parseTime=true&loc=Local"
 
-	db, err = gorm.Open(mysql.Open(DSN), &gorm.Config{})
+	db, err := gorm.Open(mysql.Open(DSN), &gorm.Config{})
 	if err != nil {
 		fmt.Println(err.Error())
 		panic("Cannot connect to DB")
 	}
 
 	// migrates the server if necessary
-	db.AutoMigrate(&User{})
+	db.AutoMigrate(&u.User{})
 }
 
 func getUserTest(username string, t *testing.T) string {
@@ -72,7 +48,7 @@ func getUserTest(username string, t *testing.T) string {
 		w.Header().Set("Content-Type", "application/json")
 
 		params := username
-		var user User
+		var user u.User
 		db.First(&user, "Username = ?", params)
 		json.NewEncoder(w).Encode(user)
 	}
@@ -85,7 +61,7 @@ func getUserTest(username string, t *testing.T) string {
 		t.Errorf("handler return wrong status code: got %v want %v", status, http.StatusOK)
 	}
 
-	var user User
+	var user u.User
 	if err := json.Unmarshal(rr.Body.Bytes(), &user); err != nil {
 		t.Errorf("got invalid reponse, expected a user, got: %v", rr.Body.String())
 	}
@@ -104,7 +80,7 @@ func deleteUserTest(username string, t *testing.T) {
 		w.Header().Set("Content-Type", "application/json")
 
 		params := username
-		var user User
+		var user u.User
 		db.First(&user, "Username = ?", params)
 		db.Delete(&user)
 		json.NewEncoder(w).Encode(user)
@@ -118,7 +94,7 @@ func deleteUserTest(username string, t *testing.T) {
 		t.Errorf("handler return wrong status code: got %v want %v", status, http.StatusOK)
 	}
 
-	var user User
+	var user u.User
 	if err := json.Unmarshal(rr.Body.Bytes(), &user); err != nil {
 		t.Errorf("got invalid reponse, expected a user, got: %v", rr.Body.String())
 	}
@@ -134,7 +110,7 @@ func createUserTest(username string, t *testing.T) {
 	mockCreateUser := func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 
-		var user User
+		var user u.User
 		user.Username = username
 		user.Password = "test-password"
 		db.Create(&user)
@@ -149,7 +125,7 @@ func createUserTest(username string, t *testing.T) {
 		t.Errorf("handler return wrong status code: got %v want %v", status, http.StatusOK)
 	}
 
-	var user User
+	var user u.User
 	if err := json.Unmarshal(rr.Body.Bytes(), &user); err != nil {
 		t.Errorf("got invalid reponse, expected a user, got: %v", rr.Body.String())
 	}
@@ -165,7 +141,7 @@ func updateUserTest(username string, password string, t *testing.T) {
 	mockUpdateUser := func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 
-		var user User
+		var user u.User
 		db.First(&user, "Username = ?", username)
 		if user.Username != "" {
 			user.Password = password
@@ -182,7 +158,7 @@ func updateUserTest(username string, password string, t *testing.T) {
 		t.Errorf("handler return wrong status code: got %v want %v", status, http.StatusOK)
 	}
 
-	var user User
+	var user u.User
 	if err := json.Unmarshal(rr.Body.Bytes(), &user); err != nil {
 		t.Errorf("got invalid reponse, expected a user, got: %v", rr.Body.String())
 	}
@@ -201,7 +177,7 @@ func TestGetUsers(t *testing.T) {
 
 	// creates rr to get the response recorder and makes the handler for the getUser api
 	rr := httptest.NewRecorder()
-	handler := http.HandlerFunc(GetUsers)
+	handler := http.HandlerFunc(login.GetUsers)
 
 	// passes in the response recorder and the request
 	handler.ServeHTTP(rr, req)
@@ -212,7 +188,7 @@ func TestGetUsers(t *testing.T) {
 	}
 
 	// unmarshal json data into users array
-	var users []User
+	var users []u.User
 	if err := json.Unmarshal(rr.Body.Bytes(), &users); err != nil {
 		t.Errorf("got invalid response, expected list of users, got: %v", rr.Body.String())
 	}

@@ -1,4 +1,4 @@
-package main
+package endpoints
 
 import (
 	"encoding/base64"
@@ -12,7 +12,9 @@ import (
 	"crypto/subtle"
 
 	"github.com/gorilla/mux"
+	u "github.com/matthewdeguzman/GatorGuessr/src/server/db_user"
 	"golang.org/x/crypto/argon2"
+	"gorm.io/gorm"
 )
 
 type hashParams struct {
@@ -46,8 +48,8 @@ func loginErr(w http.ResponseWriter) {
 	writeErr(w, http.StatusNotFound, LoginErr)
 }
 
-func userExists(username string) bool {
-	var user User
+func userExists(db *gorm.DB, username string) bool {
+	var user u.User
 	db.First(&user, "Username = ?", username)
 	if user.Username == "" {
 		return false
@@ -56,19 +58,18 @@ func userExists(username string) bool {
 	}
 }
 
-func fetchUser(user *User, username string) {
+func fetchUser(db *gorm.DB, user *u.User, username string) {
 	db.First(user, "Username = ?", username)
 }
 
-func decodeUser(user *User, r *http.Request) {
+func decodeUser(user *u.User, r *http.Request) {
 	json.NewDecoder(r.Body).Decode(user)
 }
 
-func encodeUser(user User, w http.ResponseWriter) {
+func encodeUser(user u.User, w http.ResponseWriter) {
 	json.NewEncoder(w).Encode(user)
 }
 
-// generates a hashed version of the given password using argon2
 func encodePassword(password string) (encodedHash string, err error) {
 
 	p := &hashParams{
@@ -160,19 +161,19 @@ func EnableCors(w http.ResponseWriter) {
 	w.Header().Set("Access-Control-Allow-Credentials", "true")
 }
 
-func GetUsers(w http.ResponseWriter, r *http.Request) {
+func GetUsers(w http.ResponseWriter, r *http.Request, db *gorm.DB) {
 	w.Header().Set("Content-Type", "application/json")
-	var users []User
+	var users []u.User
 	db.Find(&users)
 	json.NewEncoder(w).Encode(users)
 }
 
-func GetUser(w http.ResponseWriter, r *http.Request) {
+func GetUser(w http.ResponseWriter, r *http.Request, db *gorm.DB) {
 	w.Header().Set("Content-Type", "application/json")
 
 	params := mux.Vars(r)
-	var user User
-	fetchUser(&user, params["username"])
+	var user u.User
+	fetchUser(db, &user, params["username"])
 
 	if user.Username == "" {
 		userDNErr(w)
@@ -181,13 +182,13 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 	encodeUser(user, w)
 }
 
-func CreateUser(w http.ResponseWriter, r *http.Request) {
+func CreateUser(w http.ResponseWriter, r *http.Request, db *gorm.DB) {
 	w.Header().Set("Content-Type", "application/json")
 
-	var user User
+	var user u.User
 	decodeUser(&user, r)
 
-	if userExists(user.Username) {
+	if userExists(db, user.Username) {
 		writeErr(w, http.StatusBadRequest, "400 - User already exists")
 		return
 	}
@@ -204,15 +205,15 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 	encodeUser(user, w)
 }
 
-func UpdateUser(w http.ResponseWriter, r *http.Request) {
+func UpdateUser(w http.ResponseWriter, r *http.Request, db *gorm.DB) {
 	w.Header().Set("Content-Type", "application/json")
 	params := mux.Vars(r)
 
-	var oldUser User
-	var updatedUser User
+	var oldUser u.User
+	var updatedUser u.User
 
-	fetchUser(&oldUser, params["username"])
-	fetchUser(&updatedUser, params["username"])
+	fetchUser(db, &oldUser, params["username"])
+	fetchUser(db, &updatedUser, params["username"])
 
 	if oldUser.Username == "" {
 		userDNErr(w)
@@ -238,12 +239,12 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 	encodeUser(updatedUser, w)
 }
 
-func DeleteUser(w http.ResponseWriter, r *http.Request) {
+func DeleteUser(w http.ResponseWriter, r *http.Request, db *gorm.DB) {
 	w.Header().Set("Content-Type", "application/json")
 	params := mux.Vars(r)
-	var user User
+	var user u.User
 
-	fetchUser(&user, params["username"])
+	fetchUser(db, &user, params["username"])
 	if user.Username == "" {
 		userDNErr(w)
 		return
@@ -252,16 +253,16 @@ func DeleteUser(w http.ResponseWriter, r *http.Request) {
 	encodeUser(user, w)
 }
 
-func ValidateUser(w http.ResponseWriter, r *http.Request) {
+func ValidateUser(w http.ResponseWriter, r *http.Request, db *gorm.DB) {
 	w.Header().Set("Content-Type", "application/json")
 
-	var user User
+	var user u.User
 	var givenPassword string
 	var hashedPassword string
 
 	decodeUser(&user, r)
 	givenPassword = user.Password
-	fetchUser(&user, user.Username)
+	fetchUser(db, &user, user.Username)
 
 	if user.Username == "" {
 		userDNErr(w)
