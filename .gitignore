@@ -1,8 +1,23 @@
+# node modules
 **/node_modules
+
+# angular
 **/.angular
-src/server/server
-src/server/credentials/credentials.go
-.vscode/
+
+# assets 
+/src/assets/images
+
+# server
+/src/server/server
+/src/server/credentials/credentials.go
+
+# vscode settings
+/.vscode
+
+# executable files
 *.exe
+<<<<<<< HEAD
 src/assets/images
 env.txt
+=======
+>>>>>>> 6032d0db33939a71093b31b1a66872e17fb84bd1

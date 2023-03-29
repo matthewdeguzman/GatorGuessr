@@ -17,23 +17,22 @@ import { MaterialModule } from "./material.module";
 import { HomeComponent } from "./components/home/home.component";
 import { BannerComponent } from "./components/banner/banner.component";
 
-import { IssueService } from "./issue.service";
+import { IssueService } from "./services/issue.service";
 import { HttpClientModule } from "@angular/common/http";
 import { CookieService } from "ngx-cookie-service";
 
-const routes: Routes = [
+//Don't know if we will still need this
+/*const routes: Routes = [
   {
     path: "login",
     title: "Login",
     //canActivate: [AppGuard],
     component: LoginComponent,
-    children: [
-      {
-        path: "landing-page",
-        title: "GatorGuessr",
-        component: LandingPageComponent,
-      },
-    ],
+  },
+  {
+    path: "landing-page",
+    title: "GatorGuessr",
+    component: LandingPageComponent,
   },
   { path: "register", title: "Register", component: RegisterComponent },
   {
@@ -47,6 +46,7 @@ const routes: Routes = [
   { path: "**", redirectTo: "page-not-found" },
   // Add additional routes here
 ];
+*/
 
 @NgModule({
   declarations: [
@@ -56,6 +56,10 @@ const routes: Routes = [
     RegisterComponent,
     HomeComponent,
     LandingPageComponent,
+<<<<<<< HEAD
+=======
+    PageNotFoundComponent,
+>>>>>>> 6032d0db33939a71093b31b1a66872e17fb84bd1
   ],
   imports: [
     BrowserModule,
@@ -63,8 +67,12 @@ const routes: Routes = [
     BrowserAnimationsModule,
     HttpClientModule,
     MaterialModule,
+<<<<<<< HEAD
     //GoogleMapsModule,
     RouterModule.forRoot(routes),
+=======
+    //RouterModule.forRoot(routes),
+>>>>>>> 6032d0db33939a71093b31b1a66872e17fb84bd1
   ],
   providers: [IssueService, CookieService],
   bootstrap: [AppComponent],

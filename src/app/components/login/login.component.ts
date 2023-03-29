@@ -1,4 +1,4 @@
-import { IssueService } from "./../../issue.service";
+import { IssueService } from "../../services/issue.service";
 import { Component, OnInit, Input, Output, EventEmitter } from "@angular/core";
 import { FormGroup, FormControl, Validators } from "@angular/forms";
 import { Router } from "@angular/router";
@@ -6,7 +6,7 @@ import { Router } from "@angular/router";
 @Component({
   selector: "app-login",
   templateUrl: "./login.component.html",
-  styleUrls: ["./login.component.css"],
+  styleUrls: ["./login.component.scss"],
 })
 export class LoginComponent {
   loginForm = new FormGroup({
@@ -38,22 +38,21 @@ export class LoginComponent {
   }
 
   submitLogin(username: string, password: string) {
-    this.IssueService.getUsersWithUsername(username).subscribe((res) => {
-      console.log(res);
-      if (res.Username != username) {
-        console.log("Username does not exist");
-        this.invalidName = true;
-      } else {
-        this.invalidName = false;
-        if (res.Password != password) {
-          console.log("Incorrect password");
-          this.invalidUser = true;
-        } else {
-          console.log("Login successful");
-          this.invalidUser = false;
+    this.IssueService.validateUser(username, password).subscribe(
+      (res) => {
+        if (res == 200) {
           this.router.navigate(["/landing-page"]);
         }
+      },
+      (error) => {
+        if (error.status == 500) {
+          this.invalidName = true;
+          this.invalidUser = false;
+        } else if (error.status == 404) {
+          this.invalidUser = true;
+          this.invalidName = false;
+        }
       }
-    });
+    );
   }
 }

@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter } from "@angular/core";
-import { IssueService } from "./issue.service";
+import { IssueService } from "./services/issue.service";
 
 type User = {
   ID: number;
@@ -12,7 +12,7 @@ type User = {
 @Component({
   selector: "app-root",
   templateUrl: "./app.component.html",
-  styleUrls: ["./app.component.css"],
+  styleUrls: ["./app.component.scss"],
 })
 export class AppComponent {
   Users: User[] = [];
