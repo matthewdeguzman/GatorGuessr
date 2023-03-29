@@ -8,8 +8,8 @@ import (
 	"os"
 	"testing"
 
-	u "github.com/matthewdeguzman/GatorGuessr/src/server/db_user"
-	login "github.com/matthewdeguzman/GatorGuessr/src/server/endpoints"
+	endpoints "github.com/matthewdeguzman/GatorGuessr/src/server/endpoints"
+	u "github.com/matthewdeguzman/GatorGuessr/src/server/structs"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
@@ -170,14 +170,16 @@ func TestGetUsers(t *testing.T) {
 
 	// initializes the db and sends the get request
 	testInitMigration(t)
-	req, err := http.NewRequest("GET", "/api/users", nil)
+	req, err := http.NewRequest("GET", "/api/users/", nil)
 	if err != nil {
 		t.Error(err)
 	}
 
 	// creates rr to get the response recorder and makes the handler for the getUser api
 	rr := httptest.NewRecorder()
-	handler := http.HandlerFunc(login.GetUsers)
+	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		endpoints.GetUsers(w, r, db)
+	})
 
 	// passes in the response recorder and the request
 	handler.ServeHTTP(rr, req)
