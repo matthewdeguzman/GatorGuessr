@@ -26,13 +26,11 @@ import { CookieService } from "ngx-cookie-service";
     title: "Login",
     //canActivate: [AppGuard],
     component: LoginComponent,
-    children: [
-      {
-        path: "landing-page",
-        title: "GatorGuessr",
-        component: LandingPageComponent,
-      },
-    ],
+  },
+  {
+    path: "landing-page",
+    title: "GatorGuessr",
+    component: LandingPageComponent,
   },
   { path: "register", title: "Register", component: RegisterComponent },
   {
@@ -45,7 +43,8 @@ import { CookieService } from "ngx-cookie-service";
   { path: "", redirectTo: "home", pathMatch: "full" },
   { path: "**", redirectTo: "page-not-found" },
   // Add additional routes here
-];*/
+];
+*/
 
 @NgModule({
   declarations: [
@@ -54,6 +53,8 @@ import { CookieService } from "ngx-cookie-service";
     BannerComponent,
     RegisterComponent,
     HomeComponent,
+    LandingPageComponent,
+    PageNotFoundComponent,
   ],
   imports: [
     BrowserModule,

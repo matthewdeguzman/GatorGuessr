@@ -6,6 +6,7 @@
         <mat-form-field appearance="outline">
           <mat-label>Username</mat-label>
           <input
+            id="username"
             matInput
             #username
             placeholder="Username"
@@ -24,6 +25,7 @@
         <mat-form-field appearance="outline">
           <mat-label>Password</mat-label>
           <input
+            id="password"
             matInput
             #password
             [type]="showPassword ? 'text' : 'password'"
@@ -42,6 +44,7 @@
       </div>
       <div class="mat-button">
         <button
+          id="login-button"
           type="submit"
           mat-raised-button
           (click)="submitLogin(username.value, password.value)"

@@ -41,7 +41,7 @@ export class LoginComponent {
     this.IssueService.validateUser(username, password).subscribe(
       (res) => {
         if (res == 200) {
-          this.router.navigate(["/login/landing-page"]);
+          this.router.navigate(["/landing-page"]);
         }
       },
       (error) => {
