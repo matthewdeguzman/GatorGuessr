@@ -17,3 +17,6 @@
 # executable files
 *.exe
 
+src/assets/images
+env.txt
+src/assets/env.json

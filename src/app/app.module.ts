@@ -1,3 +1,5 @@
+//import { GoogleMapsModule } from "@angular/google-maps";
+
 import { LoginComponent } from "./components/login/login.component";
 import { RegisterComponent } from "./components/register/register.component";
 import { PageNotFoundComponent } from "./components/page-not-found/page-not-found.component";
@@ -26,13 +28,11 @@ import { CookieService } from "ngx-cookie-service";
     title: "Login",
     //canActivate: [AppGuard],
     component: LoginComponent,
-    children: [
-      {
-        path: "landing-page",
-        title: "GatorGuessr",
-        component: LandingPageComponent,
-      },
-    ],
+  },
+  {
+    path: "landing-page",
+    title: "GatorGuessr",
+    component: LandingPageComponent,
   },
   { path: "register", title: "Register", component: RegisterComponent },
   {
@@ -45,7 +45,8 @@ import { CookieService } from "ngx-cookie-service";
   { path: "", redirectTo: "home", pathMatch: "full" },
   { path: "**", redirectTo: "page-not-found" },
   // Add additional routes here
-];*/
+];
+*/
 
 @NgModule({
   declarations: [
@@ -54,6 +55,11 @@ import { CookieService } from "ngx-cookie-service";
     BannerComponent,
     RegisterComponent,
     HomeComponent,
+    LandingPageComponent,
+<<<<<<< HEAD
+=======
+    PageNotFoundComponent,
+>>>>>>> 6032d0db33939a71093b31b1a66872e17fb84bd1
   ],
   imports: [
     BrowserModule,
@@ -61,7 +67,12 @@ import { CookieService } from "ngx-cookie-service";
     BrowserAnimationsModule,
     HttpClientModule,
     MaterialModule,
+<<<<<<< HEAD
+    //GoogleMapsModule,
+    RouterModule.forRoot(routes),
+=======
     //RouterModule.forRoot(routes),
+>>>>>>> 6032d0db33939a71093b31b1a66872e17fb84bd1
   ],
   providers: [IssueService, CookieService],
   bootstrap: [AppComponent],

@@ -1,0 +1,46 @@
+.tile {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.tile-text {
+  text-align: center;
+  font-size: 30px;
+  font-weight: bold;
+}
+.text-inside-grid {
+  position: absolute;
+  left: 5px;
+}
+
+mat-grid-tile .tile-content {
+  padding: 16px;
+  height: calc(100% - 48px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+mat-grid-tile {
+  border: solid 1px #000;
+  border-bottom: none;
+}
+mat-grid-tile-header .tile-text {
+  text-align: center;
+}
+.top-row {
+  font-weight: bold;
+  font-size: 16px;
+  text-align: center;
+}
+
+.element {
+  border: solid 1px #000;
+  border-bottom: none;
+  border-left: none;
+}
+
+.mat-table {
+  height: 100%;
+}

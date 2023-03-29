@@ -6,7 +6,7 @@ import { Router } from "@angular/router";
 @Component({
   selector: "app-login",
   templateUrl: "./login.component.html",
-  styleUrls: ["./login.component.css"],
+  styleUrls: ["./login.component.scss"],
 })
 export class LoginComponent {
   loginForm = new FormGroup({
@@ -41,7 +41,7 @@ export class LoginComponent {
     this.IssueService.validateUser(username, password).subscribe(
       (res) => {
         if (res == 200) {
-          this.router.navigate(["/login/landing-page"]);
+          this.router.navigate(["/landing-page"]);
         }
       },
       (error) => {

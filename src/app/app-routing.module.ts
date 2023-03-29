@@ -13,14 +13,11 @@ const routes: Routes = [
     path: "login",
     title: "Login",
     component: LoginComponent,
-    canActivateChild: [AuthGuard],
-    children: [
-      {
-        path: "landing-page",
-        title: "GatorGuessr",
-        component: LandingPageComponent,
-      },
-    ],
+  },
+  {
+    path: "landing-page",
+    title: "GatorGuessr",
+    component: LandingPageComponent,
   },
   { path: "register", title: "Register", component: RegisterComponent },
   {
