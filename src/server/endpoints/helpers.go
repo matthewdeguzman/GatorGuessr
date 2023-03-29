@@ -56,6 +56,16 @@ func UserExists(db *gorm.DB, username string) bool {
 	}
 }
 
+func IDExists(db *gorm.DB, id uint) bool {
+	var user u.User
+	db.First(&user, "ID = ?", id)
+	if user.Username == "" {
+		return false
+	} else {
+		return true
+	}
+}
+
 func FetchUser(db *gorm.DB, user *u.User, username string) {
 	db.First(user, "Username = ?", username)
 }

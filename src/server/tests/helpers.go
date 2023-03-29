@@ -33,7 +33,7 @@ func testInitMigration(t *testing.T) (db *gorm.DB) {
 	return db
 }
 
-func cleanDB(user *u.User, username string) {
+func cleanDB(user *u.User, username string, t *testing.T) {
 	db := testInitMigration(t)
 	db.Delete(user, "Username = ?", user.Username)
 }
@@ -60,8 +60,7 @@ func mockGetUser(w http.ResponseWriter, r *http.Request, username string, t *tes
 
 func mockCreateUser(w http.ResponseWriter, r *http.Request, user u.User, db *gorm.DB, t *testing.T) {
 	endpoints.SetHeader(w)
-
-	if endpoints.UserExists(db, user.Username) {
+	if endpoints.UserExists(db, user.Username) || user.ID != 0 || user.Password == "" {
 		endpoints.WriteErr(w, http.StatusBadRequest, "")
 		return
 	}

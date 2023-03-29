@@ -65,7 +65,7 @@ func TestCreateNewUser(t *testing.T) {
 		t.Fail()
 	}
 
-	cleanDB(&user, user.Username)
+	cleanDB(&user, user.Username, t)
 }
 
 func TestCreateUserWithoutPassword(t *testing.T) {
@@ -77,10 +77,20 @@ func TestCreateUserWithoutPassword(t *testing.T) {
 		t.Fail()
 	}
 
-	cleanDB(&user, user.Username)
+	cleanDB(&user, user.Username, t)
 }
 func TestCreateWithID(t *testing.T) {
-	t.Fail()
+	user := u.User{
+		Username: "newuseralert!!",
+		Password: "pasworddd",
+		ID:       10,
+	}
+
+	if status := createUserTest(user, t); status != http.StatusBadRequest {
+		t.Fail()
+	}
+
+	cleanDB(&user, user.Username, t)
 }
 
 func TestUpdateNonexistantUser(t *testing.T) {
