@@ -56,10 +56,7 @@ import { CookieService } from "ngx-cookie-service";
     RegisterComponent,
     HomeComponent,
     LandingPageComponent,
-<<<<<<< HEAD
-=======
     PageNotFoundComponent,
->>>>>>> 6032d0db33939a71093b31b1a66872e17fb84bd1
   ],
   imports: [
     BrowserModule,
@@ -67,12 +64,7 @@ import { CookieService } from "ngx-cookie-service";
     BrowserAnimationsModule,
     HttpClientModule,
     MaterialModule,
-<<<<<<< HEAD
-    //GoogleMapsModule,
-    RouterModule.forRoot(routes),
-=======
     //RouterModule.forRoot(routes),
->>>>>>> 6032d0db33939a71093b31b1a66872e17fb84bd1
   ],
   providers: [IssueService, CookieService],
   bootstrap: [AppComponent],
