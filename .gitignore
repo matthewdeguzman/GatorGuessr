@@ -16,3 +16,8 @@
 
 # executable files
 *.exe
+<<<<<<< HEAD
+src/assets/images
+env.txt
+=======
+>>>>>>> 6032d0db33939a71093b31b1a66872e17fb84bd1
