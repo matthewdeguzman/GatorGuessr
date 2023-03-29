@@ -50,6 +50,7 @@ func TestCreateExistingUser(t *testing.T) {
 		Password: "passwordddd",
 	}
 	if status := createUserTest(user, t); status != http.StatusBadRequest {
+		cleanDB(&user, user.Username, t)
 		t.Log(status)
 		t.Fail()
 	}
@@ -64,7 +65,6 @@ func TestCreateNewUser(t *testing.T) {
 	if status := createUserTest(user, t); status != http.StatusOK {
 		t.Fail()
 	}
-
 	cleanDB(&user, user.Username, t)
 }
 
@@ -75,11 +75,11 @@ func TestCreateUserWithoutPassword(t *testing.T) {
 
 	if status := createUserTest(user, t); status != http.StatusBadRequest {
 		t.Fail()
+		cleanDB(&user, user.Username, t)
 	}
 
-	cleanDB(&user, user.Username, t)
 }
-func TestCreateWithID(t *testing.T) {
+func TestCreateUserWithID(t *testing.T) {
 	user := u.User{
 		Username: "newuseralert!!",
 		Password: "pasworddd",
@@ -88,32 +88,69 @@ func TestCreateWithID(t *testing.T) {
 
 	if status := createUserTest(user, t); status != http.StatusBadRequest {
 		t.Fail()
+		cleanDB(&user, user.Username, t)
 	}
 
-	cleanDB(&user, user.Username, t)
 }
 
 func TestUpdateNonexistantUser(t *testing.T) {
-	t.Fail()
+	user := map[string]string{
+		"Username": "this user doesn't exist lol",
+		"Password": "yeah",
+	}
+
+	status := updateUserTest(user, user["Username"], t)
+	if status != http.StatusNotFound {
+		t.Log(status)
+		t.Fail()
+	}
+	cleanDB(&u.User{}, user["Username"], t)
 }
 
 func TestUpdateExistingUser(t *testing.T) {
-	t.Fail()
+	user := map[string]string{
+		"Username": "matthew",
+		"Password": "yeah",
+	}
+
+	status := updateUserTest(user, user["Username"], t)
+	if status != http.StatusOK {
+		t.Log(status)
+		t.Fail()
+	}
 }
 
 func TestUpdateUserID(t *testing.T) {
-	t.Fail()
+	user := map[string]string{
+		"ID":       "88349",
+		"Username": "matthew",
+	}
+
+	status := updateUserTest(user, user["Username"], t)
+	if status != http.StatusMethodNotAllowed {
+		t.Log(status)
+		t.Fail()
+	}
 }
 
 func TestUpdateUserScore(t *testing.T) {
-	t.Fail()
+	user := map[string]string{
+		"Username": "stephen",
+		"Score":    "0",
+	}
+
+	status := updateUserTest(user, user["Username"], t)
+	if status != http.StatusOK {
+		t.Log(status)
+		t.Fail()
+	}
 }
 
 func TestDeleteExistingUser(t *testing.T) {
 	t.Fail()
 }
 
-func TestNonexistingUser(t *testing.T) {
+func TestDeleteNonexistingUser(t *testing.T) {
 	t.Fail()
 }
 

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
+	"strconv"
 	"testing"
 
 	endpoints "github.com/matthewdeguzman/GatorGuessr/src/server/endpoints"
@@ -37,6 +38,8 @@ func cleanDB(user *u.User, username string, t *testing.T) {
 	db := testInitMigration(t)
 	db.Delete(user, "Username = ?", user.Username)
 }
+
+/// MOCK FUNCTIONS ///
 
 func mockGetUsers(w http.ResponseWriter, r *http.Request, t *testing.T) {
 	db := testInitMigration(t)
@@ -76,6 +79,52 @@ func mockCreateUser(w http.ResponseWriter, r *http.Request, user u.User, db *gor
 	endpoints.EncodeUser(user, w)
 }
 
+func mockUpdateUser(w http.ResponseWriter, r *http.Request, userMap map[string]string, username string, db *gorm.DB, t *testing.T) {
+	endpoints.SetHeader(w)
+
+	var oldUser u.User
+	var updatedUser u.User
+	endpoints.FetchUser(db, &oldUser, username)
+	endpoints.FetchUser(db, &updatedUser, username)
+
+	if oldUser.Username == "" {
+		endpoints.UserDNErr(w)
+		return
+	}
+
+	// decode user
+	for key, element := range userMap {
+		switch key {
+		case "Username":
+			updatedUser.Username = element
+		case "ID":
+			id, _ := strconv.Atoi(element)
+			updatedUser.ID = uint(id)
+		case "Score":
+			score, _ := strconv.Atoi(element)
+			updatedUser.Score = uint(score)
+
+		}
+	}
+	if oldUser.ID != updatedUser.ID {
+		endpoints.WriteErr(w, http.StatusMethodNotAllowed, "405 - Cannot change ID")
+		return
+	}
+
+	hash, err := endpoints.EncodePassword(updatedUser.Password)
+	if err != nil {
+		endpoints.HashErr(w)
+		return
+	}
+	updatedUser.Password = hash
+	updatedUser.CreatedAt = oldUser.CreatedAt
+
+	db.Save(&updatedUser)
+	endpoints.EncodeUser(updatedUser, w)
+}
+
+// TESTING FUNCTIONS //
+
 func getUserTest(username string, t *testing.T) (status int) {
 	req, err := http.NewRequest("GET", "/api/users/{username}/", nil)
 	if err != nil {
@@ -102,6 +151,23 @@ func createUserTest(user u.User, t *testing.T) (status int) {
 	rr := httptest.NewRecorder()
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		mockCreateUser(w, r, user, db, t)
+	})
+
+	handler.ServeHTTP(rr, req)
+
+	return rr.Code
+}
+
+func updateUserTest(user map[string]string, username string, t *testing.T) (status int) {
+	db := testInitMigration(t)
+	req, err := http.NewRequest("PUT", "/api/users/{username}/", nil)
+	if err != nil {
+		t.Error(err)
+	}
+
+	rr := httptest.NewRecorder()
+	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		mockUpdateUser(w, r, user, username, db, t)
 	})
 
 	handler.ServeHTTP(rr, req)
