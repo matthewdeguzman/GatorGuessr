@@ -9,10 +9,11 @@
 
 # server
 /src/server/server
-/src/server/credentials/credentials.go
+/src/server/tests/credentials.go
 
 # vscode settings
 /.vscode
 
 # executable files
 *.exe
+

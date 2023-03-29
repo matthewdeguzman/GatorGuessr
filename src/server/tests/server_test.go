@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
-	"os"
 	"testing"
 
 	endpoints "github.com/matthewdeguzman/GatorGuessr/src/server/endpoints"
@@ -23,9 +22,9 @@ func testInitMigration(t *testing.T) {
 	const DB_NAME = "user_database"
 	const DB_HOST = "cen3031-server.mysql.database.azure.com"
 	const DB_PORT = "3306"
-	var password = os.Getenv("DB_PASSWORD")
+
 	// Build connection string
-	DSN := DB_USERNAME + ":" + password + "@tcp" + "(" + DB_HOST + ":" + DB_PORT + ")/" + DB_NAME + "?" + "parseTime=true&loc=Local"
+	DSN := DB_USERNAME + ":" + DB_PASSWORD + "@tcp" + "(" + DB_HOST + ":" + DB_PORT + ")/" + DB_NAME + "?" + "parseTime=true&loc=Local"
 
 	db, err := gorm.Open(mysql.Open(DSN), &gorm.Config{})
 	if err != nil {
