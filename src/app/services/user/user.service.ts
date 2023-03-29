@@ -5,6 +5,7 @@ import { map } from "rxjs/operators";
 export type User = {
   Username: string;
   Password: string;
+  Score: number;
 };
 
 @Injectable({
@@ -19,6 +20,7 @@ export class UserService {
     const user: User = {
       Username: username,
       Password: password,
+      Score: 0,
     };
     return user;
   }

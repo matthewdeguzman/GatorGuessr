@@ -10,6 +10,10 @@
   font-size: 30px;
   font-weight: bold;
 }
+.text-inside-grid {
+  position: absolute;
+  left: 5px;
+}
 
 mat-grid-tile .tile-content {
   padding: 16px;
@@ -21,4 +25,19 @@ mat-grid-tile .tile-content {
 
 mat-grid-tile {
   border: solid 1px #000;
+  border-bottom: none;
+}
+mat-grid-tile-header .tile-text {
+  text-align: center;
+}
+.top-row {
+  font-weight: bold;
+  font-size: 16px;
+  text-align: center;
+}
+
+.element {
+  border: solid 1px #000;
+  border-bottom: none;
+  border-left: none;
 }
