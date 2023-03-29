@@ -1,7 +1,6 @@
 package tests
 
 import (
-	"encoding/json"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
@@ -42,38 +41,65 @@ func mockGetUsers(w http.ResponseWriter, r *http.Request, t *testing.T) {
 func mockGetUser(w http.ResponseWriter, r *http.Request, username string, t *testing.T) {
 	db := testInitMigration(t)
 
+	endpoints.SetHeader(w)
+
+	var user u.User
+	endpoints.FetchUser(db, &user, username)
+
+	if user.Username == "" {
+		endpoints.UserDNErr(w)
+		return
+	}
+	endpoints.EncodeUser(user, w)
 }
-func getUserTest(username string, t *testing.T) string {
-	db := testInitMigration(t)
-	req, err := http.NewRequest("GET", "/api/users/{username}/", nil)
+
+func getUserTest(username string, t *testing.T) (status int) {
+	req, err := http.NewRequest("GET", "/api/users/{username}", nil)
 	if err != nil {
 		t.Error(err)
 	}
 
-	mockGetUser := func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "application/json")
-
-		params := username
-		var user u.User
-		db.First(&user, "Username = ?", params)
-		json.NewEncoder(w).Encode(user)
-	}
 	rr := httptest.NewRecorder()
-	handler := http.HandlerFunc(mockGetUser)
+	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		mockGetUser(w, r, username, t)
+	})
 
 	handler.ServeHTTP(rr, req)
 
-	if status := rr.Code; status != http.StatusOK {
-		t.Errorf("handler return wrong status code: got %v want %v", status, http.StatusOK)
-	}
-
-	var user u.User
-	if err := json.Unmarshal(rr.Body.Bytes(), &user); err != nil {
-		t.Errorf("got invalid reponse, expected a user, got: %v", rr.Body.String())
-	}
-
-	return user.Username
+	return rr.Code
 }
+
+// func getUserTest(username string, t *testing.T) string {
+// 	db := testInitMigration(t)
+// 	req, err := http.NewRequest("GET", "/api/users/{username}/", nil)
+// 	if err != nil {
+// 		t.Error(err)
+// 	}
+
+// 	mockGetUser := func(w http.ResponseWriter, r *http.Request) {
+// 		w.Header().Set("Content-Type", "application/json")
+
+// 		params := username
+// 		var user u.User
+// 		db.First(&user, "Username = ?", params)
+// 		json.NewEncoder(w).Encode(user)
+// 	}
+// 	rr := httptest.NewRecorder()
+// 	handler := http.HandlerFunc(mockGetUser)
+
+// 	handler.ServeHTTP(rr, req)
+
+// 	if status := rr.Code; status != http.StatusOK {
+// 		t.Errorf("handler return wrong status code: got %v want %v", status, http.StatusOK)
+// 	}
+
+// 	var user u.User
+// 	if err := json.Unmarshal(rr.Body.Bytes(), &user); err != nil {
+// 		t.Errorf("got invalid reponse, expected a user, got: %v", rr.Body.String())
+// 	}
+
+// 	return user.Username
+// }
 
 // func deleteUserTest(username string, t *testing.T) {
 // 	testInitMigration(t)
@@ -194,12 +220,17 @@ func TestGetUsers(t *testing.T) {
 	}
 }
 
-// func TestGetUser1(t *testing.T) {
-// 	username := "matthew"
-// 	if resp := getUserTest(username, t); resp != username {
-// 		t.Errorf("got invalid response, expected %v, got: %v", username, resp)
-// 	}
-// }
+func TestGetExistingUser(t *testing.T) {
+	if status := getUserTest("matthew", t); status != http.StatusOK {
+		t.Fail()
+	}
+}
+
+func TestGetNonexiststantUser(t *testing.T) {
+	if status := getUserTest("jksdal;fjea;ils", t); status != http.StatusNotFound {
+		t.Fail()
+	}
+}
 
 // func TestGetUser2(t *testing.T) {
 // 	username := "invalid-user"

@@ -16,9 +16,9 @@ import (
 )
 
 var (
-	HashErr   = "500 - Error with hashing. User not created."
-	UserDNErr = "404 - User not found."
-	LoginErr  = "404 - Username or Password Incorrect."
+	hashErr   = "500 - Error with hashing. User not created."
+	userDNErr = "404 - User not found."
+	loginErr  = "404 - Username or Password Incorrect."
 )
 
 type hashParams struct {
@@ -29,24 +29,24 @@ type hashParams struct {
 	keyLength   uint32
 }
 
-func writeErr(w http.ResponseWriter, status int, message string) {
+func WriteErr(w http.ResponseWriter, status int, message string) {
 	w.WriteHeader(status)
 	w.Write([]byte(message))
 }
 
-func hashErr(w http.ResponseWriter) {
-	writeErr(w, http.StatusInternalServerError, HashErr)
+func HashErr(w http.ResponseWriter) {
+	WriteErr(w, http.StatusInternalServerError, hashErr)
 }
 
-func userDNErr(w http.ResponseWriter) {
-	writeErr(w, http.StatusNotFound, UserDNErr)
+func UserDNErr(w http.ResponseWriter) {
+	WriteErr(w, http.StatusNotFound, userDNErr)
 }
 
-func loginErr(w http.ResponseWriter) {
-	writeErr(w, http.StatusNotFound, LoginErr)
+func LoginErr(w http.ResponseWriter) {
+	WriteErr(w, http.StatusNotFound, loginErr)
 }
 
-func userExists(db *gorm.DB, username string) bool {
+func UserExists(db *gorm.DB, username string) bool {
 	var user u.User
 	db.First(&user, "Username = ?", username)
 	if user.Username == "" {
@@ -56,22 +56,22 @@ func userExists(db *gorm.DB, username string) bool {
 	}
 }
 
-func fetchUser(db *gorm.DB, user *u.User, username string) {
+func FetchUser(db *gorm.DB, user *u.User, username string) {
 	db.First(user, "Username = ?", username)
 }
 
-func decodeUser(user *u.User, r *http.Request) {
+func DecodeUser(user *u.User, r *http.Request) {
 	json.NewDecoder(r.Body).Decode(user)
 }
 
-func encodeUser(user u.User, w http.ResponseWriter) {
+func EncodeUser(user u.User, w http.ResponseWriter) {
 	json.NewEncoder(w).Encode(user)
 }
 
-func encodeUsers(users []u.User, w http.ResponseWriter) {
+func EncodeUsers(users []u.User, w http.ResponseWriter) {
 	json.NewEncoder(w).Encode(users)
 }
-func decodeLimit(limit *uint, r *http.Request) (err error) {
+func DecodeLimit(limit *uint, r *http.Request) (err error) {
 	err = json.NewDecoder(r.Body).Decode(limit)
 	if err != nil {
 		return err
@@ -80,7 +80,7 @@ func decodeLimit(limit *uint, r *http.Request) (err error) {
 	}
 }
 
-func encodePassword(password string) (encodedHash string, err error) {
+func EncodePassword(password string) (encodedHash string, err error) {
 
 	p := &hashParams{
 		memory:      64 * 1024,
@@ -108,7 +108,7 @@ func encodePassword(password string) (encodedHash string, err error) {
 	return encodedHash, nil
 }
 
-func decodePasswordAndMatch(password, encodedHash string) (match bool, err error) {
+func DecodePasswordAndMatch(password, encodedHash string) (match bool, err error) {
 	var (
 		ErrInvalidHash         = errors.New("the encoded hash is not in the correct format")
 		ErrIncompatibleVersion = errors.New("incompatible version of argon2")
@@ -164,7 +164,7 @@ func decodePasswordAndMatch(password, encodedHash string) (match bool, err error
 	return false, nil
 }
 
-func setHeader(w http.ResponseWriter) {
+func SetHeader(w http.ResponseWriter) {
 	w.Header().Set("Content-Type", "application/json")
 }
 

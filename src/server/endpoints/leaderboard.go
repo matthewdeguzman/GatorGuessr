@@ -15,14 +15,14 @@ func GetTopUsers(w http.ResponseWriter, r *http.Request, db *gorm.DB) {
 
 	limit, err := strconv.Atoi(params["limit"])
 	if err != nil {
-		writeErr(w, http.StatusBadRequest, "400 - Could not process limit")
+		WriteErr(w, http.StatusBadRequest, "400 - Could not process limit")
 		return
 	}
 	if limit <= 0 {
-		writeErr(w, http.StatusBadRequest, "400 - Limit must be a positive integer")
+		WriteErr(w, http.StatusBadRequest, "400 - Limit must be a positive integer")
 		return
 	}
 
 	db.Limit(limit).Order("score desc").Find(&users)
-	encodeUsers(users, w)
+	EncodeUsers(users, w)
 }
