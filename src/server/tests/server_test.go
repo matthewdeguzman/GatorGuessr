@@ -182,23 +182,61 @@ func TestValidNonexistantuser(t *testing.T) {
 }
 
 func TestLeaderboardNegativeInteger(t *testing.T) {
-	t.Fail()
+	limit := "-248"
+	status, _ := getTopUsersTest(limit, t)
+
+	if status != http.StatusBadRequest {
+		t.Log(status)
+		t.Fail()
+	}
 }
 
 func TestLeaderboardFloatintPoint(t *testing.T) {
-	t.Fail()
+	limit := "3.534"
+	status, _ := getTopUsersTest(limit, t)
+
+	if status != http.StatusBadRequest {
+		t.Log(status)
+		t.Fail()
+	}
 }
 
 func TestLeaderboardZero(t *testing.T) {
-	t.Fail()
+	limit := "0"
+	status, _ := getTopUsersTest(limit, t)
+
+	if status != http.StatusBadRequest {
+		t.Log(status)
+		t.Fail()
+	}
 }
 
 func TestLeaderboardOverMaxLimit(t *testing.T) {
-	t.Fail()
+	limit := "99999"
+	status, _ := getTopUsersTest(limit, t)
+
+	if status != http.StatusOK {
+		t.Log(status)
+		t.Fail()
+	}
 }
 
-func TestLeaderboardCasual(t *testing.T) {
-	t.Fail()
+func TestLeaderboardSorted(t *testing.T) {
+	limit := "10"
+	status, users := getTopUsersTest(limit, t)
+
+	if status != http.StatusOK {
+		t.Log(status)
+		t.Fail()
+	}
+
+	var previousScore uint = users[0].Score
+	for _, user := range users {
+		if user.Score > previousScore {
+			t.Log("Not sorted in descending order")
+			t.Fail()
+		}
+	}
 }
 func TestPasswordEncoding(t *testing.T) {
 	t.Fail()

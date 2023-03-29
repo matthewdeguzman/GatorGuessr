@@ -1,6 +1,7 @@
 package tests
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
@@ -140,6 +141,23 @@ func mockDeleteUser(w http.ResponseWriter, r *http.Request, username string, db 
 	endpoints.EncodeUser(user, w)
 }
 
+func mockGetTopUsers(w http.ResponseWriter, r *http.Request, limit string, db *gorm.DB, t *testing.T) {
+	var users []u.User
+
+	lim, err := strconv.Atoi(limit)
+	if err != nil {
+		endpoints.WriteErr(w, http.StatusBadRequest, "400 - Could not process limit")
+		return
+	}
+	if lim <= 0 {
+		endpoints.WriteErr(w, http.StatusBadRequest, "400 - Limit must be a positive integer")
+		return
+	}
+
+	db.Limit(lim).Order("score desc").Find(&users)
+	endpoints.EncodeUsers(users, w)
+}
+
 // TESTING FUNCTIONS //
 
 func getUserTest(username string, t *testing.T) (status int) {
@@ -207,4 +225,24 @@ func deleteUserTest(username string, t *testing.T) (status int) {
 	handler.ServeHTTP(rr, req)
 
 	return rr.Code
+}
+
+func getTopUsersTest(limit string, t *testing.T) (status int, users []u.User) {
+	db := testInitMigration(t)
+	req, err := http.NewRequest("GET", "/api/leaderboard/{limit}/", nil)
+	if err != nil {
+		t.Error(err)
+	}
+
+	rr := httptest.NewRecorder()
+	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		mockGetTopUsers(w, r, limit, db, t)
+	})
+
+	handler.ServeHTTP(rr, req)
+
+	status = rr.Code
+	json.NewDecoder(rr.Result().Body).Decode(&users)
+
+	return status, users
 }
