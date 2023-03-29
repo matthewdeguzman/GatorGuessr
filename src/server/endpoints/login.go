@@ -41,6 +41,11 @@ func CreateUser(w http.ResponseWriter, r *http.Request, db *gorm.DB) {
 		return
 	}
 
+	if user.ID != 0 || user.Password == "" {
+		WriteErr(w, http.StatusBadRequest, "400 - Attempting to change ID or password is empty")
+		return
+	}
+
 	hash, err := EncodePassword(user.Password)
 
 	if err != nil {

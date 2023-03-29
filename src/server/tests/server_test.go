@@ -152,7 +152,7 @@ func TestDeleteExistingUser(t *testing.T) {
 		Password: "heyo",
 	}
 
-	addUser(&user, t)
+	addUser(user, t)
 
 	status := deleteUserTest(user.Username, t)
 	if status != http.StatusOK {
@@ -174,11 +174,47 @@ func TestDeleteNonexistingUser(t *testing.T) {
 }
 
 func TestValidateExistingUser(t *testing.T) {
-	t.Fail()
+	user := u.User{
+		Username: "new-user-000420",
+		Password: "jflka;fjsdlkfjeiw",
+	}
+	addUser(user, t)
+	status := validateUserTest(user, t)
+	cleanDB(&user, user.Username, t)
+	if status != http.StatusOK {
+		t.Log(status)
+		t.Fail()
+	}
 }
 
-func TestValidNonexistantuser(t *testing.T) {
-	t.Fail()
+func TestValidateNonexistantuser(t *testing.T) {
+	user := u.User{
+		Username: "new-user-000420",
+		Password: "jflka;fjsdlkfjeiw",
+	}
+	status := validateUserTest(user, t)
+	if status != http.StatusNotFound {
+		t.Log(status)
+		t.Fail()
+	}
+}
+
+func TestValidateIncorrectPassword(t *testing.T) {
+	user := u.User{
+		Username: "new-user-000420",
+		Password: "password",
+	}
+
+	addUser(user, t)
+	user.Password = "wrong-password!"
+	status := validateUserTest(user, t)
+	cleanDB(&user, user.Username, t)
+
+	user.Password = "wrong-password!"
+	if status != http.StatusNotFound {
+		t.Log(status)
+		t.Fail()
+	}
 }
 
 func TestLeaderboardNegativeInteger(t *testing.T) {
@@ -237,11 +273,4 @@ func TestLeaderboardSorted(t *testing.T) {
 			t.Fail()
 		}
 	}
-}
-func TestPasswordEncoding(t *testing.T) {
-	t.Fail()
-}
-
-func TestPasswordDecoding(t *testing.T) {
-	t.Fail()
 }

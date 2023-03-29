@@ -40,9 +40,17 @@ func cleanDB(user *u.User, username string, t *testing.T) {
 	db.Delete(user, "Username = ?", user.Username)
 }
 
-func addUser(user *u.User, t *testing.T) {
+func addUser(user u.User, t *testing.T) (err error) {
 	db := testInitMigration(t)
-	db.Create(user)
+	hash, err := endpoints.EncodePassword(user.Password)
+
+	if err != nil {
+		t.Error(err)
+	}
+	user.Password = hash
+
+	db.Create(&user)
+	return nil
 }
 
 /// MOCK FUNCTIONS ///
@@ -141,6 +149,35 @@ func mockDeleteUser(w http.ResponseWriter, r *http.Request, username string, db 
 	endpoints.EncodeUser(user, w)
 }
 
+func mockValidateUser(w http.ResponseWriter, r *http.Request, user u.User, db *gorm.DB, t *testing.T) {
+	endpoints.SetHeader(w)
+
+	var givenPassword string
+	var hashedPassword string
+	var dbUser u.User
+	givenPassword = user.Password
+
+	endpoints.FetchUser(db, &dbUser, user.Username)
+
+	if dbUser.Username == "" {
+		endpoints.UserDNErr(w)
+		return
+	}
+	hashedPassword = dbUser.Password
+
+	match, err := endpoints.DecodePasswordAndMatch(givenPassword, hashedPassword)
+	if err != nil {
+		t.Log("Hashed: " + hashedPassword)
+		t.Log(err)
+		endpoints.HashErr(w)
+		return
+	}
+	if !match {
+		endpoints.LoginErr(w)
+		return
+	}
+}
+
 func mockGetTopUsers(w http.ResponseWriter, r *http.Request, limit string, db *gorm.DB, t *testing.T) {
 	var users []u.User
 
@@ -220,6 +257,23 @@ func deleteUserTest(username string, t *testing.T) (status int) {
 	rr := httptest.NewRecorder()
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		mockDeleteUser(w, r, username, db, t)
+	})
+
+	handler.ServeHTTP(rr, req)
+
+	return rr.Code
+}
+
+func validateUserTest(user u.User, t *testing.T) (status int) {
+	db := testInitMigration(t)
+	req, err := http.NewRequest("POST", "/api/login/", nil)
+	if err != nil {
+		t.Error(err)
+	}
+
+	rr := httptest.NewRecorder()
+	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		mockValidateUser(w, r, user, db, t)
 	})
 
 	handler.ServeHTTP(rr, req)
