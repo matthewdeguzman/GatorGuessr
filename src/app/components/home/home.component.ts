@@ -1,11 +1,5 @@
-import { Component } from "@angular/core";
-
-export interface Tile {
-  cols: number;
-  title: string;
-  info: string;
-  color: string;
-}
+import { Component, OnInit } from "@angular/core";
+import { IssueService } from "src/app/services/issue.service";
 
 @Component({
   selector: "app-home",
@@ -13,13 +7,12 @@ export interface Tile {
   styleUrls: ["./home.component.css"],
 })
 export class HomeComponent {
-  tiles: Tile[] = [
-    { title: "About", cols: 2, color: "lightblue", info: "This is a test" },
-    {
-      title: "Leaderboard",
-      cols: 1,
-      color: "lightgreen",
-      info: "This is a test",
-    },
-  ];
+  constructor(private IssueService: IssueService) {}
+  displayedColumns: string[] = ["name", "score"];
+  leaderboardArray: any;
+  ngOnInit() {
+    this.IssueService.getLeaderboard().subscribe((data) => {
+      this.leaderboardArray = data;
+    });
+  }
 }
