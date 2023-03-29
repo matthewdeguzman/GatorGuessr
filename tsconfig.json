@@ -6,7 +6,12 @@
     "**/*.spec.ts"
   ],
   "compilerOptions": {
-    "types": ["cypress"],
+    "typeRoots": [
+      "node_modules/@types",
+  ],
+    "skipLibCheck": true,
+    "strictPropertyInitialization": false,
+    "types": ["cypress","node"],
     "baseUrl": "./",
     "outDir": "./dist/out-tsc",
     "forceConsistentCasingInFileNames": true,
