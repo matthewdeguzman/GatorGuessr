@@ -147,11 +147,30 @@ func TestUpdateUserScore(t *testing.T) {
 }
 
 func TestDeleteExistingUser(t *testing.T) {
-	t.Fail()
+	user := u.User{
+		Username: "test-user613",
+		Password: "heyo",
+	}
+
+	addUser(&user, t)
+
+	status := deleteUserTest(user.Username, t)
+	if status != http.StatusOK {
+		cleanDB(&user, user.Username, t)
+		t.Log(status)
+		t.Fail()
+	}
+
 }
 
 func TestDeleteNonexistingUser(t *testing.T) {
-	t.Fail()
+	username := "not-real-user :o"
+	status := deleteUserTest(username, t)
+	if status != http.StatusNotFound {
+		cleanDB(&u.User{}, username, t)
+		t.Log(status)
+		t.Fail()
+	}
 }
 
 func TestValidateExistingUser(t *testing.T) {

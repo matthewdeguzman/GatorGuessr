@@ -39,6 +39,11 @@ func cleanDB(user *u.User, username string, t *testing.T) {
 	db.Delete(user, "Username = ?", user.Username)
 }
 
+func addUser(user *u.User, t *testing.T) {
+	db := testInitMigration(t)
+	db.Create(user)
+}
+
 /// MOCK FUNCTIONS ///
 
 func mockGetUsers(w http.ResponseWriter, r *http.Request, t *testing.T) {
@@ -58,7 +63,6 @@ func mockGetUser(w http.ResponseWriter, r *http.Request, username string, t *tes
 		endpoints.WriteErr(w, http.StatusNotFound, "")
 	}
 	endpoints.EncodeUser(user, w)
-
 }
 
 func mockCreateUser(w http.ResponseWriter, r *http.Request, user u.User, db *gorm.DB, t *testing.T) {
@@ -123,6 +127,19 @@ func mockUpdateUser(w http.ResponseWriter, r *http.Request, userMap map[string]s
 	endpoints.EncodeUser(updatedUser, w)
 }
 
+func mockDeleteUser(w http.ResponseWriter, r *http.Request, username string, db *gorm.DB, t *testing.T) {
+	endpoints.SetHeader(w)
+	var user u.User
+
+	endpoints.FetchUser(db, &user, username)
+	if user.Username == "" {
+		endpoints.UserDNErr(w)
+		return
+	}
+	db.Delete(&user, "Username = ?", username)
+	endpoints.EncodeUser(user, w)
+}
+
 // TESTING FUNCTIONS //
 
 func getUserTest(username string, t *testing.T) (status int) {
@@ -168,6 +185,23 @@ func updateUserTest(user map[string]string, username string, t *testing.T) (stat
 	rr := httptest.NewRecorder()
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		mockUpdateUser(w, r, user, username, db, t)
+	})
+
+	handler.ServeHTTP(rr, req)
+
+	return rr.Code
+}
+
+func deleteUserTest(username string, t *testing.T) (status int) {
+	db := testInitMigration(t)
+	req, err := http.NewRequest("DELETE", "/api/users/{username}/", nil)
+	if err != nil {
+		t.Error(err)
+	}
+
+	rr := httptest.NewRecorder()
+	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		mockDeleteUser(w, r, username, db, t)
 	})
 
 	handler.ServeHTTP(rr, req)
