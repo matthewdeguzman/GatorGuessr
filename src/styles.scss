@@ -9,7 +9,7 @@ $angular-accent: mat.define-palette(mat.$pink-palette, A200, A100, A400);
 
 $angular-warn: mat.define-palette(mat.$red-palette);
 
-$angular-default-theme: mat.define-light-theme(
+$angular-light-theme: mat.define-light-theme(
   (
     color: (
       primary: $angular-primary,
@@ -28,11 +28,12 @@ $angular-dark-theme: mat.define-dark-theme(
   )
 );
 
+
 .darkMode {
   @include mat.all-component-colors($angular-dark-theme);
 }
 
-@include mat.all-component-themes($angular-default-theme);
+@include mat.all-component-themes($angular-light-theme);
 
 
 
