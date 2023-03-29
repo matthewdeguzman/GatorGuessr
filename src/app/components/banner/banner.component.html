@@ -1,11 +1,11 @@
-<div class="mat-app-background">
+<div class="mat-app-background {{ selectedValue }}">
   <a routerLink="'/app'"></a>
   <mat-toolbar color="primary">
     <mat-toolbar-row>
       <span class="left">
         <a href="/home">
-          <button mat-icon-button class="mr-8">
-            <mat-icon>home</mat-icon>
+          <button mat-icon-button>
+            <mat-icon color="accent">home</mat-icon>
           </button>
         </a>
         <button
@@ -13,14 +13,13 @@
           name="Theme"
           value="selectedValue"
           (click)="toggleTheme()"
-          class="mr-8"
         >
-          <mat-icon class="mr-8">{{ selectedTheme }}</mat-icon>
+          <mat-icon color="accent">{{ selectedTheme }}</mat-icon>
         </button>
       </span>
       <span class="center">
         <img src="assets/favicon/favicon-64x64.png" />
-        <div class="center-title">GatorGuessr</div>
+        <div color="primary">GatorGuessr</div>
       </span>
       <span class="right">
         <a mat-button routerLink="/register">Register</a>

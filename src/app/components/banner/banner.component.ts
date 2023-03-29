@@ -1,5 +1,5 @@
-import { Component, OnInit } from "@angular/core";
-import { OverlayContainer } from "@angular/cdk/overlay";
+import { AppComponent } from "./../../app.component";
+import { Component, HostBinding, OnInit } from "@angular/core";
 
 @Component({
   selector: "app-banner",
@@ -7,25 +7,30 @@ import { OverlayContainer } from "@angular/cdk/overlay";
   styleUrls: ["./banner.component.scss"],
 })
 export class BannerComponent implements OnInit {
-  selectedValue = true;
+  selectedValue = "lightMode";
   selectedTheme = "light_mode";
 
-  constructor(private overlay: OverlayContainer) {}
+  constructor(private AppComponent: AppComponent) {}
+
   ngOnInit() {
     this.selectedTheme = localStorage.getItem("selectedTheme") || "light_mode";
-    this.selectedValue = this.selectedTheme === "light_mode" ? true : false;
+    this.selectedValue =
+      this.selectedTheme === "light_mode" ? "lightMode" : "darkMode";
+  }
+  getTheme() {
+    return this.selectedValue;
   }
 
   toggleTheme() {
-    if (this.selectedValue) {
-      this.overlay.getContainerElement().classList.add("dark_mode");
-      this.selectedValue = false;
+    if (this.selectedValue === "lightMode") {
+      this.selectedValue = "darkMode";
       this.selectedTheme = "dark_mode";
     } else {
-      this.overlay.getContainerElement().classList.remove("dark_mode");
-      this.selectedValue = true;
+      this.selectedValue = "lightMode";
       this.selectedTheme = "light_mode";
     }
     localStorage.setItem("selectedTheme", this.selectedTheme);
+    localStorage.setItem("selectedValue", this.selectedValue);
+    this.AppComponent.theme = this.selectedValue;
   }
 }

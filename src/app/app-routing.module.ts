@@ -13,13 +13,6 @@ const routes: Routes = [
     path: "login",
     title: "Login",
     component: LoginComponent,
-    children: [
-      {
-        path: "landing-page",
-        title: "GatorGuessr",
-        component: LandingPageComponent,
-      },
-    ],
   },
   {
     path: "landing-page",
