@@ -232,6 +232,66 @@ func TestGetNonexiststantUser(t *testing.T) {
 	}
 }
 
+func TestCreateExistingUser(t *testing.T) {
+
+}
+
+func TestCreateNewUser(t *testing.T) {
+
+}
+
+func TestUpdateNonexistantUser(t *testing.T) {
+
+}
+
+func TestUpdateExistingUser(t *testing.T) {
+
+}
+
+func TestUpdateUserID(t *testing.T) {
+
+}
+
+func TestUpdateUserScore(t *testing.T) {
+
+}
+
+func TestDeleteExistingUser(t *testing.T) {
+
+}
+
+func TestNonexistingUser(t *testing.T) {
+
+}
+
+func TestValidateExistingUser(t *testing.T) {
+
+}
+
+func TestValidNonexistantuser(t *testing.T) {
+
+}
+
+func TestLeaderboardNegativeInteger(t *testing.T) {
+
+}
+
+func TestLeaderboardFloatintPoint(t *testing.T) {
+
+}
+
+func TestLeaderboardZero(t *testing.T) {
+
+}
+
+func TestLeaderboardOverMaxLimit(t *testing.T) {
+
+}
+
+func TestLeaderboardCasual(t *testing.T) {
+
+}
+
 // func TestGetUser2(t *testing.T) {
 // 	username := "invalid-user"
 // 	if resp := getUserTest(username, t); resp != "" {
