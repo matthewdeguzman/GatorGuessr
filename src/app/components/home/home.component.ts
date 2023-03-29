@@ -8,6 +8,7 @@ import { IssueService } from "src/app/services/issue.service";
 })
 export class HomeComponent {
   constructor(private IssueService: IssueService) {}
+  theme = localStorage.getItem("selectedValue") || "lightMode";
   displayedColumns: string[] = ["name", "score"];
   leaderboardArray: any;
   ngOnInit() {

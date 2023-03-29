@@ -1,29 +1,31 @@
-<a routerLink="'/app'"></a>
-<mat-toolbar class="banner">
-  <mat-toolbar-row>
-    <span class="left">
-      <a href="/home">
-        <button id="home-button" mat-icon-button>
-          <mat-icon>home</mat-icon>
+<div class="mat-app-background {{ selectedValue }}">
+  <a routerLink="'/app'"></a>
+  <mat-toolbar color="primary">
+    <mat-toolbar-row>
+      <span class="left">
+        <a href="/home">
+          <button mat-icon-button>
+            <mat-icon color="accent">home</mat-icon>
+          </button>
+        </a>
+        <button
+          mat-icon-button
+          name="Theme"
+          value="selectedValue"
+          (click)="toggleTheme()"
+        >
+          <mat-icon color="accent">{{ selectedTheme }}</mat-icon>
         </button>
-      </a>
-      <button
-        mat-icon-button
-        name="Theme"
-        value="selectedValue"
-        (click)="toggleTheme()"
-      >
-        <mat-icon>{{ selectedTheme }}</mat-icon>
-      </button>
-    </span>
-    <span class="center">
-      <img src="assets/favicon/favicon-64x64.png" />
-      <div class="center-title">GatorGuessr</div>
-    </span>
-    <span class="right">
-      <a mat-button routerLink="/register">Register</a>
-      <a mat-button routerLink="/login">Login</a>
-    </span>
-  </mat-toolbar-row>
-</mat-toolbar>
+      </span>
+      <span class="center">
+        <img src="assets/favicon/favicon-64x64.png" />
+        <div color="primary">GatorGuessr</div>
+      </span>
+      <span class="right">
+        <a mat-button routerLink="/register">Register</a>
+        <a mat-button routerLink="/login">Login</a>
+      </span>
+    </mat-toolbar-row>
+  </mat-toolbar>
+</div>
 <router-outlet></router-outlet>
