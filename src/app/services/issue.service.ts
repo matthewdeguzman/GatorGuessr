@@ -1,3 +1,4 @@
+import { LeaderboardService } from "./leaderboard/leaderboard.service";
 import { Injectable } from "@angular/core";
 import { UserService } from "./user/user.service";
 
@@ -5,7 +6,10 @@ import { UserService } from "./user/user.service";
   providedIn: "root",
 })
 export class IssueService {
-  constructor(private userService: UserService) {}
+  constructor(
+    private userService: UserService,
+    private LeaderboardService: LeaderboardService
+  ) {}
 
   // User methods
   validateUser(username: string, password: string) {
@@ -16,5 +20,10 @@ export class IssueService {
   }
   getUser(username: string) {
     return this.userService.getUser(username);
+  }
+
+  // Leaderboard methods
+  getLeaderboard() {
+    return this.LeaderboardService.getLeaderboard();
   }
 }

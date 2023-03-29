@@ -1,7 +1,43 @@
-<mat-grid-list cols="3" rowHeight="90%">
-  <mat-grid-tile *ngFor="let tile of tiles" [colspan]="tile.cols" [rowspan]="1">
-    <mat-grid-tile-header class="tile-text"
-      >{{ tile.title }}
-    </mat-grid-tile-header>
+<mat-grid-list cols="3" rowHeight="670px">
+  <mat-grid-tile [colspan]="2">
+    <mat-grid-tile-header class="tile-text"> About </mat-grid-tile-header>
+    <div class="tile-content">
+      <div class="center-title">
+        GatorGuessr is a game that puts users in a random location in
+        Gainesville and they have to guess where they are. The game is played in
+        rounds and the user gains points depending on how close they are to the
+        actual location.
+      </div>
+    </div>
+  </mat-grid-tile>
+  <mat-grid-tile [colspan]="1">
+    <mat-grid-tile-header class="tile-text"> Leaderboard </mat-grid-tile-header>
+    <!--Position-->
+    <table
+      mat-table
+      [dataSource]="leaderboardArray"
+      class="mat-elevation-z0"
+      style="margin-top: 1px"
+    >
+      <!--Name-->
+      <ng-container matColumnDef="name">
+        <th mat-header-cell class="top-row" *matHeaderCellDef>Name</th>
+        <td mat-cell class="element" *matCellDef="let element">
+          {{ element.Username }}
+        </td>
+      </ng-container>
+
+      <!--Score-->
+      <ng-container matColumnDef="score">
+        <th mat-header-cell class="top-row" *matHeaderCellDef>Score</th>
+        <td mat-cell class="element" *matCellDef="let element">
+          {{ element.Score }}
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    </table>
   </mat-grid-tile>
 </mat-grid-list>
+''

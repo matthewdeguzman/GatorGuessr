@@ -2,49 +2,19 @@
 <mat-toolbar class="banner">
   <mat-toolbar-row>
     <span class="left">
-      <button mat-icon-button [matMenuTriggerFor]="options">
-        <mat-icon>more_vert</mat-icon>
+      <a href="/home">
+        <button mat-icon-button>
+          <mat-icon>home</mat-icon>
+        </button>
+      </a>
+      <button
+        mat-icon-button
+        name="Theme"
+        value="selectedValue"
+        (click)="toggleTheme()"
+      >
+        <mat-icon>{{ selectedTheme }}</mat-icon>
       </button>
-
-      <!--Selectable Options-->
-      <mat-menu #options="matMenu">
-        <a href="/home">
-          <button mat-menu-item>
-            <mat-icon>home</mat-icon>
-            <span>Home</span>
-          </button>
-        </a>
-        <button mat-menu-item [matMenuTriggerFor]="themes">
-          <mat-icon>brush</mat-icon>
-          <span>Themes</span>
-        </button>
-        <button mat-menu-item disabled>
-          <mat-icon>construction</mat-icon>
-          <span>Coming Soon!</span>
-        </button>
-      </mat-menu>
-
-      <!--Themes-->
-      <mat-menu #themes="matMenu">
-        <button mat-menu-item>
-          <mat-icon>filter_vintage</mat-icon>
-          <span>Basic</span>
-        </button>
-        <button mat-menu-item>
-          <mat-icon>dark_mode</mat-icon>
-          <span>Dark Mode</span>
-        </button>
-        <button mat-menu-item>
-          <mat-icon>light_mode</mat-icon>
-          <span>Light Mode</span>
-        </button>
-        <a target="_blank" href="https://www.youtube.com/watch?v=mn9ifMV5YFg">
-          <button mat-menu-item>
-            <mat-icon>blind</mat-icon>
-            <span>Color Blind Mode</span>
-          </button>
-        </a>
-      </mat-menu>
     </span>
     <span class="center">
       <img src="assets/favicon/favicon-64x64.png" />
