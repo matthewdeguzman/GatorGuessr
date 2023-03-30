@@ -9,16 +9,16 @@
 
 # server
 /src/server/server
-/src/server/credentials/credentials.go
+/src/server/tests/credentials.go
 
 # vscode settings
 /.vscode
 
 # executable files
 *.exe
+
 src/assets/images
 # API key
 env.txt
 src/assets/env.json
-=======
->>>>>>> 018061783db9626fc5991d9c9574eb04f932dc44
+

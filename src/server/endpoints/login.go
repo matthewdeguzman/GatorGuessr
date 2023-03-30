@@ -10,121 +10,126 @@ import (
 )
 
 func GetUsers(w http.ResponseWriter, r *http.Request, db *gorm.DB) {
-	setHeader(w)
+	SetHeader(w)
 	var users []u.User
 	db.Find(&users)
 	json.NewEncoder(w).Encode(users)
 }
 
 func GetUser(w http.ResponseWriter, r *http.Request, db *gorm.DB) {
-	setHeader(w)
+	SetHeader(w)
 
 	params := mux.Vars(r)
 	var user u.User
-	fetchUser(db, &user, params["username"])
+	FetchUser(db, &user, params["username"])
 
 	if user.Username == "" {
-		userDNErr(w)
+		UserDNErr(w)
 		return
 	}
-	encodeUser(user, w)
+	EncodeUser(user, w)
 }
 
 func CreateUser(w http.ResponseWriter, r *http.Request, db *gorm.DB) {
-	setHeader(w)
+	SetHeader(w)
 
 	var user u.User
-	decodeUser(&user, r)
+	DecodeUser(&user, r)
 
-	if userExists(db, user.Username) {
-		writeErr(w, http.StatusBadRequest, "400 - User already exists")
+	if UserExists(db, user.Username) {
+		WriteErr(w, http.StatusBadRequest, "400 - User already exists")
 		return
 	}
 
-	hash, err := encodePassword(user.Password)
+	if user.ID != 0 || user.Password == "" {
+		WriteErr(w, http.StatusBadRequest, "400 - Attempting to change ID or password is empty")
+		return
+	}
+
+	hash, err := EncodePassword(user.Password)
 
 	if err != nil {
-		writeErr(w, http.StatusInternalServerError, HashErr)
+		WriteErr(w, http.StatusInternalServerError, hashErr)
 		return
 	}
 	user.Password = hash
 
 	db.Create(&user)
-	encodeUser(user, w)
+	EncodeUser(user, w)
 }
 
 func UpdateUser(w http.ResponseWriter, r *http.Request, db *gorm.DB) {
-	setHeader(w)
+	SetHeader(w)
 	params := mux.Vars(r)
 
 	var oldUser u.User
 	var updatedUser u.User
 
-	fetchUser(db, &oldUser, params["username"])
-	fetchUser(db, &updatedUser, params["username"])
+	FetchUser(db, &oldUser, params["username"])
+	FetchUser(db, &updatedUser, params["username"])
 
 	if oldUser.Username == "" {
-		userDNErr(w)
+		UserDNErr(w)
 		return
 	}
 
-	decodeUser(&updatedUser, r)
+	DecodeUser(&updatedUser, r)
 
 	if oldUser.ID != updatedUser.ID {
-		writeErr(w, http.StatusMethodNotAllowed, "405 - Cannot change immutable field")
+		WriteErr(w, http.StatusMethodNotAllowed, "405 - Cannot change immutable field")
 		return
 	}
 
-	hash, err := encodePassword(updatedUser.Password)
+	hash, err := EncodePassword(updatedUser.Password)
 	if err != nil {
-		hashErr(w)
+		HashErr(w)
 		return
 	}
 	updatedUser.Password = hash
 	updatedUser.CreatedAt = oldUser.CreatedAt
 
 	db.Save(&updatedUser)
-	encodeUser(updatedUser, w)
+	EncodeUser(updatedUser, w)
 }
 
 func DeleteUser(w http.ResponseWriter, r *http.Request, db *gorm.DB) {
-	setHeader(w)
+	SetHeader(w)
 	params := mux.Vars(r)
 	var user u.User
 
-	fetchUser(db, &user, params["username"])
+	FetchUser(db, &user, params["username"])
 	if user.Username == "" {
-		userDNErr(w)
+		UserDNErr(w)
 		return
 	}
 	db.Delete(&user, "Username = ?", params["username"])
-	encodeUser(user, w)
+	EncodeUser(user, w)
 }
 
 func ValidateUser(w http.ResponseWriter, r *http.Request, db *gorm.DB) {
-	setHeader(w)
+	SetHeader(w)
 
 	var user u.User
 	var givenPassword string
 	var hashedPassword string
 
-	decodeUser(&user, r)
+	DecodeUser(&user, r)
 	givenPassword = user.Password
-	fetchUser(db, &user, user.Username)
+	FetchUser(db, &user, user.Username)
 
 	if user.Username == "" {
-		userDNErr(w)
+		UserDNErr(w)
 		return
 	}
 	hashedPassword = user.Password
 
-	match, err := decodePasswordAndMatch(givenPassword, hashedPassword)
+	match, err := DecodePasswordAndMatch(givenPassword, hashedPassword)
 	if err != nil {
-		hashErr(w)
+		HashErr(w)
 		return
 	}
 	if !match {
-		loginErr(w)
+		LoginErr(w)
 		return
 	}
 }
