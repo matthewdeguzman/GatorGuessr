@@ -22,7 +22,7 @@ func initializeMigration() {
 	const DB_NAME = "user_database"
 	const DB_HOST = "cen3031-server.mysql.database.azure.com"
 	const DB_PORT = "3306"
-	var password = os.Getenv("DB_PASSWORD")
+	var password = os.Getenv("DB_PASSWORD");
 	// Build connection string
 	DSN := DB_USERNAME + ":" + password + "@tcp" + "(" + DB_HOST + ":" + DB_PORT + ")/" + DB_NAME + "?" + "parseTime=true&loc=Local"
 
