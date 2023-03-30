@@ -18,5 +18,7 @@
 *.exe
 
 src/assets/images
+# API key
 env.txt
 src/assets/env.json
+
