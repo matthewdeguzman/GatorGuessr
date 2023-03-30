@@ -134,12 +134,17 @@ func TestUpdateUserID(t *testing.T) {
 }
 
 func TestUpdateUserScore(t *testing.T) {
-	user := map[string]string{
-		"Username": "stephen",
-		"Score":    "0",
+	userMap := map[string]string{
+		"Username": "new-user-000420",
+		"Score":    "jflka;fjsdlkfjeiw",
 	}
-
-	status := updateUserTest(user, user["Username"], t)
+	user := u.User{
+		Username: userMap["Username"],
+		Password: userMap["Score"],
+	}
+	addUser(user, t)
+	status := updateUserTest(userMap, userMap["Username"], t)
+	cleanDB(&user, user.Username, t)
 	if status != http.StatusOK {
 		t.Log(status)
 		t.Fail()
