@@ -1,8 +1,16 @@
 # Sprint 3
 
+## Video:
+''
+
 ## Work Completed
 
 ### Front-end
+
+#### Dark Mode to Light Mode
+By utilizing Material UI's style templates, we devised a method for users to switch the website's theme between light mode and dark mode, providing them with the flexibility to tailor the website's design to their individual preferences. Moreover, this approach involved converting all the CSS files to SCSS, an efficient design practice that streamlines website development and eases our work in the future.
+#### Recieving HTTP Status Code
+Rather than returning the user itself, logging in and registering users yield HTTP status codes, a security measure that safeguards passwords and data on the API, while also facilitating communication with the backend. To enhance efficiency, we developed a user service that streamlines HTTP requests and enhances their organization, particularly since we need to make numerous backend calls.
 
 ### Back-end
 
@@ -19,3 +27,7 @@
 ### Back-end
 
 ## Documentation
+
+# Sprint 3
+
+
