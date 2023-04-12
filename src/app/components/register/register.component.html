@@ -27,7 +27,7 @@
           </mat-form-field>
         </div>
         <div>
-          <mat-card-footer *ngIf="showUserError()">
+          <mat-card-footer class="error" *ngIf="showUserError()">
             Error: User already exists
           </mat-card-footer>
         </div>
@@ -44,16 +44,24 @@
               [formControl]="passwordRequirements"
             />
 
-            <mat-error *ngIf="passwordRequirements.errors?.['minlength']">
+            <mat-error
+              *ngIf="passwordRequirements.errors?.['minlength'] && usernameRequirements.valid"
+            >
               Password must be at least 8 characters long
             </mat-error>
-            <mat-error *ngIf="passwordRequirements.errors?.['maxlength']">
+            <mat-error
+              *ngIf="passwordRequirements.errors?.['maxlength'] && usernameRequirements.valid"
+            >
               Password can't be longer then 25 characters
             </mat-error>
-            <mat-error *ngIf="passwordRequirements.errors?.['required']">
+            <mat-error
+              *ngIf="passwordRequirements.errors?.['required'] && usernameRequirements.valid"
+            >
               Password is required
             </mat-error>
-            <mat-error *ngIf="passwordRequirements.errors?.['pattern']">
+            <mat-error
+              *ngIf="passwordRequirements.errors?.['pattern'] && usernameRequirements.valid"
+            >
               Must have lowercase, uppercase and a number
             </mat-error>
 

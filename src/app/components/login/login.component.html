@@ -17,7 +17,7 @@
         </mat-form-field>
       </div>
       <div>
-        <mat-card-footer *ngIf="showUserError()">
+        <mat-card-footer class="error" *ngIf="showUserError()">
           Error: No User Found
         </mat-card-footer>
       </div>
@@ -40,7 +40,7 @@
       </div>
 
       <div>
-        <mat-card-footer *ngIf="showPassError()">
+        <mat-card-footer class="error" *ngIf="showPassError()">
           Error: Incorrect Password
         </mat-card-footer>
       </div>
