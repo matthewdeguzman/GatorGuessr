@@ -22,7 +22,7 @@ func initializeMigration() {
 	const DB_NAME = "user_database"
 	const DB_HOST = "cen3031-server.mysql.database.azure.com"
 	const DB_PORT = "3306"
-	var password = os.Getenv("DB_PASSWORD");
+	var password = os.Getenv("DB_PASSWORD")
 	// Build connection string
 	DSN := DB_USERNAME + ":" + password + "@tcp" + "(" + DB_HOST + ":" + DB_PORT + ")/" + DB_NAME + "?" + "parseTime=true&loc=Local"
 
@@ -91,6 +91,18 @@ func initializeRouter() {
 			endpoints.GetTopUsers(w, r, db)
 		case "OPTIONS":
 			w.WriteHeader(http.StatusNotFound)
+		default:
+			w.WriteHeader(http.StatusNotFound)
+		}
+	})
+
+	r.HandleFunc("/api/cookies/", func(w http.ResponseWriter, r *http.Request) {
+		endpoints.EnableCors(w)
+		switch r.Method {
+		case "GET":
+			endpoints.GetCookieHandler(w, r)
+		case "POST":
+			endpoints.SetCookieHandler(w, r)
 		default:
 			w.WriteHeader(http.StatusNotFound)
 		}
