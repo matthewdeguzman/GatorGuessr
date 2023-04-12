@@ -11,7 +11,7 @@ import { Observable } from "rxjs";
 })
 export class LandingPageComponent {
   title = "GatorMap";
-  string = "";
+  string = "AIzaSyArV4qnzQ40J1nt6FIPYIYqwSYrOKztUzo"; //remove
   lat = this.randomLat();
   long = this.randomLong();
   invalidLoc: boolean = true;
