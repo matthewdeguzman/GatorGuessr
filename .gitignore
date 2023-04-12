@@ -5,7 +5,7 @@
 **/.angular
 
 # assets 
-/src/assets/images
+/src/assets/images/miku.png
 
 # server
 /src/server/server
