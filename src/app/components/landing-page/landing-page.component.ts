@@ -11,7 +11,7 @@ import { Observable } from "rxjs";
 })
 export class LandingPageComponent {
   title = "GatorMap";
-  string = "AIzaSyArV4qnzQ40J1nt6FIPYIYqwSYrOKztUzo"; //remove
+  string = "AIzaSyArV4qnzQ40J1nt6FIPYIYqwSYrOKztUzo";
   lat = this.randomLat();
   long = this.randomLong();
   invalidLoc: boolean = true;
@@ -72,18 +72,18 @@ export class LandingPageComponent {
 
       new google.maps.Map(document.getElementById("Gmap") as HTMLElement, {
         center: { lat: 29.653288, lng: -82.338712 },
-        zoom: 7,
+        zoom: 11,
         disableDefaultUI: true,
-        restriction: {
-          latLngBounds: {
-            //North: nw 53rd ave
-            east: -82.295573,
-            north: 29.676191,
-            south: 29.616823,
-            west: -82.398928,
-          },
-          strictBounds: false,
-        },
+        // restriction: {
+        //   latLngBounds: {
+        //     //North: nw 53rd ave
+        //     east: -82.295573,
+        //     north: 29.676191,
+        //     south: 29.616823,
+        //     west: -82.398928,
+        //   },
+        //   strictBounds: false,
+        // },
       });
     });
   }
