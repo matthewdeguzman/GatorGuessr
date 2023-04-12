@@ -5,8 +5,7 @@
 }
 
 .tile-text {
-  text-align: center;
-  font-size: 30px;
+  font-size: 28px;
   font-weight: bold;
 }
 .text-inside-grid {
@@ -14,12 +13,25 @@
   left: 5px;
 }
 
-mat-grid-tile .tile-content {
-  padding: 16px;
-  height: calc(100% - 48px);
+.tile-content {
+  position: absolute;
+  top: 0;
+  left: 0;
   display: flex;
-  justify-content: center;
   align-items: center;
+  padding-top: 5%;
+}
+.about-text{
+  text-align: center;
+  margin: 10px;
+  font-size: 25px;
+  font-weight: bold;
+}
+.team{
+  text-align: center;
+  margin: 10px;
+  font-size: 48px;
+  font-weight: bold;
 }
 
 mat-grid-tile {
@@ -43,4 +55,43 @@ mat-grid-tile-header .tile-text {
 
 .mat-table {
   height: 100%;
+}
+.ethan{
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  max-width: 50%;
+}
+.matthew{
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  padding-bottom: 13%;
+  display: flex;
+  align-items: center;
+  max-width: 50%;
+}
+.rama{
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  display: flex;
+  align-items: center;
+  max-width: 50%;
+}
+.stephen {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  padding-bottom: 13%;
+  display: flex;
+  align-items: center;
+  max-width: 50%;
+}
+.teamtext{
+  margin: 10px;
+  font-size: 22px;
+  font-weight: bold;
 }
