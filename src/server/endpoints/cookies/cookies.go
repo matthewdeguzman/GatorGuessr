@@ -25,6 +25,9 @@ var (
 
 func writeCookie(w http.ResponseWriter, cookie http.Cookie) error {
 
+	// encode the value in base64
+	cookie.Value = base64.URLEncoding.EncodeToString([]byte(cookie.Value))
+
 	// return error if the cookie is too long
 	if len(cookie.String()) > 4096 {
 		return ErrValueTooLong
@@ -135,11 +138,13 @@ func SetCookieHandler(w http.ResponseWriter, r *http.Request, db *gorm.DB, secre
 func GetCookieHandler(w http.ResponseWriter, r *http.Request, secretKey []byte) {
 	// Retrieve the cookie from the request using its name.
 	// If no matching cookie is found, this will return a
-	// http.ErrNoCookie error. We check for this, and return a 400 Bad Request
-	// response to the client.
-	cookieName := ""
-	json.NewDecoder(r.Body).Decode(&cookieName)
-	value, err := ReadSignedCookie(r, cookieName, secretKey)
+	// http.ErrNoCookie error.
+	type CookieResponse struct {
+		Name string
+	}
+	var cookieReponse CookieResponse
+	json.NewDecoder(r.Body).Decode(&cookieReponse)
+	value, err := ReadSignedCookie(r, cookieReponse.Name, secretKey)
 	if err != nil {
 		switch {
 		case errors.Is(err, http.ErrNoCookie):

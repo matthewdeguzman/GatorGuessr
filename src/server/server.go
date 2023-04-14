@@ -32,7 +32,7 @@ func initializeMigration() {
 	// Build connection string
 	DSN := DB_USERNAME + ":" + password + "@tcp" + "(" + DB_HOST + ":" + DB_PORT + ")/" + DB_NAME + "?" + "parseTime=true&loc=Local"
 
-	db, err := gorm.Open(mysql.Open(DSN), &gorm.Config{})
+	db, err = gorm.Open(mysql.Open(DSN), &gorm.Config{})
 	if err != nil {
 		fmt.Println(err.Error())
 		panic("Cannot connect to DB")
