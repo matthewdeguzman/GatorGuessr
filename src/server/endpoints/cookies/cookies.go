@@ -7,6 +7,7 @@ import (
 	"crypto/hmac"
 	"crypto/sha256"
 	"encoding/base64"
+	"encoding/json"
 	"errors"
 	"log"
 	"net/http"
@@ -136,12 +137,15 @@ func GetCookieHandler(w http.ResponseWriter, r *http.Request, secretKey []byte) 
 	// If no matching cookie is found, this will return a
 	// http.ErrNoCookie error. We check for this, and return a 400 Bad Request
 	// response to the client.
-
-	_, err := r.Cookie("")
+	cookieName := ""
+	json.NewDecoder(r.Body).Decode(&cookieName)
+	value, err := ReadSignedCookie(r, cookieName, secretKey)
 	if err != nil {
 		switch {
 		case errors.Is(err, http.ErrNoCookie):
 			http.Error(w, "cookie not found", http.StatusBadRequest)
+		case errors.Is(err, ErrInvalidValue):
+			http.Error(w, "invalid cookie", http.StatusBadRequest)
 		default:
 			log.Println(err)
 			http.Error(w, "server error", http.StatusInternalServerError)
@@ -149,5 +153,5 @@ func GetCookieHandler(w http.ResponseWriter, r *http.Request, secretKey []byte) 
 		return
 	}
 
-	w.Write([]byte("cookie found"))
+	w.Write([]byte(value))
 }

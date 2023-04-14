@@ -19,6 +19,7 @@ import (
 var (
 	db        *gorm.DB
 	secretKey []byte
+	err       error
 )
 
 func initializeMigration() {
