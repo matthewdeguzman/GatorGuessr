@@ -9,7 +9,6 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"log"
 	"net/http"
 
@@ -106,7 +105,6 @@ func SetCookieHandler(w http.ResponseWriter, r *http.Request, db *gorm.DB, secre
 	// Initialize a new cookie where the name is based on the user ID
 	var cookie http.Cookie
 	json.NewDecoder(r.Body).Decode(&cookie)
-	fmt.Println(cookie)
 	err := WriteSignedCookie(w, cookie, secretKey)
 	if err != nil {
 		log.Println(err)
