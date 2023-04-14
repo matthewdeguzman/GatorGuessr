@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/hex"
 	"fmt"
 	"log"
 	"net/http"
@@ -8,13 +9,18 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/matthewdeguzman/GatorGuessr/src/server/endpoints"
+	"github.com/matthewdeguzman/GatorGuessr/src/server/endpoints/api"
+	"github.com/matthewdeguzman/GatorGuessr/src/server/endpoints/cookies"
 	db_user "github.com/matthewdeguzman/GatorGuessr/src/server/structs"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
 
-var db *gorm.DB
-var err error
+var (
+	db        *gorm.DB
+	secretKey []byte
+	err       error
+)
 
 func initializeMigration() {
 
@@ -22,7 +28,7 @@ func initializeMigration() {
 	const DB_NAME = "user_database"
 	const DB_HOST = "cen3031-server.mysql.database.azure.com"
 	const DB_PORT = "3306"
-	var password = os.Getenv("DB_PASSWORD");
+	var password = os.Getenv("DB_PASSWORD")
 	// Build connection string
 	DSN := DB_USERNAME + ":" + password + "@tcp" + "(" + DB_HOST + ":" + DB_PORT + ")/" + DB_NAME + "?" + "parseTime=true&loc=Local"
 
@@ -39,6 +45,11 @@ func initializeMigration() {
 }
 
 func initializeRouter() {
+	// get secret key
+	secretKey, err := hex.DecodeString(os.Getenv("COOKIE_SECRET"))
+	if err != nil {
+		log.Fatal(err)
+	}
 	r := mux.NewRouter()
 
 	// Route Handlers / Endpoints
@@ -46,9 +57,9 @@ func initializeRouter() {
 		endpoints.EnableCors(w)
 		switch r.Method {
 		case "GET":
-			endpoints.GetUsers(w, r, db)
+			api.GetUsers(w, r, db)
 		case "POST":
-			endpoints.CreateUser(w, r, db)
+			api.CreateUser(w, r, db)
 		case "OPTIONS":
 			w.WriteHeader(http.StatusOK)
 		default:
@@ -60,11 +71,11 @@ func initializeRouter() {
 		endpoints.EnableCors(w)
 		switch r.Method {
 		case "GET":
-			endpoints.GetUser(w, r, db)
+			api.GetUser(w, r, db)
 		case "PUT":
-			endpoints.UpdateUser(w, r, db)
+			api.UpdateUser(w, r, db)
 		case "DELETE":
-			endpoints.DeleteUser(w, r, db)
+			api.DeleteUser(w, r, db)
 		case "OPTIONS":
 			w.WriteHeader(http.StatusOK)
 		default:
@@ -76,7 +87,7 @@ func initializeRouter() {
 		endpoints.EnableCors(w)
 		switch r.Method {
 		case "POST":
-			endpoints.ValidateUser(w, r, db)
+			api.ValidateUser(w, r, db)
 		case "OPTIONS":
 			w.WriteHeader(http.StatusOK)
 		default:
@@ -88,13 +99,33 @@ func initializeRouter() {
 		endpoints.EnableCors(w)
 		switch r.Method {
 		case "GET":
-			endpoints.GetTopUsers(w, r, db)
+			api.GetTopUsers(w, r, db)
 		case "OPTIONS":
 			w.WriteHeader(http.StatusNotFound)
 		default:
 			w.WriteHeader(http.StatusNotFound)
 		}
 	})
+
+	r.HandleFunc("/cookies/verify/", func(w http.ResponseWriter, r *http.Request) {
+		endpoints.EnableCors(w)
+		switch r.Method {
+		case "GET":
+			cookies.GetCookieHandler(w, r, secretKey)
+		default:
+			w.WriteHeader(http.StatusNotFound)
+		}
+	})
+	r.HandleFunc("/cookies/set/", func(w http.ResponseWriter, r *http.Request) {
+		endpoints.EnableCors(w)
+		switch r.Method {
+		case "GET":
+			cookies.SetCookieHandler(w, r, db, secretKey)
+		default:
+			w.WriteHeader(http.StatusNotFound)
+		}
+	})
+
 	log.Fatal(http.ListenAndServe(":9000", r))
 }
 

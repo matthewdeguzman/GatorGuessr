@@ -8,7 +8,8 @@ import (
 	"strconv"
 	"testing"
 
-	endpoints "github.com/matthewdeguzman/GatorGuessr/src/server/endpoints"
+	"github.com/matthewdeguzman/GatorGuessr/src/server/endpoints"
+	"github.com/matthewdeguzman/GatorGuessr/src/server/endpoints/api"
 	u "github.com/matthewdeguzman/GatorGuessr/src/server/structs"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -57,7 +58,7 @@ func addUser(user u.User, t *testing.T) (err error) {
 
 func mockGetUsers(w http.ResponseWriter, r *http.Request, t *testing.T) {
 	db := testInitMigration(t)
-	endpoints.GetUsers(w, r, db)
+	api.GetUsers(w, r, db)
 }
 
 func mockGetUser(w http.ResponseWriter, r *http.Request, username string, t *testing.T) {
