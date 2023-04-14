@@ -1,4 +1,7 @@
-package endpoints
+/**
+* Referenced from https://www.alexedwards.net/blog/working-with-cookies-in-go
+ */
+package cookies
 
 import (
 	"errors"
@@ -6,6 +9,7 @@ import (
 	"net/http"
 	"strconv"
 
+	helpers "github.com/matthewdeguzman/GatorGuessr/src/server/endpoints"
 	u "github.com/matthewdeguzman/GatorGuessr/src/server/structs"
 	"gorm.io/gorm"
 )
@@ -35,8 +39,8 @@ func SetCookieHandler(w http.ResponseWriter, r *http.Request, db *gorm.DB) {
 	// Initialize a new cookie where the name is based on the user ID
 
 	var user u.User
-	DecodeUser(&user, r)
-	FetchUser(db, &user, user.Username)
+	helpers.DecodeUser(&user, r)
+	helpers.FetchUser(db, &user, user.Username)
 	if user.Username == "" {
 		http.Error(w, "User not found", http.StatusNotFound)
 		return

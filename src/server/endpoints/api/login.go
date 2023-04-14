@@ -1,135 +1,136 @@
-package endpoints
+package api
 
 import (
 	"encoding/json"
 	"net/http"
 
 	"github.com/gorilla/mux"
+	helpers "github.com/matthewdeguzman/GatorGuessr/src/server/endpoints"
 	u "github.com/matthewdeguzman/GatorGuessr/src/server/structs"
 	"gorm.io/gorm"
 )
 
 func GetUsers(w http.ResponseWriter, r *http.Request, db *gorm.DB) {
-	SetHeader(w)
+	helpers.SetHeader(w)
 	var users []u.User
 	db.Find(&users)
 	json.NewEncoder(w).Encode(users)
 }
 
 func GetUser(w http.ResponseWriter, r *http.Request, db *gorm.DB) {
-	SetHeader(w)
+	helpers.SetHeader(w)
 
 	params := mux.Vars(r)
 	var user u.User
-	FetchUser(db, &user, params["username"])
+	helpers.FetchUser(db, &user, params["username"])
 
 	if user.Username == "" {
-		UserDNErr(w)
+		helpers.UserDNErr(w)
 		return
 	}
-	EncodeUser(user, w)
+	helpers.EncodeUser(user, w)
 }
 
 func CreateUser(w http.ResponseWriter, r *http.Request, db *gorm.DB) {
-	SetHeader(w)
+	helpers.SetHeader(w)
 
 	var user u.User
-	DecodeUser(&user, r)
+	helpers.DecodeUser(&user, r)
 
-	if UserExists(db, user.Username) {
-		WriteErr(w, http.StatusBadRequest, "400 - User already exists")
+	if helpers.UserExists(db, user.Username) {
+		helpers.WriteErr(w, http.StatusBadRequest, "400 - User already exists")
 		return
 	}
 
 	if user.ID != 0 || user.Password == "" {
-		WriteErr(w, http.StatusBadRequest, "400 - Attempting to change ID or password is empty")
+		helpers.WriteErr(w, http.StatusBadRequest, "400 - Attempting to change ID or password is empty")
 		return
 	}
 
-	hash, err := EncodePassword(user.Password)
+	hash, err := helpers.EncodePassword(user.Password)
 
 	if err != nil {
-		WriteErr(w, http.StatusInternalServerError, hashErr)
+		helpers.HashErr(w)
 		return
 	}
 	user.Password = hash
 
 	db.Create(&user)
-	EncodeUser(user, w)
+	helpers.EncodeUser(user, w)
 }
 
 func UpdateUser(w http.ResponseWriter, r *http.Request, db *gorm.DB) {
-	SetHeader(w)
+	helpers.SetHeader(w)
 	params := mux.Vars(r)
 
 	var oldUser u.User
 	var updatedUser u.User
 
-	FetchUser(db, &oldUser, params["username"])
-	FetchUser(db, &updatedUser, params["username"])
+	helpers.FetchUser(db, &oldUser, params["username"])
+	helpers.FetchUser(db, &updatedUser, params["username"])
 
 	if oldUser.Username == "" {
-		UserDNErr(w)
+		helpers.UserDNErr(w)
 		return
 	}
 
-	DecodeUser(&updatedUser, r)
+	helpers.DecodeUser(&updatedUser, r)
 
 	if oldUser.ID != updatedUser.ID {
-		WriteErr(w, http.StatusMethodNotAllowed, "405 - Cannot change immutable field")
+		helpers.WriteErr(w, http.StatusMethodNotAllowed, "405 - Cannot change immutable field")
 		return
 	}
 
-	hash, err := EncodePassword(updatedUser.Password)
+	hash, err := helpers.EncodePassword(updatedUser.Password)
 	if err != nil {
-		HashErr(w)
+		helpers.HashErr(w)
 		return
 	}
 	updatedUser.Password = hash
 	updatedUser.CreatedAt = oldUser.CreatedAt
 
 	db.Save(&updatedUser)
-	EncodeUser(updatedUser, w)
+	helpers.EncodeUser(updatedUser, w)
 }
 
 func DeleteUser(w http.ResponseWriter, r *http.Request, db *gorm.DB) {
-	SetHeader(w)
+	helpers.SetHeader(w)
 	params := mux.Vars(r)
 	var user u.User
 
-	FetchUser(db, &user, params["username"])
+	helpers.FetchUser(db, &user, params["username"])
 	if user.Username == "" {
-		UserDNErr(w)
+		helpers.UserDNErr(w)
 		return
 	}
 	db.Delete(&user, "Username = ?", params["username"])
-	EncodeUser(user, w)
+	helpers.EncodeUser(user, w)
 }
 
 func ValidateUser(w http.ResponseWriter, r *http.Request, db *gorm.DB) {
-	SetHeader(w)
+	helpers.SetHeader(w)
 
 	var user u.User
 	var givenPassword string
 	var hashedPassword string
 
-	DecodeUser(&user, r)
+	helpers.DecodeUser(&user, r)
 	givenPassword = user.Password
-	FetchUser(db, &user, user.Username)
+	helpers.FetchUser(db, &user, user.Username)
 
 	if user.Username == "" {
-		UserDNErr(w)
+		helpers.UserDNErr(w)
 		return
 	}
 	hashedPassword = user.Password
 
-	match, err := DecodePasswordAndMatch(givenPassword, hashedPassword)
+	match, err := helpers.DecodePasswordAndMatch(givenPassword, hashedPassword)
 	if err != nil {
-		HashErr(w)
+		helpers.HashErr(w)
 		return
 	}
 	if !match {
-		LoginErr(w)
+		helpers.LoginErr(w)
 		return
 	}
 }
