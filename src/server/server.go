@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/hex"
 	"fmt"
 	"log"
 	"net/http"
@@ -15,8 +16,10 @@ import (
 	"gorm.io/gorm"
 )
 
-var db *gorm.DB
-var err error
+var (
+	db        *gorm.DB
+	secretKey []byte
+)
 
 func initializeMigration() {
 
@@ -28,7 +31,7 @@ func initializeMigration() {
 	// Build connection string
 	DSN := DB_USERNAME + ":" + password + "@tcp" + "(" + DB_HOST + ":" + DB_PORT + ")/" + DB_NAME + "?" + "parseTime=true&loc=Local"
 
-	db, err = gorm.Open(mysql.Open(DSN), &gorm.Config{})
+	db, err := gorm.Open(mysql.Open(DSN), &gorm.Config{})
 	if err != nil {
 		fmt.Println(err.Error())
 		panic("Cannot connect to DB")
@@ -41,6 +44,11 @@ func initializeMigration() {
 }
 
 func initializeRouter() {
+	// get secret key
+	secretKey, err := hex.DecodeString(os.Getenv("COOKIE_SECRET"))
+	if err != nil {
+		log.Fatal(err)
+	}
 	r := mux.NewRouter()
 
 	// Route Handlers / Endpoints
@@ -102,7 +110,7 @@ func initializeRouter() {
 		endpoints.EnableCors(w)
 		switch r.Method {
 		case "GET":
-			cookies.GetCookieHandler(w, r)
+			cookies.GetCookieHandler(w, r, secretKey)
 		default:
 			w.WriteHeader(http.StatusNotFound)
 		}
@@ -111,7 +119,7 @@ func initializeRouter() {
 		endpoints.EnableCors(w)
 		switch r.Method {
 		case "GET":
-			cookies.SetCookieHandler(w, r, db)
+			cookies.SetCookieHandler(w, r, db, secretKey)
 		default:
 			w.WriteHeader(http.StatusNotFound)
 		}

@@ -53,7 +53,7 @@ func readCookie(r *http.Request, name string) (string, error) {
 	return string(value), nil
 }
 
-func WriteSigned(w http.ResponseWriter, cookie http.Cookie, secretKey []byte) error {
+func WriteSignedCookie(w http.ResponseWriter, cookie http.Cookie, secretKey []byte) error {
 	// Calculate the HMAC signature of the cookie name and value, using SHA256 and
 	// a secret key
 	mac := hmac.New(sha256.New, secretKey)
@@ -67,7 +67,8 @@ func WriteSigned(w http.ResponseWriter, cookie http.Cookie, secretKey []byte) er
 	return writeCookie(w, cookie)
 }
 
-func ReadSigned(r *http.Request, name string, secretKey []byte) (string, error) {
+func ReadSignedCookie(r *http.Request, name string, secretKey []byte) (string, error) {
+
 	// Read in the signed value from the cookie. This should be in the format
 	// "{signature}{original value}".
 	signedValue, err := readCookie(r, name)
@@ -99,7 +100,7 @@ func ReadSigned(r *http.Request, name string, secretKey []byte) (string, error) 
 	return value, nil
 }
 
-func SetCookieHandler(w http.ResponseWriter, r *http.Request, db *gorm.DB) {
+func SetCookieHandler(w http.ResponseWriter, r *http.Request, db *gorm.DB, secretKey []byte) {
 	// Initialize a new cookie where the name is based on the user ID
 
 	var user u.User
@@ -113,20 +114,24 @@ func SetCookieHandler(w http.ResponseWriter, r *http.Request, db *gorm.DB) {
 	cookieName := "cookie" + strconv.FormatUint(uint64(user.ID), 10)
 	cookie := http.Cookie{
 		Name:     cookieName,
-		Value:    "user cookie",
+		Value:    "user cookie for " + strconv.FormatUint(uint64(user.ID), 10),
 		MaxAge:   60 * 60 * 24 * 365 * 5, // 5 years
 		HttpOnly: true,
 		Secure:   true,
 		SameSite: http.SameSiteLaxMode,
 	}
 
-	// Use the http.SetCookie() function to send the cookie to the client.
-	http.SetCookie(w, &cookie)
+	err := WriteSignedCookie(w, cookie, secretKey)
+	if err != nil {
+		log.Println(err)
+		http.Error(w, "server error", http.StatusInternalServerError)
+		return
+	}
 
 	w.Write([]byte("Cookie created"))
 }
 
-func GetCookieHandler(w http.ResponseWriter, r *http.Request) {
+func GetCookieHandler(w http.ResponseWriter, r *http.Request, secretKey []byte) {
 	// Retrieve the cookie from the request using its name.
 	// If no matching cookie is found, this will return a
 	// http.ErrNoCookie error. We check for this, and return a 400 Bad Request
