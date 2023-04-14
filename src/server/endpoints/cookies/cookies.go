@@ -9,12 +9,10 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"log"
 	"net/http"
-	"strconv"
 
-	helpers "github.com/matthewdeguzman/GatorGuessr/src/server/endpoints"
-	u "github.com/matthewdeguzman/GatorGuessr/src/server/structs"
 	"gorm.io/gorm"
 )
 
@@ -34,7 +32,7 @@ func writeCookie(w http.ResponseWriter, cookie http.Cookie) error {
 	}
 
 	http.SetCookie(w, &cookie)
-
+	w.Write([]byte(cookie.Value))
 	return nil
 }
 
@@ -106,25 +104,9 @@ func ReadSignedCookie(r *http.Request, name string, secretKey []byte) (string, e
 
 func SetCookieHandler(w http.ResponseWriter, r *http.Request, db *gorm.DB, secretKey []byte) {
 	// Initialize a new cookie where the name is based on the user ID
-
-	var user u.User
-	helpers.DecodeUser(&user, r)
-	helpers.FetchUser(db, &user, user.Username)
-	if user.Username == "" {
-		http.Error(w, "User not found", http.StatusNotFound)
-		return
-	}
-
-	cookieName := "cookie" + strconv.FormatUint(uint64(user.ID), 10)
-	cookie := http.Cookie{
-		Name:     cookieName,
-		Value:    "user cookie for " + strconv.FormatUint(uint64(user.ID), 10),
-		MaxAge:   60 * 60 * 24 * 365 * 5, // 5 years
-		HttpOnly: true,
-		Secure:   true,
-		SameSite: http.SameSiteLaxMode,
-	}
-
+	var cookie http.Cookie
+	json.NewDecoder(r.Body).Decode(&cookie)
+	fmt.Println(cookie)
 	err := WriteSignedCookie(w, cookie, secretKey)
 	if err != nil {
 		log.Println(err)
@@ -139,12 +121,10 @@ func GetCookieHandler(w http.ResponseWriter, r *http.Request, secretKey []byte) 
 	// Retrieve the cookie from the request using its name.
 	// If no matching cookie is found, this will return a
 	// http.ErrNoCookie error.
-	type CookieResponse struct {
-		Name string
-	}
-	var cookieReponse CookieResponse
-	json.NewDecoder(r.Body).Decode(&cookieReponse)
-	value, err := ReadSignedCookie(r, cookieReponse.Name, secretKey)
+
+	var cookie http.Cookie
+	json.NewDecoder(r.Body).Decode(&cookie)
+	value, err := ReadSignedCookie(r, cookie.Name, secretKey)
 	if err != nil {
 		switch {
 		case errors.Is(err, http.ErrNoCookie):

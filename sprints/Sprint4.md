@@ -30,6 +30,8 @@ Reads `user` from the JSON object provided in `r`.  `user.password` is decrypted
 
 Reads `limit` from `r` and executes a search query with `db.Limit` to get `limit` amount of users. The users are sorted in descending order of score using `db.Order` and stored in a slice. If `limit` is not a uint, a 400 error is encoded in `w`. Else, the slice of users is encoded in `w`.
 
+### func SetCookieHandler(w http.ResponseWriter, r *http.Request)
+
 ### func GetCookieHandler(w http.ResponseWriter, r *http.Request)
 
-The function receives a cookie in the http request and verifies whether the cookie is valid or not. (specifics will be added later)
+The function receives a cookie in the http request and the cookie name, then verifies whether the cookie is valid. If there is no cookie with the given name, a bad request is returned. The name and value of the cookie are base 64 encoded, so they are decoded first. Then, the cookie is verified if the HMAC signature generated with the secret key, cookie name, and cookie value match the expected HMAC signature of the same values. If the signatures do not match, the cookie is not valid and a bad request is returned.
