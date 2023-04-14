@@ -96,7 +96,7 @@ func initializeRouter() {
 		}
 	})
 
-	r.HandleFunc("/api/get-cookies/{cookie_name}/", func(w http.ResponseWriter, r *http.Request) {
+	r.HandleFunc("/cookies/verify/", func(w http.ResponseWriter, r *http.Request) {
 		endpoints.EnableCors(w)
 		switch r.Method {
 		case "GET":
@@ -105,10 +105,10 @@ func initializeRouter() {
 			w.WriteHeader(http.StatusNotFound)
 		}
 	})
-	r.HandleFunc("/api/set-cookies/{username}/", func(w http.ResponseWriter, r *http.Request) {
+	r.HandleFunc("/cookies/set/", func(w http.ResponseWriter, r *http.Request) {
 		endpoints.EnableCors(w)
 		switch r.Method {
-		case "POST":
+		case "GET":
 			endpoints.SetCookieHandler(w, r, db)
 		default:
 			w.WriteHeader(http.StatusNotFound)
