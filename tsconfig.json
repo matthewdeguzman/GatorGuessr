@@ -9,7 +9,6 @@
     "typeRoots": [
       "node_modules/@types",
   ],
-    "skipLibCheck": true,
     "strictPropertyInitialization": false,
     "types": ["cypress","node"],
     "baseUrl": "./",
