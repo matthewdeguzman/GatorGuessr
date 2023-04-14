@@ -1,7 +1,6 @@
 package endpoints
 
 import (
-	"encoding/json"
 	"errors"
 	"log"
 	"net/http"
@@ -16,13 +15,12 @@ func GetCookieHandler(w http.ResponseWriter, r *http.Request) {
 	// If no matching cookie is found, this will return a
 	// http.ErrNoCookie error. We check for this, and return a 400 Bad Request
 	// response to the client.
-	cookieName := ""
-	json.NewDecoder(r.Body).Decode(&cookieName)
-	cookie, err := r.Cookie(cookieName)
+
+	_, err := r.Cookie("")
 	if err != nil {
 		switch {
 		case errors.Is(err, http.ErrNoCookie):
-			http.Error(w, "cookie \""+cookieName+"\" not found", http.StatusBadRequest)
+			http.Error(w, "cookie not found", http.StatusBadRequest)
 		default:
 			log.Println(err)
 			http.Error(w, "server error", http.StatusInternalServerError)
@@ -30,7 +28,7 @@ func GetCookieHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Write([]byte(cookie.Value))
+	w.Write([]byte("cookie found"))
 }
 
 func SetCookieHandler(w http.ResponseWriter, r *http.Request, db *gorm.DB) {
