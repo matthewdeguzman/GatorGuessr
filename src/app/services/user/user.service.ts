@@ -46,6 +46,14 @@ export class UserService {
       .pipe(map((response) => response.status));
   }
 
+  //gets Cookie
+  setCookie() {
+    return this.http.get(`${this.uri}/cookies/set/`, {
+      observe: "response",
+      responseType: "text",
+    });
+  }
+
   // Gets a user
   getUser(username: string) {
     return this.http
@@ -65,9 +73,17 @@ export class UserService {
       })
       .pipe(map((response) => response.status));
   }
-}
 
-// Deletes the user
+  // Gets a user's score
+  getScore(username: string) {
+    return this.http
+      .get(`${this.uri}/api/users/${username}/`, {
+        observe: "response",
+        responseType: "text",
+      })
+      .pipe(map((response) => response.status));
+  }
+}
 
 /*
 import { Injectable } from "@angular/core";

@@ -41,6 +41,9 @@ export class LoginComponent {
     this.IssueService.validateUser(username, password).subscribe(
       (res) => {
         if (res == 200) {
+          this.IssueService.setCookie().subscribe((res) => {
+            localStorage.setItem("token", res.body as string);
+          });
           this.router.navigate(["/landing-page"]);
         }
       },

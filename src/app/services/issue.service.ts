@@ -24,6 +24,12 @@ export class IssueService {
   deleteUser(username: string) {
     return this.userService.deleteUser(username);
   }
+  setCookie() {
+    return this.userService.setCookie();
+  }
+  getScore(username: string) {
+    return this.userService.getScore(username);
+  }
 
   // Leaderboard methods
   getLeaderboard() {
