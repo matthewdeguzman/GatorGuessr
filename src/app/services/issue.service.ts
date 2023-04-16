@@ -1,6 +1,7 @@
 import { LeaderboardService } from "./leaderboard/leaderboard.service";
 import { Injectable } from "@angular/core";
 import { UserService } from "./user/user.service";
+import { CookiesService } from "./cookies/cookies.service";
 
 @Injectable({
   providedIn: "root",
@@ -8,7 +9,8 @@ import { UserService } from "./user/user.service";
 export class IssueService {
   constructor(
     private userService: UserService,
-    private LeaderboardService: LeaderboardService
+    private leaderboardService: LeaderboardService,
+    private cookiesService: CookiesService
   ) {}
 
   // User methods
@@ -24,15 +26,20 @@ export class IssueService {
   deleteUser(username: string) {
     return this.userService.deleteUser(username);
   }
-  setCookie() {
-    return this.userService.setCookie();
-  }
   getScore(username: string) {
     return this.userService.getScore(username);
   }
 
   // Leaderboard methods
   getLeaderboard() {
-    return this.LeaderboardService.getLeaderboard();
+    return this.leaderboardService.getLeaderboard();
+  }
+
+  // Cookie methods
+  setCookie(username: string) {
+    return this.cookiesService.getCookie(username);
+  }
+  verifyCookie() {
+    return this.cookiesService.validateCookie();
   }
 }

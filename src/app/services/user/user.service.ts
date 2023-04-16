@@ -46,14 +46,6 @@ export class UserService {
       .pipe(map((response) => response.status));
   }
 
-  //gets Cookie
-  setCookie() {
-    return this.http.get(`${this.uri}/cookies/set/`, {
-      observe: "response",
-      responseType: "text",
-    });
-  }
-
   // Gets a user
   getUser(username: string) {
     return this.http
