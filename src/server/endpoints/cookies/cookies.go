@@ -112,7 +112,7 @@ func SetCookieHandler(w http.ResponseWriter, r *http.Request, db *gorm.DB, secre
 		return
 	}
 
-	w.Write([]byte("Cookie created"))
+	//w.Write([]byte("Cookie created"))
 }
 
 func GetCookieHandler(w http.ResponseWriter, r *http.Request, secretKey []byte) {
