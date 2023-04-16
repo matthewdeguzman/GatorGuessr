@@ -21,6 +21,9 @@ export class IssueService {
   getUser(username: string) {
     return this.userService.getUser(username);
   }
+  deleteUser(username: string) {
+    return this.userService.deleteUser(username);
+  }
 
   // Leaderboard methods
   getLeaderboard() {
