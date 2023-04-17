@@ -32,8 +32,28 @@
       </span>
       -->
       <span class="right">
+        <a mat-button routerLink="/app">Sign Out</a>
+        <button
+          mat-icon-button
+          [matMenuTriggerFor]="userSettings"
+          id="settings-button"
+        >
+          <mat-icon>settings</mat-icon>
+        </button>
+        <mat-menu #userSettings="matMenu">
+          <button mat-menu-item>
+            <mat-icon>account_circle</mat-icon>
+            <span>Edit User</span>
+          </button>
+          <button color="warn" mat-menu-item>
+            <mat-icon>delete</mat-icon>
+            <span>Delete Account</span>
+          </button>
+        </mat-menu>
+        <!--
         <a mat-button routerLink="/register">Register</a>
         <a mat-button routerLink="/login">Login</a>
+        -->
       </span>
     </mat-toolbar-row>
   </mat-toolbar>
