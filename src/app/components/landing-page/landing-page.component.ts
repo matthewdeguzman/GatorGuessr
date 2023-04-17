@@ -92,6 +92,10 @@ export class LandingPageComponent {
           // },
         }
       );
+      var marker = new google.maps.Marker({
+        position: null,
+        map: navMap,
+      });
       google.maps.event.addListener(
         navMap,
         "click",
@@ -100,10 +104,8 @@ export class LandingPageComponent {
         }
       );
       function placeMarker(Location: google.maps.LatLng, Map: google.maps.Map) {
-        var marker = new google.maps.Marker({
-          position: Location,
-          map: navMap,
-        });
+        marker.setMap(navMap);
+        marker.setPosition(Location);
       }
     });
   }
