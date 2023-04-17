@@ -21,6 +21,9 @@ export class IssueService {
   getUser(username: string) {
     return this.userService.getUser(username);
   }
+  getUserScore(username: string) {
+    return this.userService.getUserScore(username);
+  }
 
   // Leaderboard methods
   getLeaderboard() {

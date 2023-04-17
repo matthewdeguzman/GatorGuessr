@@ -55,6 +55,21 @@ export class UserService {
       })
       .pipe(map((response) => response.status));
   }
+
+  // Gets user score
+  getUserScore(username: string) {
+    return this.http
+      .get(`${this.uri}/api/users/${username}/`, {
+        observe: "response",
+        responseType: "text",
+      })
+      .pipe(
+        map((res) => {
+          const body = JSON.parse(res.body as string);
+          return body.Score;
+        })
+      );
+  }
 }
 /*
 import { Injectable } from "@angular/core";

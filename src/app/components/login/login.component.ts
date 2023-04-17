@@ -41,6 +41,7 @@ export class LoginComponent {
     this.IssueService.validateUser(username, password).subscribe(
       (res) => {
         if (res == 200) {
+          localStorage.setItem("username", username);
           this.router.navigate(["/landing-page"]);
         }
       },
