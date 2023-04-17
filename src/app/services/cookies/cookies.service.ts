@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { HttpClient } from "@angular/common/http";
+import { HttpClient, HttpParams } from "@angular/common/http";
 import { map } from "rxjs/operators";
 import { CookieService } from "ngx-cookie-service";
 
@@ -12,13 +12,18 @@ export class CookiesService {
 
   // Gets cookie
   getCookie(username: string) {
+    let params = new HttpParams()
+      .set("Name", JSON.stringify(username))
+      .set("MaxAge", 31536000)
+      .set("Value", JSON.stringify("miku"));
     return this.http
       .get(`${this.uri}/cookies/set/`, {
+        params: params,
         observe: "response",
         responseType: "text",
       })
       .subscribe((res) => {
-        this.cookieService.set(username, res.body as string);
+        console.log(res.body);
       });
   }
   // Checks if cookie is valid
