@@ -12,6 +12,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/gorilla/mux"
 	"gorm.io/gorm"
 )
 
@@ -31,7 +32,6 @@ func writeCookie(w http.ResponseWriter, cookie http.Cookie) error {
 	}
 
 	http.SetCookie(w, &cookie)
-	w.Write([]byte(cookie.Value))
 	return nil
 }
 
@@ -120,9 +120,8 @@ func GetCookieHandler(w http.ResponseWriter, r *http.Request, secretKey []byte) 
 	// If no matching cookie is found, this will return a
 	// http.ErrNoCookie error.
 
-	var cookie http.Cookie
-	json.NewDecoder(r.Body).Decode(&cookie)
-	value, err := ReadSignedCookie(r, cookie.Name, secretKey)
+	params := mux.Vars(r)
+	_, err := ReadSignedCookie(r, params["cookie-name"], secretKey)
 	if err != nil {
 		switch {
 		case errors.Is(err, http.ErrNoCookie):
@@ -136,5 +135,5 @@ func GetCookieHandler(w http.ResponseWriter, r *http.Request, secretKey []byte) 
 		return
 	}
 
-	w.Write([]byte(value))
+	w.Write([]byte("Cookie verified"))
 }
