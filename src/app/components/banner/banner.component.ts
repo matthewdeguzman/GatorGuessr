@@ -2,6 +2,7 @@ import { AppComponent } from "./../../app.component";
 import { Component, HostBinding, OnInit } from "@angular/core";
 import { IssueService } from "src/app/services/issue.service";
 import { MatDialog, MatDialogConfig } from "@angular/material/dialog";
+import { AccountComponent } from "../account/account.component";
 
 @Component({
   selector: "app-banner",
@@ -31,6 +32,8 @@ export class BannerComponent implements OnInit {
     const dialogConfig = new MatDialogConfig();
     dialogConfig.disableClose = true;
     dialogConfig.autoFocus = true;
+
+    this.dialog.open(AccountComponent, dialogConfig);
   }
 
   // Login methods
