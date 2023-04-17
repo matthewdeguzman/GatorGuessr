@@ -7,7 +7,6 @@ import (
 	"crypto/hmac"
 	"crypto/sha256"
 	"encoding/base64"
-	"encoding/json"
 	"errors"
 	"log"
 	"net/http"
@@ -103,9 +102,9 @@ func ReadSignedCookie(r *http.Request, name string, secretKey []byte) (string, e
 
 func SetCookieHandler(w http.ResponseWriter, r *http.Request, db *gorm.DB, secretKey []byte) {
 	// Initialize a new cookie where the name is based on the user ID
-	var cookie http.Cookie
-	json.NewDecoder(r.Body).Decode(&cookie)
-	err := WriteSignedCookie(w, cookie, secretKey)
+	params := mux.Vars(r)
+	cookie, err := r.Cookie(params["cookie-name"])
+	err = WriteSignedCookie(w, *cookie, secretKey)
 	if err != nil {
 		log.Println(err)
 		http.Error(w, "server error", http.StatusInternalServerError)
