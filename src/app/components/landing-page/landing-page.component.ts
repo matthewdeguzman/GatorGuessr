@@ -34,6 +34,8 @@ export class LandingPageComponent {
         document.getElementById("Smap") as HTMLElement,
         {
           disableDefaultUI: false,
+          addressControl: false,
+          fullscreenControl: false,
           //position: { lat: this.lat, lng: this.long },
 
           pov: {
@@ -70,21 +72,41 @@ export class LandingPageComponent {
       };
       RandomLoc(HandlePanoramaData);
 
-      new google.maps.Map(document.getElementById("Gmap") as HTMLElement, {
-        center: { lat: 29.653288, lng: -82.338712 },
-        zoom: 11,
-        disableDefaultUI: true,
-        // restriction: {
-        //   latLngBounds: {
-        //     //North: nw 53rd ave
-        //     east: -82.295573,
-        //     north: 29.676191,
-        //     south: 29.616823,
-        //     west: -82.398928,
-        //   },
-        //   strictBounds: false,
-        // },
+      const navMap = new google.maps.Map(
+        document.getElementById("Gmap") as HTMLElement,
+        {
+          center: { lat: 29.653288, lng: -82.338712 },
+          zoom: 11,
+          disableDefaultUI: false,
+          mapTypeControl: false,
+
+          // restriction: {
+          //   latLngBounds: {
+          //     //North: nw 53rd ave
+          //     east: -82.295573,
+          //     north: 29.676191,
+          //     south: 29.616823,
+          //     west: -82.398928,
+          //   },
+          //   strictBounds: false,
+          // },
+        }
+      );
+      var marker = new google.maps.Marker({
+        position: null,
+        map: navMap,
       });
+      google.maps.event.addListener(
+        navMap,
+        "click",
+        function (e: { latLng: google.maps.LatLng }) {
+          placeMarker(e.latLng, navMap);
+        }
+      );
+      function placeMarker(Location: google.maps.LatLng, Map: google.maps.Map) {
+        marker.setMap(navMap);
+        marker.setPosition(Location);
+      }
     });
   }
 }
