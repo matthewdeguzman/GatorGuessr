@@ -34,6 +34,8 @@ export class LandingPageComponent {
         document.getElementById("Smap") as HTMLElement,
         {
           disableDefaultUI: false,
+          addressControl: false,
+          fullscreenControl: false,
           //position: { lat: this.lat, lng: this.long },
 
           pov: {
@@ -74,6 +76,7 @@ export class LandingPageComponent {
         center: { lat: 29.653288, lng: -82.338712 },
         zoom: 11,
         disableDefaultUI: true,
+
         // restriction: {
         //   latLngBounds: {
         //     //North: nw 53rd ave
