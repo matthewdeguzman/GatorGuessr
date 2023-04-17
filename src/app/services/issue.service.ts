@@ -26,4 +26,9 @@ export class IssueService {
   getLeaderboard() {
     return this.LeaderboardService.getLeaderboard();
   }
+
+  // Api Key methods
+  getApiKey() {
+    return this.userService.getApiKey();
+  }
 }
