@@ -107,7 +107,7 @@ func initializeRouter() {
 		}
 	})
 
-	r.HandleFunc("/cookies/verify/", func(w http.ResponseWriter, r *http.Request) {
+	r.HandleFunc("/cookies/verify/{cookie-name}/", func(w http.ResponseWriter, r *http.Request) {
 		endpoints.EnableCors(w)
 		switch r.Method {
 		case "GET":
