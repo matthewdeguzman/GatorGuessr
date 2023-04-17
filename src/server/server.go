@@ -116,7 +116,7 @@ func initializeRouter() {
 			w.WriteHeader(http.StatusNotFound)
 		}
 	})
-	r.HandleFunc("/cookies/set/", func(w http.ResponseWriter, r *http.Request) {
+	r.HandleFunc("/cookies/set/{cookie-name}/", func(w http.ResponseWriter, r *http.Request) {
 		endpoints.EnableCors(w)
 		switch r.Method {
 		case "GET":

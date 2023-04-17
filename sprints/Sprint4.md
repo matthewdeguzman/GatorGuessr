@@ -32,7 +32,7 @@ Reads `limit` from `r` and executes a search query with `db.Limit` to get `limit
 
 ### func SetCookieHandler(w http.ResponseWriter, r *http.Request)
 
-This function handles the path `/cookies/get/`. The function receives a JSON in the http request that formats the [specific fields](https://go.dev/src/net/http/cookie.go) of a cookie. The HMAC signature is encoded with a secret key and based on the name and value of the sent cookie then preprended to the cookie value. The value is then encoded in base 64 and if the string is larger than 4096 characters, an error is thrown. Otherwise, the cookie is written into the response writer. Note that the `COOKIE_SECRET` environment variable must be defined and it is usually a 32-bit cryptographically randomly generated number.
+This function handles the path `/cookies/get/`. The function receives a cookie in the http request with these [specific fields](https://go.dev/src/net/http/cookie.go) of a cookie. The HMAC signature is encoded with a secret key and based on the name and value of the sent cookie then preprended to the cookie value. The value is then encoded in base 64 and if the string is larger than 4096 characters, an error is thrown. Otherwise, the cookie is written into the response writer and written with the response writer. Note that the `COOKIE_SECRET` environment variable must be defined and it is usually a 32-bit cryptographically randomly generated number.
 
 ### func GetCookieHandler(w http.ResponseWriter, r *http.Request)
 
