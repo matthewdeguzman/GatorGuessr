@@ -62,13 +62,22 @@
 }
 
 .mapView {
-  background-color: bisque;
+  background-color: transparent;
   position: absolute; /* Update this line to position absolute */
   width: fit-content;
-  height: fit-content;
+  height: 40vh;
   bottom: 0; /* Update this line to align to the bottom */
   left: 0; /* Update this line to align to the left */
   z-index: 1;
+}
+
+.sub{
+  z-index: 2; /* Update z-index value to be higher than full class */
+  position: relative; /* Update position to absolute */
+
+  //bottom: calc(100% - 50px); /* Update bottom value to position the "sub" element above ".full" element */
+  //left: 10px; /* Update left value to position the "sub" element above ".full" element */
+
 }
 
 .streetView {
@@ -84,6 +93,7 @@
   width: 100vw;
   left: 0;
   height: 90vh;
+  //height: 90vh;
 }
 
 .grid-container {

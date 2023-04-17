@@ -16,6 +16,8 @@ export class LandingPageComponent {
   long = this.randomLong();
   invalidLoc: boolean = true;
 
+  submit() {}
+
   randomLat() {
     return Math.random() * (29.769872 - 29.602758) + 29.769872;
   }
@@ -36,6 +38,7 @@ export class LandingPageComponent {
           disableDefaultUI: false,
           addressControl: false,
           fullscreenControl: false,
+
           //position: { lat: this.lat, lng: this.long },
 
           pov: {
@@ -71,13 +74,14 @@ export class LandingPageComponent {
         }
       };
       RandomLoc(HandlePanoramaData);
+      if (pano.getVisible() == false) RandomLoc(HandlePanoramaData);
 
       const navMap = new google.maps.Map(
         document.getElementById("Gmap") as HTMLElement,
         {
           center: { lat: 29.653288, lng: -82.338712 },
           zoom: 11,
-          disableDefaultUI: false,
+          disableDefaultUI: true,
           mapTypeControl: false,
 
           // restriction: {
