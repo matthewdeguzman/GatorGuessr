@@ -16,6 +16,10 @@ export class LandingPageComponent {
   long = this.randomLong();
   invalidLoc: boolean = true;
   time = 60;
+  userLat: number = 0;
+  userLng: number = 0;
+  streetViewLat: number = 0;
+  streetViewLng: number = 0;
 
   randomLat() {
     return Math.random() * (29.769872 - 29.602758) + 29.769872;
@@ -23,9 +27,29 @@ export class LandingPageComponent {
   randomLong() {
     return Math.random() * (-82.263414 - -82.420207) + -82.263414;
   }
+  setStreetView(latLng: google.maps.LatLng) {
+    this.streetViewLat = latLng.lat();
+    this.streetViewLng = latLng.lng();
+  }
+  setUserLoc(latLng: google.maps.LatLng) {
+    this.userLat = latLng.lat();
+    this.userLng = latLng.lng();
+  }
 
   submit() {
     console.log("Submit button clicked");
+    const distance = Math.sqrt(
+      Math.pow(this.userLat - this.streetViewLat, 2) +
+        Math.pow(this.userLng - this.streetViewLng, 2)
+    );
+    const maxDistance = 0.04; // Maximum allowed distance for maximum points (adjust as needed)
+    const maxPoints = 1000; // Maximum points for a perfect guess
+    const minPoints = 0; // Minimum points for a guess beyond the maximum allowed distance
+    const score = Math.round(
+      Math.max(maxPoints - (distance / maxDistance) * maxPoints, minPoints)
+    );
+
+    console.log("Score: " + score);
   }
 
   countDown() {
@@ -65,20 +89,21 @@ export class LandingPageComponent {
           },
         }
       );
-      function RandomLoc(
+      const RandomLoc = (
         callback:
           | ((
               a: google.maps.StreetViewPanoramaData | null,
               b: google.maps.StreetViewStatus
             ) => void)
           | undefined
-      ) {
+      ) => {
         var lat = Math.random() * (29.676191 - 29.616823) + 29.616823;
         var long = Math.random() * (-82.295573 - -82.398928) + -82.398928;
         var cr = new google.maps.LatLng(lat, long);
+        this.setStreetView(cr);
         var sStatus = new google.maps.StreetViewService();
         sStatus.getPanorama({ location: cr, radius: 10 }, callback);
-      }
+      };
       const HandlePanoramaData = (data: any, status: string) => {
         if (status === "OK") {
           console.log("valid panorama");
@@ -125,10 +150,14 @@ export class LandingPageComponent {
           placeMarker(e.latLng, navMap);
         }
       );
-      function placeMarker(Location: google.maps.LatLng, Map: google.maps.Map) {
+      const placeMarker = (
+        Location: google.maps.LatLng,
+        Map: google.maps.Map
+      ) => {
         marker.setMap(navMap);
         marker.setPosition(Location);
-      }
+        this.setUserLoc(Location);
+      };
     });
   }
 }
