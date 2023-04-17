@@ -1,6 +1,6 @@
 # Sprint 4
 
-# Documentation
+## Documentation
 
 ### func GetUsers(w http.ResponseWriter, r *http.Request)
 
@@ -32,8 +32,8 @@ Reads `limit` from `r` and executes a search query with `db.Limit` to get `limit
 
 ### func SetCookieHandler(w http.ResponseWriter, r *http.Request)
 
-The function receives a JSON in the http request that formats the specific fields of a cookie. The HMAC signature is encoded with the secret key and based on the name and value of the cookie and preprended to the value of the cookie. The value is then encoded in base 64 and if the string is larger than 4096 characters, an error is thrown. Otherwise, the cookie is written into the response writer. Note that the name must be properly formatted, so there should not be spaces in the name.
+This function handles the path `/cookies/get/`. The function receives a cookie in the http request with these [specific fields](https://go.dev/src/net/http/cookie.go) of a cookie. The HMAC signature is encoded with a secret key and based on the name and value of the sent cookie then preprended to the cookie value. The value is then encoded in base 64 and if the string is larger than 4096 characters, an error is thrown. Otherwise, the cookie is written into the response writer and written with the response writer. Note that the `COOKIE_SECRET` environment variable must be defined and it is usually a 32-bit cryptographically randomly generated number.
 
 ### func GetCookieHandler(w http.ResponseWriter, r *http.Request)
 
-The function receives a cookie in the http request then verifies whether the cookie is valid. If there is no cookie with the given name, a bad request is returned. The name and value of the cookie are base 64 encoded, so they are decoded first. Then, the cookie is verified if the HMAC signature generated with the secret key, cookie name, and cookie value match the expected HMAC signature of the same values. If the signatures do not match, the cookie is not valid and a bad request is returned.
+This function handles the path `/cookies/set/{cookie-name}/`. The function receives a cookie in the http request and the name of the cookie as the `cookie-name` routing variable then verifies whether the cookie is valid. If there is no cookie with the given name, a bad request is returned. The name and value of the cookie are base 64 encoded, so they are decoded first. Then, the cookie is verified if the HMAC signature generated with the secret key, cookie name, and cookie value match the expected HMAC signature of the same values. If the signatures do not match, the cookie is not valid and a bad request is returned. Note that the `COOKIE_SECRET` environment variable must be defined and it is usually a 32-bit cryptographically randomly generated number.
