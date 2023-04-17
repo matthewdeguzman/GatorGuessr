@@ -3,6 +3,7 @@ import { Loader } from "@googlemaps/js-api-loader";
 import { Component } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { Observable } from "rxjs";
+import { IssueService } from "src/app/services/issue.service";
 
 @Component({
   selector: "app-landing-page",
@@ -64,7 +65,12 @@ export class LandingPageComponent {
     }
   }
 
+  constructor(private IssueService: IssueService) {}
+
   ngOnInit(): void {
+    this.IssueService.getApiKey().subscribe((res) => {
+      this.string = res.body as string;
+    });
     let loader = new Loader({
       apiKey: this.string,
       version: "weekly",

@@ -58,12 +58,10 @@ export class UserService {
 
   // Gets api key
   getApiKey() {
-    return this.http
-      .get(`${this.uri}/apikey/get/`, {
-        observe: "response",
-        responseType: "text",
-      })
-      .pipe(map((response) => response.status));
+    return this.http.get(`${this.uri}/apikey/get/`, {
+      observe: "response",
+      responseType: "text",
+    });
   }
 }
 /*
