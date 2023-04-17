@@ -42,7 +42,6 @@ export class LoginComponent {
       (res) => {
         if (res == 200) {
           this.IssueService.setCookie(username);
-          this.IssueService.verifyCookie();
           this.router.navigate(["/landing-page"]);
         }
       },

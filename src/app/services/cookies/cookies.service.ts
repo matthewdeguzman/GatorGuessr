@@ -12,13 +12,8 @@ export class CookiesService {
 
   // Gets cookie
   getCookie(username: string) {
-    let params = new HttpParams()
-      .set("Name", JSON.stringify(username))
-      .set("MaxAge", 31536000)
-      .set("Value", JSON.stringify("miku"));
     return this.http
-      .get(`${this.uri}/cookies/set/`, {
-        params: params,
+      .get(`${this.uri}/cookies/set/${username}/`, {
         observe: "response",
         responseType: "text",
       })
@@ -29,7 +24,7 @@ export class CookiesService {
   // Checks if cookie is valid
   validateCookie() {
     return this.http
-      .get(`${this.uri}/cookies/verify/`, {
+      .get(`${this.uri}/cookies/get/`, {
         observe: "response",
         responseType: "text",
       })
