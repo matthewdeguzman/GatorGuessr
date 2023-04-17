@@ -1,6 +1,7 @@
 import { AppComponent } from "./../../app.component";
 import { Component, HostBinding, OnInit } from "@angular/core";
 import { IssueService } from "src/app/services/issue.service";
+import { MatDialog, MatDialogConfig } from "@angular/material/dialog";
 
 @Component({
   selector: "app-banner",
@@ -15,7 +16,8 @@ export class BannerComponent implements OnInit {
 
   constructor(
     private AppComponent: AppComponent,
-    private IssueService: IssueService
+    private IssueService: IssueService,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit() {
@@ -24,10 +26,14 @@ export class BannerComponent implements OnInit {
       this.selectedTheme === "light_mode" ? "lightMode" : "darkMode";
     this.updateBanner();
   }
-  getTheme() {
-    return this.selectedValue;
+
+  openDialog() {
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.disableClose = true;
+    dialogConfig.autoFocus = true;
   }
 
+  // Login methods
   updateBanner() {
     this.username = localStorage.getItem("username") || "Guest";
     if (this.username !== "null") {
@@ -35,6 +41,11 @@ export class BannerComponent implements OnInit {
         this.score = data;
       });
     }
+  }
+
+  // Theme methods
+  getTheme() {
+    return this.selectedValue;
   }
 
   toggleTheme() {
