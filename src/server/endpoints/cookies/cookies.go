@@ -104,6 +104,10 @@ func SetCookieHandler(w http.ResponseWriter, r *http.Request, db *gorm.DB, secre
 	// Initialize a new cookie where the name is based on the user ID
 	params := mux.Vars(r)
 	cookie, err := r.Cookie(params["cookie-name"])
+	if cookie == nil || err != nil {
+		http.Error(w, "Error retrieving cookie", http.StatusBadRequest)
+		return
+	}
 	err = WriteSignedCookie(w, *cookie, secretKey)
 	if err != nil {
 		log.Println(err)

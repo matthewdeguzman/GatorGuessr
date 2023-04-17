@@ -46,7 +46,7 @@ func initializeMigration() {
 
 func initializeRouter() {
 	// get secret key
-	secretKey, err := hex.DecodeString(os.Getenv("COOKIE_SECRET"))
+	secretKey, err = hex.DecodeString(os.Getenv("COOKIE_SECRET"))
 	if err != nil {
 		log.Fatal(err)
 	}
