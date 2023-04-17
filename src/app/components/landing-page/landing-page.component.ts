@@ -15,8 +15,7 @@ export class LandingPageComponent {
   lat = this.randomLat();
   long = this.randomLong();
   invalidLoc: boolean = true;
-
-  submit() {}
+  time = 60;
 
   randomLat() {
     return Math.random() * (29.769872 - 29.602758) + 29.769872;
@@ -25,11 +24,30 @@ export class LandingPageComponent {
     return Math.random() * (-82.263414 - -82.420207) + -82.263414;
   }
 
+  submit() {
+    console.log("Submit button clicked");
+  }
+
+  countDown() {
+    this.time--; // decrements by one second
+    if (this.time > 0) {
+      setTimeout(() => {
+        this.countDown();
+      }, 1000); //decrement one second
+    } else {
+      // If remaining time reaches 0, call the submit function
+      this.submit();
+    }
+  }
+
   ngOnInit(): void {
     let loader = new Loader({
       apiKey: this.string,
       version: "weekly",
     });
+    setTimeout(() => {
+      this.countDown();
+    }, 1000); //decrements by 1000ms
 
     loader.load().then(() => {
       const pano = new google.maps.StreetViewPanorama(
