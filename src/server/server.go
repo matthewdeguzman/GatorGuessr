@@ -45,6 +45,7 @@ func initializeMigration() {
 }
 
 func initializeRouter() {
+	var API_KEY = os.Getenv("GOOGLE_API_KEY")
 	// get secret key
 	secretKey, err = hex.DecodeString(os.Getenv("COOKIE_SECRET"))
 	if err != nil {
@@ -102,6 +103,16 @@ func initializeRouter() {
 			api.GetTopUsers(w, r, db)
 		case "OPTIONS":
 			w.WriteHeader(http.StatusNotFound)
+		default:
+			w.WriteHeader(http.StatusNotFound)
+		}
+	})
+
+	r.HandleFunc("/apikey/get/", func(w http.ResponseWriter, r *http.Request) {
+		endpoints.EnableCors(w)
+		switch r.Method {
+		case "GET":
+			api.GetAPIKey(w, r, API_KEY)
 		default:
 			w.WriteHeader(http.StatusNotFound)
 		}
