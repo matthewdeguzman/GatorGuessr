@@ -64,15 +64,20 @@ export class LandingPageComponent {
       this.submit();
     }
   }
+  async someFunction() {
+    await new Promise((resolve) => setTimeout(resolve, 100));
+  }
 
   constructor(private IssueService: IssueService) {}
 
-  ngOnInit(): void {
+  async ngOnInit() {
     this.IssueService.getApiKey().subscribe((res) => {
       this.string = res.body as string;
-      this.string = this.string.substring(1, this.string.length - 2);
-      console.log(this.string);
     });
+    await this.someFunction();
+    this.string = this.string.substring(1, this.string.length - 2);
+    console.log(this.string);
+
     let loader = new Loader({
       apiKey: this.string,
       version: "weekly",
