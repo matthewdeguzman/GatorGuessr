@@ -13,8 +13,6 @@ import { IssueService } from "src/app/services/issue.service";
 export class LandingPageComponent {
   title = "GatorMap";
   string = "";
-  // lat = this.randomLat();
-  // long = this.randomLong();
   invalidLoc: boolean = true;
   time = 60;
   userLat: number = 0;
@@ -23,12 +21,6 @@ export class LandingPageComponent {
   streetViewLng: number = 0;
   navMap: any;
 
-  // randomLat() {
-  //   return Math.random() * (29.769872 - 29.602758) + 29.769872;
-  // }
-  // randomLong() {
-  //   return Math.random() * (-82.263414 - -82.420207) + -82.263414;
-  // }
   setStreetView(latLng: google.maps.LatLng) {
     this.streetViewLat = latLng.lat();
     this.streetViewLng = latLng.lng();
@@ -37,7 +29,6 @@ export class LandingPageComponent {
     this.userLat = latLng.lat();
     this.userLng = latLng.lng();
   }
-  showMapDiff() {}
 
   submit() {
     console.log("Submit button clicked");
@@ -55,7 +46,18 @@ export class LandingPageComponent {
     var orginalLocation = new google.maps.Marker({
       position: { lat: this.streetViewLat, lng: this.streetViewLng },
       map: this.navMap,
+      icon: "http://maps.google.com/mapfiles/kml/paddle/purple-stars.png",
     });
+    const lineDistance = new google.maps.Polyline({
+      path: [
+        { lat: this.userLat, lng: this.userLng },
+        { lat: this.streetViewLat, lng: this.streetViewLng },
+      ],
+      strokeColor: "#FF5733",
+      strokeOpacity: 1.0,
+      strokeWeight: 4,
+    });
+    lineDistance.setMap(this.navMap);
   }
 
   countDown() {
@@ -121,7 +123,14 @@ export class LandingPageComponent {
         var cr = new google.maps.LatLng(lat, long);
         this.setStreetView(cr);
         var sStatus = new google.maps.StreetViewService();
-        sStatus.getPanorama({ location: cr, radius: 10 }, callback);
+        sStatus.getPanorama(
+          {
+            location: cr,
+            radius: 15,
+            source: google.maps.StreetViewSource.OUTDOOR,
+          },
+          callback
+        );
       };
       const HandlePanoramaData = (data: any, status: string) => {
         if (status === "OK") {
