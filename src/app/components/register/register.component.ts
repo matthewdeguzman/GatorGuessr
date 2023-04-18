@@ -1,3 +1,4 @@
+import { CookieService } from "ngx-cookie-service";
 import { Router } from "@angular/router";
 import { Component, OnInit, Input, Output, EventEmitter } from "@angular/core";
 import { FormGroup, FormControl, Validators } from "@angular/forms";
@@ -26,7 +27,11 @@ export class RegisterComponent {
       "^(?=[^A-Z]*[A-Z])(?=[^a-z]*[a-z])(?=\\D*\\d)[A-Za-z\\d!$%@#£€*?&]{8,}$"
     ),
   ]);
-  constructor(private IssueService: IssueService, private router: Router) {}
+  constructor(
+    private IssueService: IssueService,
+    private router: Router,
+    private CookieService: CookieService
+  ) {}
   // @Input() error: string | null;
   @Output() submitEM = new EventEmitter();
 
@@ -46,18 +51,23 @@ export class RegisterComponent {
   submitRegistration(username: string, password: string) {
     this.IssueService.getUser(username).subscribe(
       (res) => {
-        if (res == 200) {
-          this.invalidUser = true;
-        } else {
-          console.log("Something weird happened");
-        }
+        console.log("Hatsune Miku");
       },
       (error) => {
         if (error.status == 404) {
           this.IssueService.createUser(username, password).subscribe((res) => {
+            this.CookieService.set(
+              "UserLoginCookie",
+              res.body as string,
+              69420,
+              "/miku"
+            );
             this.invalidUser = false;
             this.router.navigate(["/login"]);
           });
+        }
+        if (error.status == 400) {
+          this.invalidUser = true;
         }
       }
     );
