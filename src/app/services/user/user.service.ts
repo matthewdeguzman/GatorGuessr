@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { HttpClient } from "@angular/common/http";
+import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { map } from "rxjs/operators";
 import { CookieService } from "ngx-cookie-service";
 
@@ -14,7 +14,7 @@ export type User = {
 })
 export class UserService {
   private uri = "http://localhost:9000";
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private CookieService: CookieService) {}
 
   // Builds a user
   buildUser(username: string, password: string): User {
@@ -44,7 +44,7 @@ export class UserService {
         observe: "response",
         responseType: "text",
       })
-      .pipe(map((response) => response.status));
+      .pipe(map((response) => response));
   }
 
   // Gets a user
@@ -59,8 +59,13 @@ export class UserService {
 
   // Gets api key
   getApiKey() {
+    const headers = new HttpHeaders().set(
+      "UserLoginCookie",
+      this.CookieService.get("UserLoginCookie")
+    );
     return this.http
       .get(`${this.uri}/apikey/get/`, {
+        headers: headers,
         observe: "response",
         responseType: "text",
       })
@@ -69,8 +74,13 @@ export class UserService {
 
   // Deletes a user
   deleteUser(username: string) {
+    const headers = new HttpHeaders().set(
+      "UserLoginCookie",
+      this.CookieService.get("UserLoginCookie")
+    );
     return this.http
       .delete(`${this.uri}/api/users/${username}/`, {
+        headers: headers,
         observe: "response",
         responseType: "text",
       })
@@ -79,8 +89,13 @@ export class UserService {
 
   // Gets a user's score
   getScore(username: string) {
+    const headers = new HttpHeaders().set(
+      "UserLoginCookie",
+      this.CookieService.get("UserLoginCookie")
+    );
     return this.http
       .get(`${this.uri}/api/users/${username}/`, {
+        headers: headers,
         observe: "response",
         responseType: "text",
       })
