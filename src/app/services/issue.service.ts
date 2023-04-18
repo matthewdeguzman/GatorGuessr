@@ -1,6 +1,8 @@
 import { LeaderboardService } from "./leaderboard/leaderboard.service";
 import { Injectable } from "@angular/core";
 import { UserService } from "./user/user.service";
+import { HttpResponse } from "@angular/common/http";
+import { Observable } from "rxjs";
 import { CookiesService } from "./cookies/cookies.service";
 
 @Injectable({

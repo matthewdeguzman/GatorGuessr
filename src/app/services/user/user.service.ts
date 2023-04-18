@@ -63,7 +63,7 @@ export class UserService {
         observe: "response",
         responseType: "text",
       })
-      .pipe(map((response) => response.status));
+      .pipe(map((response) => response));
   }
 
   // Deletes a user
