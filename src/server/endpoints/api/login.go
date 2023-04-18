@@ -12,19 +12,9 @@ import (
 	"gorm.io/gorm"
 )
 
-func GetUsers(w http.ResponseWriter, r *http.Request, db *gorm.DB) {
-	helpers.SetHeader(w)
-	var users []u.User
-	db.Find(&users)
-	json.NewEncoder(w).Encode(users)
-}
-
-func GetUser(w http.ResponseWriter, r *http.Request, db *gorm.DB) {
-	helpers.SetHeader(w)
-
-	params := mux.Vars(r)
+func GetUserWithUsername(w http.ResponseWriter, r *http.Request, username string, db *.gorb.DB) {
 	var user u.User
-	helpers.FetchUser(db, &user, params["username"])
+	helpers.FetchUser(db, &user, username)
 
 	if user.Username == "" {
 		helpers.UserDNErr(w)
@@ -36,6 +26,20 @@ func GetUser(w http.ResponseWriter, r *http.Request, db *gorm.DB) {
 		return
 	}
 	helpers.EncodeUser(user, w)
+}
+
+func GetUsers(w http.ResponseWriter, r *http.Request, db *gorm.DB) {
+	helpers.SetHeader(w)
+	var users []u.User
+	db.Find(&users)
+	json.NewEncoder(w).Encode(users)
+}
+
+func GetUser(w http.ResponseWriter, r *http.Request, db *gorm.DB) {
+	helpers.SetHeader(w)
+
+	params := mux.Vars(r)
+	GetUserWithUsername(w, r, params["username"], db)
 }
 
 func CreateUser(w http.ResponseWriter, r *http.Request, db *gorm.DB) {

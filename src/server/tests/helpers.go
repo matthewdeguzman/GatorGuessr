@@ -17,7 +17,7 @@ import (
 
 func testInitMigration(t *testing.T) (db *gorm.DB) {
 	const DB_USERNAME = "cen3031"
-	const DB_NAME = "user_database"
+	const DB_NAME = "test_database"
 	const DB_HOST = "cen3031-server.mysql.database.azure.com"
 	const DB_PORT = "3306"
 
@@ -61,18 +61,9 @@ func mockGetUsers(w http.ResponseWriter, r *http.Request, t *testing.T) {
 	api.GetUsers(w, r, db)
 }
 
-func mockGetUser(w http.ResponseWriter, r *http.Request, username string, t *testing.T) {
+func mockGetUser(w http.ResponseWriter, r *http.Request, t *testing.T) {
 	db := testInitMigration(t)
-
-	endpoints.SetHeader(w)
-
-	var user u.User
-	endpoints.FetchUser(db, &user, username)
-
-	if user.Username == "" {
-		endpoints.WriteErr(w, http.StatusNotFound, "")
-	}
-	endpoints.EncodeUser(user, w)
+	api.GetUser(w, r, db)
 }
 
 func mockCreateUser(w http.ResponseWriter, r *http.Request, user u.User, db *gorm.DB, t *testing.T) {
