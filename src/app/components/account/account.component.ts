@@ -29,7 +29,8 @@ export class AccountComponent {
   closeDialog() {
     this.dialogRef.close();
   }
-  changePassword(newUsername: string, newPassword: string) {
-    // TODO: Implement logic to change password/username
+  updateUser(newUsername: string, newPassword: string) {
+    this.IssueService.updateUser(newUsername, newPassword);
+    this.closeDialog();
   }
 }

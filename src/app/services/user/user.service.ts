@@ -80,6 +80,12 @@ export class UserService {
       })
       .pipe(map((response) => response.status));
   }
+
+  // Updates a user
+
+  updateUser(username: string, password: string) {
+    //TODO: Update user
+  }
 }
 /*
 import { Injectable } from "@angular/core";
