@@ -10,9 +10,10 @@ import (
 	"errors"
 	"log"
 	"net/http"
+	"os"
+	"strconv"
 
-	"github.com/gorilla/mux"
-	"gorm.io/gorm"
+	u "github.com/matthewdeguzman/GatorGuessr/src/server/structs"
 )
 
 var (
@@ -31,6 +32,7 @@ func writeCookie(w http.ResponseWriter, cookie http.Cookie) error {
 	}
 
 	http.SetCookie(w, &cookie)
+	w.Write([]byte(cookie.Value))
 	return nil
 }
 
@@ -100,31 +102,28 @@ func ReadSignedCookie(r *http.Request, name string, secretKey []byte) (string, e
 	return value, nil
 }
 
-func SetCookieHandler(w http.ResponseWriter, r *http.Request, db *gorm.DB, secretKey []byte) {
+func SetCookieHandler(w http.ResponseWriter, r *http.Request, user u.User) {
 	// Initialize a new cookie where the name is based on the user ID
-	params := mux.Vars(r)
-	cookie, err := r.Cookie(params["cookie-name"])
-	if cookie == nil || err != nil {
-		http.Error(w, "Error retrieving cookie", http.StatusBadRequest)
-		return
+
+	cookie := http.Cookie{
+		Name:  "UserLoginCookie",
+		Value: "UserLogin" + strconv.FormatUint(uint64(user.ID), 10),
 	}
-	err = WriteSignedCookie(w, *cookie, secretKey)
+	secretKey := []byte(os.Getenv("COOKIE_SECRET"))
+	err := WriteSignedCookie(w, cookie, secretKey)
 	if err != nil {
 		log.Println(err)
 		http.Error(w, "server error", http.StatusInternalServerError)
 		return
 	}
-
-	w.Write([]byte("Cookie created"))
 }
 
-func GetCookieHandler(w http.ResponseWriter, r *http.Request, secretKey []byte) {
+func GetCookieHandler(w http.ResponseWriter, r *http.Request, cookieName string, secretKey []byte) error {
 	// Retrieve the cookie from the request using its name.
 	// If no matching cookie is found, this will return a
 	// http.ErrNoCookie error.
 
-	params := mux.Vars(r)
-	_, err := ReadSignedCookie(r, params["cookie-name"], secretKey)
+	_, err := ReadSignedCookie(r, cookieName, secretKey)
 	if err != nil {
 		switch {
 		case errors.Is(err, http.ErrNoCookie):
@@ -135,8 +134,8 @@ func GetCookieHandler(w http.ResponseWriter, r *http.Request, secretKey []byte) 
 			log.Println(err)
 			http.Error(w, "server error", http.StatusInternalServerError)
 		}
-		return
+		return err
 	}
 
-	w.Write([]byte("Cookie verified"))
+	return nil
 }

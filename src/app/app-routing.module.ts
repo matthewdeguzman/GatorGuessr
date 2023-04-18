@@ -5,7 +5,6 @@ import { NgModule } from "@angular/core";
 import { RouterModule, Routes } from "@angular/router";
 import { RegisterComponent } from "./components/register/register.component";
 import { HomeComponent } from "./components/home/home.component";
-import { AuthGuard } from "./guards/auth/auth.guard";
 
 const routes: Routes = [
   { path: "home", title: "Home", component: HomeComponent },
