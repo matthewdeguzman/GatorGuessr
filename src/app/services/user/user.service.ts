@@ -1,6 +1,7 @@
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { map } from "rxjs/operators";
+import { CookieService } from "ngx-cookie-service";
 
 export type User = {
   Username: string;
@@ -32,7 +33,7 @@ export class UserService {
         observe: "response",
         responseType: "text",
       })
-      .pipe(map((response) => response.status));
+      .pipe(map((response) => response));
   }
 
   // Creates a user

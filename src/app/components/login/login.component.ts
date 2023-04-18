@@ -2,6 +2,7 @@ import { IssueService } from "../../services/issue.service";
 import { Component, OnInit, Input, Output, EventEmitter } from "@angular/core";
 import { FormGroup, FormControl, Validators } from "@angular/forms";
 import { Router } from "@angular/router";
+import { CookieService } from "ngx-cookie-service";
 
 @Component({
   selector: "app-login",
@@ -14,7 +15,11 @@ export class LoginComponent {
     password: new FormControl(""),
   });
 
-  constructor(private IssueService: IssueService, private router: Router) {}
+  constructor(
+    private IssueService: IssueService,
+    private router: Router,
+    private CookieService: CookieService
+  ) {}
 
   // @Input() error: string | null;
   @Output() submitEM = new EventEmitter();
@@ -40,8 +45,13 @@ export class LoginComponent {
   submitLogin(username: string, password: string) {
     this.IssueService.validateUser(username, password).subscribe(
       (res) => {
-        if (res == 200) {
-          this.IssueService.setCookie(username);
+        if (res.status == 200) {
+          this.CookieService.set(
+            "UserLoginCookie",
+            res.body as string,
+            69420,
+            "/miku"
+          );
           this.router.navigate(["/landing-page"]);
         }
       },
