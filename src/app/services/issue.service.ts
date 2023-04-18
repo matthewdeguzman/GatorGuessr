@@ -42,4 +42,9 @@ export class IssueService {
   verifyCookie() {
     return this.cookiesService.validateCookie();
   }
+
+  // Api Key methods
+  getApiKey() {
+    return this.userService.getApiKey();
+  }
 }

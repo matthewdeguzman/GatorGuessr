@@ -10,6 +10,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/matthewdeguzman/GatorGuessr/src/server/endpoints"
 	"github.com/matthewdeguzman/GatorGuessr/src/server/endpoints/api"
+	"github.com/matthewdeguzman/GatorGuessr/src/server/endpoints/cookies"
 	db_user "github.com/matthewdeguzman/GatorGuessr/src/server/structs"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -44,6 +45,7 @@ func initializeMigration() {
 }
 
 func initializeRouter() {
+	var API_KEY = os.Getenv("GOOGLE_API_KEY")
 	// get secret key
 	secretKey, err = hex.DecodeString(os.Getenv("COOKIE_SECRET"))
 	if err != nil {
@@ -101,6 +103,35 @@ func initializeRouter() {
 			api.GetTopUsers(w, r, db)
 		case "OPTIONS":
 			w.WriteHeader(http.StatusNotFound)
+		default:
+			w.WriteHeader(http.StatusNotFound)
+		}
+	})
+
+	r.HandleFunc("/apikey/get/", func(w http.ResponseWriter, r *http.Request) {
+		endpoints.EnableCors(w)
+		switch r.Method {
+		case "GET":
+			api.GetAPIKey(w, r, API_KEY)
+		default:
+			w.WriteHeader(http.StatusNotFound)
+		}
+	})
+
+	r.HandleFunc("/cookies/verify/{cookie-name}/", func(w http.ResponseWriter, r *http.Request) {
+		endpoints.EnableCors(w)
+		switch r.Method {
+		case "GET":
+			cookies.GetCookieHandler(w, r, secretKey)
+		default:
+			w.WriteHeader(http.StatusNotFound)
+		}
+	})
+	r.HandleFunc("/cookies/set/{cookie-name}/", func(w http.ResponseWriter, r *http.Request) {
+		endpoints.EnableCors(w)
+		switch r.Method {
+		case "GET":
+			cookies.SetCookieHandler(w, r, db, secretKey)
 		default:
 			w.WriteHeader(http.StatusNotFound)
 		}
