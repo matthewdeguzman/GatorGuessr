@@ -12,7 +12,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func GetUserWithUsername(w http.ResponseWriter, r *http.Request, username string, db *.gorb.DB) {
+func GetUserWithUsername(w http.ResponseWriter, r *http.Request, username string, db *gorm.DB) {
 	var user u.User
 	helpers.FetchUser(db, &user, username)
 
@@ -28,26 +28,7 @@ func GetUserWithUsername(w http.ResponseWriter, r *http.Request, username string
 	helpers.EncodeUser(user, w)
 }
 
-func GetUsers(w http.ResponseWriter, r *http.Request, db *gorm.DB) {
-	helpers.SetHeader(w)
-	var users []u.User
-	db.Find(&users)
-	json.NewEncoder(w).Encode(users)
-}
-
-func GetUser(w http.ResponseWriter, r *http.Request, db *gorm.DB) {
-	helpers.SetHeader(w)
-
-	params := mux.Vars(r)
-	GetUserWithUsername(w, r, params["username"], db)
-}
-
-func CreateUser(w http.ResponseWriter, r *http.Request, db *gorm.DB) {
-	helpers.SetHeader(w)
-
-	var user u.User
-	helpers.DecodeUser(&user, r)
-
+func CreateUserFromUser(w http.ResponseWriter, r *http.Request, user u.User, db *gorm.db) {
 	if helpers.UserExists(db, user.Username) {
 		helpers.WriteErr(w, http.StatusBadRequest, "400 - User already exists")
 		return
@@ -71,6 +52,28 @@ func CreateUser(w http.ResponseWriter, r *http.Request, db *gorm.DB) {
 
 	// create cookie
 	cookies.SetCookieHandler(w, r, user)
+}
+func GetUsers(w http.ResponseWriter, r *http.Request, db *gorm.DB) {
+	helpers.SetHeader(w)
+	var users []u.User
+	db.Find(&users)
+	json.NewEncoder(w).Encode(users)
+}
+
+func GetUser(w http.ResponseWriter, r *http.Request, db *gorm.DB) {
+	helpers.SetHeader(w)
+
+	params := mux.Vars(r)
+	GetUserWithUsername(w, r, params["username"], db)
+}
+
+func CreateUser(w http.ResponseWriter, r *http.Request, db *gorm.DB) {
+	helpers.SetHeader(w)
+
+	var user u.User
+	helpers.DecodeUser(&user, r)
+
+	CreateUserFromUser(w, r, user, db)
 }
 
 func UpdateUser(w http.ResponseWriter, r *http.Request, db *gorm.DB) {

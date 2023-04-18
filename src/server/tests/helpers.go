@@ -61,27 +61,13 @@ func mockGetUsers(w http.ResponseWriter, r *http.Request, t *testing.T) {
 	api.GetUsers(w, r, db)
 }
 
-func mockGetUser(w http.ResponseWriter, r *http.Request, t *testing.T) {
+func mockGetUser(w http.ResponseWriter, r *http.Request, username string, t *testing.T) {
 	db := testInitMigration(t)
-	api.GetUser(w, r, db)
+	api.GetUserWithUsername(w, r, username, db)
 }
 
 func mockCreateUser(w http.ResponseWriter, r *http.Request, user u.User, db *gorm.DB, t *testing.T) {
-	endpoints.SetHeader(w)
-	if endpoints.UserExists(db, user.Username) || user.ID != 0 || user.Password == "" {
-		endpoints.WriteErr(w, http.StatusBadRequest, "")
-		return
-	}
-
-	hash, err := endpoints.EncodePassword(user.Password)
-
-	if err != nil {
-		endpoints.WriteErr(w, http.StatusInternalServerError, "")
-	}
-	user.Password = hash
-
-	db.Create(&user)
-	endpoints.EncodeUser(user, w)
+	api.CreateUserFromUser(w, r, user, db)
 }
 
 func mockUpdateUser(w http.ResponseWriter, r *http.Request, userMap map[string]string, username string, db *gorm.DB, t *testing.T) {
