@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/hex"
 	"fmt"
 	"log"
 	"net/http"
@@ -17,7 +16,6 @@ import (
 
 var (
 	db        *gorm.DB
-	secretKey []byte
 	err       error
 )
 
@@ -44,12 +42,6 @@ func initializeMigration() {
 }
 
 func initializeRouter() {
-	var API_KEY = os.Getenv("GOOGLE_API_KEY")
-	// get secret key
-	secretKey, err = hex.DecodeString(os.Getenv("COOKIE_SECRET"))
-	if err != nil {
-		log.Fatal(err)
-	}
 	r := mux.NewRouter()
 
 	// Route Handlers / Endpoints
@@ -107,11 +99,11 @@ func initializeRouter() {
 		}
 	})
 
-	r.HandleFunc("/apikey/get/", func(w http.ResponseWriter, r *http.Request) {
+	r.HandleFunc("/api/maps-key/", func(w http.ResponseWriter, r *http.Request) {
 		endpoints.EnableCors(w)
 		switch r.Method {
 		case "GET":
-			api.GetAPIKey(w, r, API_KEY)
+			api.GetAPIKey(w, r)
 		default:
 			w.WriteHeader(http.StatusNotFound)
 		}
