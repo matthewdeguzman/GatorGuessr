@@ -6,7 +6,9 @@ import (
 
 	"github.com/gorilla/mux"
 	helpers "github.com/matthewdeguzman/GatorGuessr/src/server/endpoints"
+	cookies "github.com/matthewdeguzman/GatorGuessr/src/server/endpoints/cookies"
 	u "github.com/matthewdeguzman/GatorGuessr/src/server/structs"
+
 	"gorm.io/gorm"
 )
 
@@ -133,4 +135,6 @@ func ValidateUser(w http.ResponseWriter, r *http.Request, db *gorm.DB) {
 		helpers.LoginErr(w)
 		return
 	}
+
+	cookies.SetCookieHandler(w, r, user)
 }
