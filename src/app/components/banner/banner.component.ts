@@ -1,9 +1,9 @@
-import { PageNotFoundComponent } from "./../page-not-found/page-not-found.component";
 import { AppComponent } from "./../../app.component";
 import { Component, HostBinding, OnInit } from "@angular/core";
 import { IssueService } from "src/app/services/issue.service";
 import { MatDialog, MatDialogConfig } from "@angular/material/dialog";
 import { AccountComponent } from "../account/account.component";
+import { DeleteComponent } from "../delete/delete.component";
 
 @Component({
   selector: "app-banner",
@@ -34,7 +34,7 @@ export class BannerComponent implements OnInit {
     dialogConfig.disableClose = false;
     dialogConfig.autoFocus = true;
 
-    this.dialog.open(AccountComponent, dialogConfig);
+    this.dialog.open(DeleteComponent, dialogConfig);
   }
 
   openAccountDialog() {

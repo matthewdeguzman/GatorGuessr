@@ -1,10 +1,46 @@
-<span color="warn">
-  <div>
-    Are you sure you want to delete your account? This action cannot be undone.
-  </div>
-  <div>
-    <button mat-raised-button color="warn" (click)="deleteAccount()">
-      Delete Account
-    </button>
-  </div>
-</span>
+<mat-card>
+  <mat-card-title>Change Password/Username</mat-card-title>
+  <mat-card-content>
+    <form [formGroup]="updateForm">
+      <div>
+        <mat-form-field appearance="outline">
+          <mat-label>New Username</mat-label>
+          <input
+            class="input"
+            id="newUsername"
+            matInput
+            #newUsername
+            placeholder="New Username"
+            formControlName="newUsername"
+          />
+          <mat-icon matSuffix> sentiment_very_satisfied</mat-icon>
+        </mat-form-field>
+      </div>
+      <div>
+        <mat-form-field appearance="outline">
+          <mat-label>New Password</mat-label>
+          <input
+            class="input"
+            id="newPassword"
+            matInput
+            #newPassword
+            [type]="showPassword ? 'text' : 'password'"
+            placeholder="newPassword"
+          />
+          <mat-icon matSuffix (click)="togglePasswordVisibility()">
+            {{ showPassword ? "visibility_off" : "visibility" }}
+          </mat-icon>
+        </mat-form-field>
+      </div>
+
+      <button
+        mat-raised-button
+        color="primary"
+        type="submit"
+        (click)="changePassword(newUsername.value, newPassword.value)"
+      >
+        Save
+      </button>
+    </form>
+  </mat-card-content>
+</mat-card>
