@@ -1,3 +1,4 @@
+import { PageNotFoundComponent } from "./../page-not-found/page-not-found.component";
 import { AppComponent } from "./../../app.component";
 import { Component, HostBinding, OnInit } from "@angular/core";
 import { IssueService } from "src/app/services/issue.service";
@@ -28,7 +29,15 @@ export class BannerComponent implements OnInit {
     this.updateBanner();
   }
 
-  openDialog() {
+  openDeleteDialog() {
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.disableClose = false;
+    dialogConfig.autoFocus = true;
+
+    this.dialog.open(AccountComponent, dialogConfig);
+  }
+
+  openAccountDialog() {
     const dialogConfig = new MatDialogConfig();
     dialogConfig.disableClose = false;
     dialogConfig.autoFocus = true;

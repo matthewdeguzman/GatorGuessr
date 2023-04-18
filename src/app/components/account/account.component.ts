@@ -1,5 +1,6 @@
 import { Component } from "@angular/core";
 import { MatDialogRef } from "@angular/material/dialog";
+import { IssueService } from "src/app/services/issue.service";
 
 @Component({
   selector: "app-account",
@@ -7,11 +8,17 @@ import { MatDialogRef } from "@angular/material/dialog";
   styleUrls: ["./account.component.scss"],
 })
 export class AccountComponent {
-  constructor(private dialogRef: MatDialogRef<AccountComponent>) {}
+  constructor(
+    private IssueService: IssueService,
+    private dialogRef: MatDialogRef<AccountComponent>
+  ) {}
 
-  ngOnInit() {}
+  deleteAccount() {
+    this.IssueService.deleteUser("test");
+    this.closeDialog();
+  }
 
-  close() {
+  closeDialog() {
     this.dialogRef.close();
   }
 }

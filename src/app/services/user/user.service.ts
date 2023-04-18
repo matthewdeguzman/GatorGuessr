@@ -70,6 +70,16 @@ export class UserService {
         })
       );
   }
+
+  // Deletes a user
+  deleteUser(username: string) {
+    return this.http
+      .delete(`${this.uri}/api/users/${username}/`, {
+        observe: "response",
+        responseType: "text",
+      })
+      .pipe(map((response) => response.status));
+  }
 }
 /*
 import { Injectable } from "@angular/core";
