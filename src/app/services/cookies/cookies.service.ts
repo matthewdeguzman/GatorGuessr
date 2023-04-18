@@ -17,8 +17,8 @@ export class CookiesService {
 
   // Gets cookie
   getCookie(username: string) {
-    document.cookie = `key=Cookie; path=http://localhost:9000/cookies/set/${username}/`;
-    const headers = new HttpHeaders().set(document.cookie, username);
+    document.cookie = `Cookie=${username}`;
+    const headers = new HttpHeaders().set(`${document.cookie}`, "miku");
     return this.http
       .get(`${this.uri}/cookies/set/${username}/`, {
         headers: headers,
@@ -26,7 +26,13 @@ export class CookiesService {
         withCredentials: true,
         responseType: "text",
       })
-      .pipe(map((response) => response.status));
+      .pipe(
+        map((response) => {
+          console.log(response);
+          const cookie = response.headers.get("Set-Cookie");
+          console.log(cookie);
+        })
+      );
   }
   // Checks if cookie is valid
   validateCookie() {
