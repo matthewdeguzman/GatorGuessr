@@ -70,6 +70,8 @@ export class LandingPageComponent {
   ngOnInit(): void {
     this.IssueService.getApiKey().subscribe((res) => {
       this.string = res.body as string;
+      this.string = this.string.substring(1, this.string.length - 2);
+      console.log(this.string);
     });
     let loader = new Loader({
       apiKey: this.string,
