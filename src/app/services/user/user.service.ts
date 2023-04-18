@@ -78,7 +78,7 @@ export class UserService {
       this.CookieService.get("UserLoginCookie")
     );
     return this.http
-      .get(`${this.uri}/apikey/get/`, {
+      .get(`${this.uri}/api/maps-key/`, {
         headers: headers,
         observe: "response",
         responseType: "text",
