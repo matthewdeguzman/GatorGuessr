@@ -1,9 +1,6 @@
 import { LeaderboardService } from "./leaderboard/leaderboard.service";
 import { Injectable } from "@angular/core";
 import { UserService } from "./user/user.service";
-import { HttpResponse } from "@angular/common/http";
-import { Observable } from "rxjs";
-import { CookiesService } from "./cookies/cookies.service";
 
 @Injectable({
   providedIn: "root",
@@ -11,8 +8,7 @@ import { CookiesService } from "./cookies/cookies.service";
 export class IssueService {
   constructor(
     private userService: UserService,
-    private leaderboardService: LeaderboardService,
-    private cookiesService: CookiesService
+    private leaderboardService: LeaderboardService
   ) {}
 
   // User methods
@@ -38,14 +34,6 @@ export class IssueService {
   // Leaderboard methods
   getLeaderboard() {
     return this.leaderboardService.getLeaderboard();
-  }
-
-  // Cookie methods
-  setCookie(username: string) {
-    return this.cookiesService.getCookie(username);
-  }
-  verifyCookie() {
-    return this.cookiesService.validateCookie();
   }
 
   // Api Key methods
