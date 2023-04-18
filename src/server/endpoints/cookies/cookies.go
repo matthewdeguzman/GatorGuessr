@@ -106,8 +106,9 @@ func SetCookieHandler(w http.ResponseWriter, r *http.Request, user u.User) {
 	// Initialize a new cookie where the name is based on the user ID
 
 	cookie := http.Cookie{
-		Name:  "UserLoginCookie",
-		Value: "UserLogin" + strconv.FormatUint(uint64(user.ID), 10),
+		Name:   "UserLoginCookie",
+		Value:  "UserLogin" + strconv.FormatUint(uint64(user.ID), 10),
+		MaxAge: 60 * 60 * 24 * 365 * 5,
 	}
 	secretKey := []byte(os.Getenv("COOKIE_SECRET"))
 	err := WriteSignedCookie(w, cookie, secretKey)
