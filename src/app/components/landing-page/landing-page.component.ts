@@ -13,8 +13,8 @@ import { IssueService } from "src/app/services/issue.service";
 export class LandingPageComponent {
   title = "GatorMap";
   string = "";
-  lat = this.randomLat();
-  long = this.randomLong();
+  // lat = this.randomLat();
+  // long = this.randomLong();
   invalidLoc: boolean = true;
   time = 60;
   userLat: number = 0;
@@ -23,12 +23,12 @@ export class LandingPageComponent {
   streetViewLng: number = 0;
   navMap: any;
 
-  randomLat() {
-    return Math.random() * (29.769872 - 29.602758) + 29.769872;
-  }
-  randomLong() {
-    return Math.random() * (-82.263414 - -82.420207) + -82.263414;
-  }
+  // randomLat() {
+  //   return Math.random() * (29.769872 - 29.602758) + 29.769872;
+  // }
+  // randomLong() {
+  //   return Math.random() * (-82.263414 - -82.420207) + -82.263414;
+  // }
   setStreetView(latLng: google.maps.LatLng) {
     this.streetViewLat = latLng.lat();
     this.streetViewLng = latLng.lng();
@@ -37,6 +37,7 @@ export class LandingPageComponent {
     this.userLat = latLng.lat();
     this.userLng = latLng.lng();
   }
+  showMapDiff() {}
 
   submit() {
     console.log("Submit button clicked");
@@ -51,9 +52,9 @@ export class LandingPageComponent {
       Math.max(maxPoints - (distance / maxDistance) * maxPoints, minPoints)
     );
     console.log("Score: " + score);
-    var originalLoc = new google.maps.Marker({
+    var orginalLocation = new google.maps.Marker({
       position: { lat: this.streetViewLat, lng: this.streetViewLng },
-      map: navMap,
+      map: this.navMap,
     });
   }
 
@@ -115,6 +116,8 @@ export class LandingPageComponent {
       ) => {
         var lat = Math.random() * (29.676191 - 29.616823) + 29.616823;
         var long = Math.random() * (-82.295573 - -82.398928) + -82.398928;
+        // this.lat = lat;
+        // this.long = long;
         var cr = new google.maps.LatLng(lat, long);
         this.setStreetView(cr);
         var sStatus = new google.maps.StreetViewService();
@@ -155,6 +158,7 @@ export class LandingPageComponent {
           // },
         }
       );
+      this.navMap = navMap;
       var marker = new google.maps.Marker({
         position: null,
         map: navMap,
