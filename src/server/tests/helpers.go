@@ -70,48 +70,8 @@ func mockCreateUser(w http.ResponseWriter, r *http.Request, user u.User, db *gor
 	api.CreateUserFromUser(w, r, user, db)
 }
 
-func mockUpdateUser(w http.ResponseWriter, r *http.Request, userMap map[string]string, username string, db *gorm.DB, t *testing.T) {
-	endpoints.SetHeader(w)
-
-	var oldUser u.User
-	var updatedUser u.User
-	endpoints.FetchUser(db, &oldUser, username)
-	endpoints.FetchUser(db, &updatedUser, username)
-
-	if oldUser.Username == "" {
-		endpoints.UserDNErr(w)
-		return
-	}
-
-	// decode user
-	for key, element := range userMap {
-		switch key {
-		case "Username":
-			updatedUser.Username = element
-		case "ID":
-			id, _ := strconv.Atoi(element)
-			updatedUser.ID = uint(id)
-		case "Score":
-			score, _ := strconv.Atoi(element)
-			updatedUser.Score = uint(score)
-
-		}
-	}
-	if oldUser.ID != updatedUser.ID {
-		endpoints.WriteErr(w, http.StatusMethodNotAllowed, "405 - Cannot change ID")
-		return
-	}
-
-	hash, err := endpoints.EncodePassword(updatedUser.Password)
-	if err != nil {
-		endpoints.HashErr(w)
-		return
-	}
-	updatedUser.Password = hash
-	updatedUser.CreatedAt = oldUser.CreatedAt
-
-	db.Save(&updatedUser)
-	endpoints.EncodeUser(updatedUser, w)
+func mockUpdateUser(w http.ResponseWriter, r *http.Request, oldUser, updatedUser u.User, db *gorm.DB, t *testing.T) {
+	UpdateUserFromUser(w, r, oldUser, updatedUser, db)
 }
 
 func mockDeleteUser(w http.ResponseWriter, r *http.Request, username string, db *gorm.DB, t *testing.T) {

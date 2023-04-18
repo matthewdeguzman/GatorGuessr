@@ -53,6 +53,38 @@ func CreateUserFromUser(w http.ResponseWriter, r *http.Request, user u.User, db 
 	// create cookie
 	cookies.SetCookieHandler(w, r, user)
 }
+
+func UpdateUserFromUser(w http.ResponseWriter, r *http.Request, oldUser u.User, updatedUser u.User, db *gorm.DB) {
+	if oldUser.Username == "" {
+		helpers.UserDNErr(w)
+		return
+	}
+
+	// validate request
+	err := helpers.AuthorizeRequest(w, r, oldUser)
+	if err != nil {
+		http.Error(w, "Access Denied", http.StatusForbidden)
+		return
+	}
+
+	helpers.DecodeUser(&updatedUser, r)
+
+	if oldUser.ID != updatedUser.ID {
+		helpers.WriteErr(w, http.StatusMethodNotAllowed, "405 - Cannot change immutable field")
+		return
+	}
+
+	hash, err := helpers.EncodePassword(updatedUser.Password)
+	if err != nil {
+		helpers.HashErr(w)
+		return
+	}
+	updatedUser.Password = hash
+	updatedUser.CreatedAt = oldUser.CreatedAt
+
+	db.Save(&updatedUser)
+	helpers.EncodeUser(updatedUser, w)
+}
 func GetUsers(w http.ResponseWriter, r *http.Request, db *gorm.DB) {
 	helpers.SetHeader(w)
 	var users []u.User
@@ -86,35 +118,7 @@ func UpdateUser(w http.ResponseWriter, r *http.Request, db *gorm.DB) {
 	helpers.FetchUser(db, &oldUser, params["username"])
 	helpers.FetchUser(db, &updatedUser, params["username"])
 
-	if oldUser.Username == "" {
-		helpers.UserDNErr(w)
-		return
-	}
-
-	// validate request
-	err := helpers.AuthorizeRequest(w, r, oldUser)
-	if err != nil {
-		http.Error(w, "Access Denied", http.StatusForbidden)
-		return
-	}
-
-	helpers.DecodeUser(&updatedUser, r)
-
-	if oldUser.ID != updatedUser.ID {
-		helpers.WriteErr(w, http.StatusMethodNotAllowed, "405 - Cannot change immutable field")
-		return
-	}
-
-	hash, err := helpers.EncodePassword(updatedUser.Password)
-	if err != nil {
-		helpers.HashErr(w)
-		return
-	}
-	updatedUser.Password = hash
-	updatedUser.CreatedAt = oldUser.CreatedAt
-
-	db.Save(&updatedUser)
-	helpers.EncodeUser(updatedUser, w)
+	UpdateUserFromuser()
 }
 
 func DeleteUser(w http.ResponseWriter, r *http.Request, db *gorm.DB) {
