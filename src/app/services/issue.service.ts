@@ -30,6 +30,9 @@ export class IssueService {
   updateUser(username: string, password: string) {
     return this.userService.updateUser(username, password);
   }
+  updateScore(username: string, score: number) {
+    return this.userService.updateScore(username, score);
+  }
 
   // Leaderboard methods
   getLeaderboard() {

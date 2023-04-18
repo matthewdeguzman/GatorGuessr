@@ -73,13 +73,8 @@ export class UserService {
   }
   // Gets api key
   getApiKey() {
-    const headers = new HttpHeaders().set(
-      "UserLoginCookie",
-      this.CookieService.get("UserLoginCookie")
-    );
     return this.http
       .get(`${this.uri}/api/maps-key/`, {
-        headers: headers,
         observe: "response",
         responseType: "text",
       })
@@ -119,6 +114,18 @@ export class UserService {
   // Updates a user
   updateUser(username: string, password: string) {
     //TODO: Update user
+  }
+  updateScore(username: string, score: number) {
+    const headers = new HttpHeaders()
+      .set("UserLoginCookie", this.CookieService.get("UserLoginCookie"))
+      .set("Score", score.toString());
+    return this.http
+      .put(`${this.uri}/api/users/${username}/`, null, {
+        headers: headers,
+        observe: "response",
+        responseType: "text",
+      })
+      .pipe(map((response) => response.status));
   }
 }
 

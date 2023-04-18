@@ -13,21 +13,14 @@ import { IssueService } from "src/app/services/issue.service";
 export class LandingPageComponent {
   title = "GatorMap";
   string = "";
-  lat = this.randomLat();
-  long = this.randomLong();
   invalidLoc: boolean = true;
   time = 60;
   userLat: number = 0;
   userLng: number = 0;
   streetViewLat: number = 0;
   streetViewLng: number = 0;
+  navMap: any;
 
-  randomLat() {
-    return Math.random() * (29.769872 - 29.602758) + 29.769872;
-  }
-  randomLong() {
-    return Math.random() * (-82.263414 - -82.420207) + -82.263414;
-  }
   setStreetView(latLng: google.maps.LatLng) {
     this.streetViewLat = latLng.lat();
     this.streetViewLng = latLng.lng();
@@ -49,8 +42,26 @@ export class LandingPageComponent {
     const score = Math.round(
       Math.max(maxPoints - (distance / maxDistance) * maxPoints, minPoints)
     );
-
     console.log("Score: " + score);
+    var orginalLocation = new google.maps.Marker({
+      position: { lat: this.streetViewLat, lng: this.streetViewLng },
+      map: this.navMap,
+      icon: "http://maps.google.com/mapfiles/kml/paddle/purple-stars.png",
+    });
+    const lineDistance = new google.maps.Polyline({
+      path: [
+        { lat: this.userLat, lng: this.userLng },
+        { lat: this.streetViewLat, lng: this.streetViewLng },
+      ],
+      strokeColor: "#FF5733",
+      strokeOpacity: 1.0,
+      strokeWeight: 4,
+    });
+    lineDistance.setMap(this.navMap);
+    const temp = localStorage.getItem("username");
+    if (temp != null) {
+      this.IssueService.updateScore(temp, score);
+    } else console.log("Not logged in");
   }
 
   countDown() {
@@ -76,6 +87,7 @@ export class LandingPageComponent {
     });
     await this.someFunction();
     this.string = this.string.substring(1, this.string.length - 2);
+    console.log(this.string);
 
     let loader = new Loader({
       apiKey: this.string,
@@ -111,10 +123,19 @@ export class LandingPageComponent {
       ) => {
         var lat = Math.random() * (29.676191 - 29.616823) + 29.616823;
         var long = Math.random() * (-82.295573 - -82.398928) + -82.398928;
+        // this.lat = lat;
+        // this.long = long;
         var cr = new google.maps.LatLng(lat, long);
         this.setStreetView(cr);
         var sStatus = new google.maps.StreetViewService();
-        sStatus.getPanorama({ location: cr, radius: 10 }, callback);
+        sStatus.getPanorama(
+          {
+            location: cr,
+            radius: 15,
+            source: google.maps.StreetViewSource.OUTDOOR,
+          },
+          callback
+        );
       };
       const HandlePanoramaData = (data: any, status: string) => {
         if (status === "OK") {
@@ -151,6 +172,7 @@ export class LandingPageComponent {
           // },
         }
       );
+      this.navMap = navMap;
       var marker = new google.maps.Marker({
         position: null,
         map: navMap,
