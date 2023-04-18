@@ -8,24 +8,39 @@
   width: 100%;
 }
 .left {
-  flex: 1;
+  flex: .5;
   display: flex;
   justify-content: flex-start;
   align-items: center;
 }
 
+.middle-left{
+  flex: .5;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  font-size: 18px;
+}
+
 .center {
-  flex: 1;
+  flex: .5;
   display: flex;
   justify-content: center;
   align-items: center;
   font-size: 28px;
 }
 
+.middle-right{
+  flex: .5;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  font-size: 18px;
+}
+
 .right {
-  flex: 1;
+  flex: .5;
   display: flex;
   justify-content: flex-end;
   align-items: center;
 }
-

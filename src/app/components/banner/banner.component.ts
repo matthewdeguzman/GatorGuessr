@@ -1,5 +1,9 @@
 import { AppComponent } from "./../../app.component";
 import { Component, HostBinding, OnInit } from "@angular/core";
+import { IssueService } from "src/app/services/issue.service";
+import { MatDialog, MatDialogConfig } from "@angular/material/dialog";
+import { AccountComponent } from "../account/account.component";
+import { DeleteComponent } from "../delete/delete.component";
 
 @Component({
   selector: "app-banner",
@@ -9,14 +13,49 @@ import { Component, HostBinding, OnInit } from "@angular/core";
 export class BannerComponent implements OnInit {
   selectedValue = "lightMode";
   selectedTheme = "light_mode";
+  username = "Guest";
+  score = 0;
 
-  constructor(private AppComponent: AppComponent) {}
+  constructor(
+    private AppComponent: AppComponent,
+    private IssueService: IssueService,
+    private dialog: MatDialog
+  ) {}
 
   ngOnInit() {
     this.selectedTheme = localStorage.getItem("selectedTheme") || "light_mode";
     this.selectedValue =
       this.selectedTheme === "light_mode" ? "lightMode" : "darkMode";
+    this.updateBanner();
   }
+
+  openDeleteDialog() {
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.disableClose = false;
+    dialogConfig.autoFocus = true;
+
+    this.dialog.open(DeleteComponent, dialogConfig);
+  }
+
+  openAccountDialog() {
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.disableClose = false;
+    dialogConfig.autoFocus = true;
+
+    this.dialog.open(AccountComponent, dialogConfig);
+  }
+
+  // Login methods
+  updateBanner() {
+    this.username = localStorage.getItem("username") || "Guest";
+    if (this.username !== "null") {
+      this.IssueService.getUserScore(this.username).subscribe((data) => {
+        this.score = data;
+      });
+    }
+  }
+
+  // Theme methods
   getTheme() {
     return this.selectedValue;
   }

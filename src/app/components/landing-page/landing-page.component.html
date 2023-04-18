@@ -9,5 +9,17 @@
     <mat-card-content>
       <div class="full" id="Gmap"></div>
     </mat-card-content>
+    <mat-card-actions>
+      <button
+        mat-raised-button
+        color="primary"
+        class="sub"
+        id="submitButton"
+        (click)="submit()"
+      >
+        Submit
+      </button>
+      <div class="timer">&nbsp; {{ time }} Seconds Left</div>
+    </mat-card-actions>
   </mat-card>
 </div>
