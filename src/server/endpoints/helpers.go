@@ -9,7 +9,6 @@ import (
 	"fmt"
 	"net/http"
 	"os"
-	"strconv"
 	"strings"
 
 	"github.com/matthewdeguzman/GatorGuessr/src/server/endpoints/cookies"
@@ -181,12 +180,12 @@ func SetHeader(w http.ResponseWriter) {
 	w.Header().Set("Content-Type", "application/json")
 }
 
-func AuthorizeRequest(w http.ResponseWriter, r *http.Request, username string, db *gorm.DB) {
+func AuthorizeRequest(w http.ResponseWriter, r *http.Request, user u.User) error {
 	secretKey := []byte(os.Getenv("COOKIE_SECRET"))
-	var user u.User
-	FetchUser(db, &user, username)
-	cookieName := "UserCookie" + strconv.FormatUint(uint64(user.ID), 10)
-	cookies.GetCookieHandler(w, r, cookieName, secretKey)
+
+	err := cookies.GetCookieHandler(w, r, "UserLoginCookie", secretKey)
+
+	return err
 }
 
 func EnableCors(w http.ResponseWriter) {

@@ -118,7 +118,7 @@ func SetCookieHandler(w http.ResponseWriter, r *http.Request, user u.User) {
 	}
 }
 
-func GetCookieHandler(w http.ResponseWriter, r *http.Request, cookieName string, secretKey []byte) {
+func GetCookieHandler(w http.ResponseWriter, r *http.Request, cookieName string, secretKey []byte) error {
 	// Retrieve the cookie from the request using its name.
 	// If no matching cookie is found, this will return a
 	// http.ErrNoCookie error.
@@ -134,8 +134,8 @@ func GetCookieHandler(w http.ResponseWriter, r *http.Request, cookieName string,
 			log.Println(err)
 			http.Error(w, "server error", http.StatusInternalServerError)
 		}
-		return
+		return err
 	}
 
-	w.Write([]byte("Cookie verified"))
+	return nil
 }

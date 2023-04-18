@@ -30,6 +30,11 @@ func GetUser(w http.ResponseWriter, r *http.Request, db *gorm.DB) {
 		helpers.UserDNErr(w)
 		return
 	}
+	err := helpers.AuthorizeRequest(w, r, user)
+	if err != nil {
+		http.Error(w, "Access Denied", http.StatusForbidden)
+		return
+	}
 	helpers.EncodeUser(user, w)
 }
 
@@ -59,6 +64,9 @@ func CreateUser(w http.ResponseWriter, r *http.Request, db *gorm.DB) {
 
 	db.Create(&user)
 	helpers.EncodeUser(user, w)
+
+	// create cookie
+	cookies.SetCookieHandler(w, r, user)
 }
 
 func UpdateUser(w http.ResponseWriter, r *http.Request, db *gorm.DB) {
@@ -73,6 +81,13 @@ func UpdateUser(w http.ResponseWriter, r *http.Request, db *gorm.DB) {
 
 	if oldUser.Username == "" {
 		helpers.UserDNErr(w)
+		return
+	}
+
+	// validate request
+	err := helpers.AuthorizeRequest(w, r, oldUser)
+	if err != nil {
+		http.Error(w, "Access Denied", http.StatusForbidden)
 		return
 	}
 
@@ -103,6 +118,13 @@ func DeleteUser(w http.ResponseWriter, r *http.Request, db *gorm.DB) {
 	helpers.FetchUser(db, &user, params["username"])
 	if user.Username == "" {
 		helpers.UserDNErr(w)
+		return
+	}
+
+	// authorize request
+	err := helpers.AuthorizeRequest(w, r, user)
+	if err != nil {
+		http.Error(w, "Access Denied", http.StatusForbidden)
 		return
 	}
 	db.Delete(&user, "Username = ?", params["username"])
@@ -136,5 +158,6 @@ func ValidateUser(w http.ResponseWriter, r *http.Request, db *gorm.DB) {
 		return
 	}
 
+	// create cookie
 	cookies.SetCookieHandler(w, r, user)
 }
