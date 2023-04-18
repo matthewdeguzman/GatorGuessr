@@ -58,6 +58,10 @@ export class LandingPageComponent {
       strokeWeight: 4,
     });
     lineDistance.setMap(this.navMap);
+    const temp = localStorage.getItem("username");
+    if (temp != null) {
+      this.IssueService.updateScore(temp, score);
+    } else console.log("Not logged in");
   }
 
   countDown() {
@@ -83,6 +87,7 @@ export class LandingPageComponent {
     });
     await this.someFunction();
     this.string = this.string.substring(1, this.string.length - 2);
+    console.log(this.string);
 
     let loader = new Loader({
       apiKey: this.string,
