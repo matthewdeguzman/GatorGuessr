@@ -21,6 +21,7 @@ export class LandingPageComponent {
   userLng: number = 0;
   streetViewLat: number = 0;
   streetViewLng: number = 0;
+  navMap: any;
 
   randomLat() {
     return Math.random() * (29.769872 - 29.602758) + 29.769872;
@@ -49,8 +50,11 @@ export class LandingPageComponent {
     const score = Math.round(
       Math.max(maxPoints - (distance / maxDistance) * maxPoints, minPoints)
     );
-
     console.log("Score: " + score);
+    var originalLoc = new google.maps.Marker({
+      position: { lat: this.streetViewLat, lng: this.streetViewLng },
+      map: navMap,
+    });
   }
 
   countDown() {
