@@ -76,7 +76,6 @@ export class LandingPageComponent {
     });
     await this.someFunction();
     this.string = this.string.substring(1, this.string.length - 2);
-    console.log(this.string);
 
     let loader = new Loader({
       apiKey: this.string,
