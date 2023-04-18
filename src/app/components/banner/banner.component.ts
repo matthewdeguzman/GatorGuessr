@@ -30,7 +30,7 @@ export class BannerComponent implements OnInit {
 
   openDialog() {
     const dialogConfig = new MatDialogConfig();
-    dialogConfig.disableClose = true;
+    dialogConfig.disableClose = false;
     dialogConfig.autoFocus = true;
 
     this.dialog.open(AccountComponent, dialogConfig);
