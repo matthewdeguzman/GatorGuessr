@@ -65,7 +65,28 @@ export class UserService {
       })
       .pipe(map((response) => response));
   }
+
+  // Deletes a user
+  deleteUser(username: string) {
+    return this.http
+      .delete(`${this.uri}/api/users/${username}/`, {
+        observe: "response",
+        responseType: "text",
+      })
+      .pipe(map((response) => response.status));
+  }
+
+  // Gets a user's score
+  getScore(username: string) {
+    return this.http
+      .get(`${this.uri}/api/users/${username}/`, {
+        observe: "response",
+        responseType: "text",
+      })
+      .pipe(map((response) => response.status));
+  }
 }
+
 /*
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";

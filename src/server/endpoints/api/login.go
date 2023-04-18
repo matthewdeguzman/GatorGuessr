@@ -6,7 +6,9 @@ import (
 
 	"github.com/gorilla/mux"
 	helpers "github.com/matthewdeguzman/GatorGuessr/src/server/endpoints"
+	cookies "github.com/matthewdeguzman/GatorGuessr/src/server/endpoints/cookies"
 	u "github.com/matthewdeguzman/GatorGuessr/src/server/structs"
+
 	"gorm.io/gorm"
 )
 
@@ -26,6 +28,11 @@ func GetUser(w http.ResponseWriter, r *http.Request, db *gorm.DB) {
 
 	if user.Username == "" {
 		helpers.UserDNErr(w)
+		return
+	}
+	err := helpers.AuthorizeRequest(w, r, user)
+	if err != nil {
+		http.Error(w, "Access Denied", http.StatusForbidden)
 		return
 	}
 	helpers.EncodeUser(user, w)
@@ -57,6 +64,9 @@ func CreateUser(w http.ResponseWriter, r *http.Request, db *gorm.DB) {
 
 	db.Create(&user)
 	helpers.EncodeUser(user, w)
+
+	// create cookie
+	cookies.SetCookieHandler(w, r, user)
 }
 
 func UpdateUser(w http.ResponseWriter, r *http.Request, db *gorm.DB) {
@@ -71,6 +81,13 @@ func UpdateUser(w http.ResponseWriter, r *http.Request, db *gorm.DB) {
 
 	if oldUser.Username == "" {
 		helpers.UserDNErr(w)
+		return
+	}
+
+	// validate request
+	err := helpers.AuthorizeRequest(w, r, oldUser)
+	if err != nil {
+		http.Error(w, "Access Denied", http.StatusForbidden)
 		return
 	}
 
@@ -103,6 +120,13 @@ func DeleteUser(w http.ResponseWriter, r *http.Request, db *gorm.DB) {
 		helpers.UserDNErr(w)
 		return
 	}
+
+	// authorize request
+	err := helpers.AuthorizeRequest(w, r, user)
+	if err != nil {
+		http.Error(w, "Access Denied", http.StatusForbidden)
+		return
+	}
 	db.Delete(&user, "Username = ?", params["username"])
 	helpers.EncodeUser(user, w)
 }
@@ -133,4 +157,7 @@ func ValidateUser(w http.ResponseWriter, r *http.Request, db *gorm.DB) {
 		helpers.LoginErr(w)
 		return
 	}
+
+	// create cookie
+	cookies.SetCookieHandler(w, r, user)
 }
