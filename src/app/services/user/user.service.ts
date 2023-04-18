@@ -70,6 +70,15 @@ export class UserService {
         })
       );
   }
+  // Gets api key
+  getApiKey() {
+    return this.http
+      .get(`${this.uri}/apikey/get/`, {
+        observe: "response",
+        responseType: "text",
+      })
+      .pipe(map((response) => response));
+  }
 
   // Deletes a user
   deleteUser(username: string) {
@@ -87,6 +96,7 @@ export class UserService {
     //TODO: Update user
   }
 }
+
 /*
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";

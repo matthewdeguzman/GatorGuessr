@@ -69,7 +69,6 @@ export class BannerComponent implements OnInit {
       this.selectedTheme = "light_mode";
     }
     localStorage.setItem("selectedTheme", this.selectedTheme);
-    localStorage.setItem("selectedValue", this.selectedValue);
     this.AppComponent.theme = this.selectedValue;
   }
 }

@@ -8,8 +8,10 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"os"
 	"strings"
 
+	"github.com/matthewdeguzman/GatorGuessr/src/server/endpoints/cookies"
 	u "github.com/matthewdeguzman/GatorGuessr/src/server/structs"
 	"golang.org/x/crypto/argon2"
 	"gorm.io/gorm"
@@ -176,6 +178,14 @@ func DecodePasswordAndMatch(password, encodedHash string) (match bool, err error
 
 func SetHeader(w http.ResponseWriter) {
 	w.Header().Set("Content-Type", "application/json")
+}
+
+func AuthorizeRequest(w http.ResponseWriter, r *http.Request, user u.User) error {
+	secretKey := []byte(os.Getenv("COOKIE_SECRET"))
+
+	err := cookies.GetCookieHandler(w, r, "UserLoginCookie", secretKey)
+
+	return err
 }
 
 func EnableCors(w http.ResponseWriter) {

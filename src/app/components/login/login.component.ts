@@ -42,6 +42,7 @@ export class LoginComponent {
       (res) => {
         if (res == 200) {
           localStorage.setItem("username", username);
+          this.IssueService.setCookie(username);
           this.router.navigate(["/landing-page"]);
         }
       },
