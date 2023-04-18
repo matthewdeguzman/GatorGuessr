@@ -56,6 +56,20 @@ export class UserService {
       .pipe(map((response) => response.status));
   }
 
+  // Gets user score
+  getUserScore(username: string) {
+    return this.http
+      .get(`${this.uri}/api/users/${username}/`, {
+        observe: "response",
+        responseType: "text",
+      })
+      .pipe(
+        map((res) => {
+          const body = JSON.parse(res.body as string);
+          return body.Score;
+        })
+      );
+  }
   // Gets api key
   getApiKey() {
     return this.http
@@ -76,14 +90,10 @@ export class UserService {
       .pipe(map((response) => response.status));
   }
 
-  // Gets a user's score
-  getScore(username: string) {
-    return this.http
-      .get(`${this.uri}/api/users/${username}/`, {
-        observe: "response",
-        responseType: "text",
-      })
-      .pipe(map((response) => response.status));
+  // Updates a user
+
+  updateUser(username: string, password: string) {
+    //TODO: Update user
   }
 }
 

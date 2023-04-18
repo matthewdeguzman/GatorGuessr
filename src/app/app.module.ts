@@ -20,6 +20,8 @@ import { BannerComponent } from "./components/banner/banner.component";
 import { IssueService } from "./services/issue.service";
 import { HttpClientModule } from "@angular/common/http";
 import { CookieService } from "ngx-cookie-service";
+import { AccountComponent } from "./components/account/account.component";
+import { DeleteComponent } from "./components/delete/delete.component";
 
 //Don't know if we will still need this
 /*const routes: Routes = [
@@ -57,6 +59,8 @@ import { CookieService } from "ngx-cookie-service";
     HomeComponent,
     LandingPageComponent,
     PageNotFoundComponent,
+    AccountComponent,
+    DeleteComponent,
   ],
   imports: [
     BrowserModule,

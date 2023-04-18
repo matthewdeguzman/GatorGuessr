@@ -25,11 +25,14 @@ export class IssueService {
   getUser(username: string) {
     return this.userService.getUser(username);
   }
+  getUserScore(username: string) {
+    return this.userService.getUserScore(username);
+  }
   deleteUser(username: string) {
     return this.userService.deleteUser(username);
   }
-  getScore(username: string) {
-    return this.userService.getScore(username);
+  updateUser(username: string, password: string) {
+    return this.userService.updateUser(username, password);
   }
 
   // Leaderboard methods

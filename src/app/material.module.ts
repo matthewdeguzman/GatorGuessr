@@ -11,6 +11,7 @@ import { MatMenuModule } from "@angular/material/menu";
 import { MatTableModule } from "@angular/material/table";
 import { MatButtonToggleModule } from "@angular/material/button-toggle";
 import { MatSlideToggleModule } from "@angular/material/slide-toggle";
+import { MatDialogModule } from "@angular/material/dialog";
 
 const MaterialComponents = [
   MatButtonModule,
@@ -25,6 +26,7 @@ const MaterialComponents = [
   MatTableModule,
   MatButtonToggleModule,
   MatSlideToggleModule,
+  MatDialogModule,
 ];
 
 @NgModule({
