@@ -115,6 +115,11 @@ export class UserService {
       })
       .pipe(map((response) => response.status));
   }
+
+  // Updates a user
+  updateUser(username: string, password: string) {
+    //TODO: Update user
+  }
 }
 
 /*
