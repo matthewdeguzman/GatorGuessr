@@ -5,13 +5,14 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"github.com/matthewdeguzman/GatorGuessr/src/server/endpoints/api"
 	u "github.com/matthewdeguzman/GatorGuessr/src/server/structs"
 )
 
 /// TESTS ///
 
 func TestGetUsers(t *testing.T) {
-
+	db := testInitMigration(t)
 	req, err := http.NewRequest("GET", "/api/users/", nil)
 	if err != nil {
 		t.Error(err)
@@ -20,7 +21,7 @@ func TestGetUsers(t *testing.T) {
 	// creates rr to get the response recorder and makes the handler for the getUser api
 	rr := httptest.NewRecorder()
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		mockGetUsers(w, r, t)
+		api.GetUsers(w, r, db)
 	})
 
 	// passes in the response recorder and the request
@@ -33,87 +34,118 @@ func TestGetUsers(t *testing.T) {
 }
 
 func TestGetExistingUser(t *testing.T) {
-	if status := getUserTest("matthew", t); status != http.StatusOK {
+	db := testInitMigration(t)
+	user := u.User{
+		Username: "User",
+		Password: "User",
+	}
+
+	addUser(user, t, db)
+	status := getUserTest(user, t, db)
+	cleanDB(user, db)
+
+	if status != http.StatusOK {
 		t.Fail()
 	}
 }
 
 func TestGetNonexiststantUser(t *testing.T) {
-	if status := getUserTest("jksdal;fjea;ils", t); status != http.StatusNotFound {
+	db := testInitMigration(t)
+	user := u.User{
+		Username: "NonexistantUser",
+		Password: "Password",
+	}
+
+	cleanDB(user, db)
+	status := getUserTest(user, t, db)
+
+	if status != http.StatusNotFound {
 		t.Fail()
 	}
 }
 
 func TestCreateExistingUser(t *testing.T) {
+	db := testInitMigration(t)
 	user := u.User{
-		Username: "matthew",
-		Password: "passwordddd",
+		Username: "User",
+		Password: "User",
 	}
-	if status := createUserTest(user, t); status != http.StatusBadRequest {
-		cleanDB(&user, user.Username, t)
+
+	addUser(user, t, db)
+	status := createUserTest(user, t, db)
+	cleanDB(user, db)
+
+	if status != http.StatusBadRequest {
 		t.Log(status)
 		t.Fail()
 	}
 }
 
 func TestCreateNewUser(t *testing.T) {
+	db := testInitMigration(t)
 	user := u.User{
-		Username: "garbledmess",
-		Password: "password!!",
+		Username: "NewUser",
+		Password: "User",
 	}
-
-	if status := createUserTest(user, t); status != http.StatusOK {
+	cleanDB(user, db)
+	if status := createUserTest(user, t, db); status != http.StatusOK {
 		t.Fail()
 	}
-	cleanDB(&user, user.Username, t)
+	cleanDB(user, db)
 }
 
 func TestCreateUserWithoutPassword(t *testing.T) {
+	db := testInitMigration(t)
 	user := u.User{
-		Username: "newuseralert!!",
+		Username: "NewUser",
 	}
-
-	if status := createUserTest(user, t); status != http.StatusBadRequest {
+	cleanDB(user, db)
+	if status := createUserTest(user, t, db); status != http.StatusBadRequest {
 		t.Fail()
-		cleanDB(&user, user.Username, t)
 	}
 
 }
 func TestCreateUserWithID(t *testing.T) {
+	db := testInitMigration(t)
 	user := u.User{
-		Username: "newuseralert!!",
-		Password: "pasworddd",
+		Username: "NewUser",
+		Password: "Password",
 		ID:       10,
 	}
-
-	if status := createUserTest(user, t); status != http.StatusBadRequest {
+	cleanDB(user, db)
+	if status := createUserTest(user, t, db); status != http.StatusBadRequest {
 		t.Fail()
-		cleanDB(&user, user.Username, t)
 	}
 
 }
 
 func TestUpdateNonexistantUser(t *testing.T) {
-	user := map[string]string{
-		"Username": "this user doesn't exist lol",
-		"Password": "yeah",
+	db := testInitMigration(t)
+	ogUser := u.User{
+		Username: "NonexistantUser",
+		Password: "password",
 	}
 
-	status := updateUserTest(user, user["Username"], t)
+	cleanDB(ogUser, db)
+	status := updateUserTest(u.User{}, ogUser, t, db)
 	if status != http.StatusNotFound {
 		t.Log(status)
 		t.Fail()
 	}
-	cleanDB(&u.User{}, user["Username"], t)
 }
 
 func TestUpdateExistingUser(t *testing.T) {
-	user := map[string]string{
-		"Username": "matthew",
-		"Password": "yeah",
+	db := testInitMigration(t)
+	ogUser := u.User{
+		Username: "User",
+		Password: "User",
 	}
-
-	status := updateUserTest(user, user["Username"], t)
+	updatedUser := u.User{
+		Password: "NewPassword",
+	}
+	cleanDB(ogUser, db)
+	addUser(ogUser, t, db)
+	status := updateUserTest(ogUser, updatedUser, t, db)
 	if status != http.StatusOK {
 		t.Log(status)
 		t.Fail()
@@ -121,31 +153,20 @@ func TestUpdateExistingUser(t *testing.T) {
 }
 
 func TestUpdateUserID(t *testing.T) {
-	user := map[string]string{
-		"ID":       "88349",
-		"Username": "matthew",
+	db := testInitMigration(t)
+	ogUser := u.User{
+		Username: "User",
+		Password: "User",
+	}
+	updatedUser := u.User{
+		ID: 9403059,
 	}
 
-	status := updateUserTest(user, user["Username"], t)
+	cleanDB(ogUser, db)
+	addUser(ogUser, t, db)
+	status := updateUserTest(ogUser, updatedUser, t, db)
+
 	if status != http.StatusMethodNotAllowed {
-		t.Log(status)
-		t.Fail()
-	}
-}
-
-func TestUpdateUserScore(t *testing.T) {
-	userMap := map[string]string{
-		"Username": "new-user-000420",
-		"Score":    "jflka;fjsdlkfjeiw",
-	}
-	user := u.User{
-		Username: userMap["Username"],
-		Password: userMap["Score"],
-	}
-	addUser(user, t)
-	status := updateUserTest(userMap, userMap["Username"], t)
-	cleanDB(&user, user.Username, t)
-	if status != http.StatusOK {
 		t.Log(status)
 		t.Fail()
 	}

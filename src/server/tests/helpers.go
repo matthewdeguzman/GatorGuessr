@@ -1,6 +1,7 @@
 package tests
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -36,13 +37,11 @@ func testInitMigration(t *testing.T) (db *gorm.DB) {
 	return db
 }
 
-func cleanDB(user *u.User, username string, t *testing.T) {
-	db := testInitMigration(t)
+func cleanDB(user u.User, db *gorm.DB) {
 	db.Delete(user, "Username = ?", user.Username)
 }
 
-func addUser(user u.User, t *testing.T) (err error) {
-	db := testInitMigration(t)
+func addUser(user u.User, t *testing.T, db *gorm.DB) (err error) {
 	hash, err := endpoints.EncodePassword(user.Password)
 
 	if err != nil {
@@ -55,24 +54,6 @@ func addUser(user u.User, t *testing.T) (err error) {
 }
 
 /// MOCK FUNCTIONS ///
-
-func mockGetUsers(w http.ResponseWriter, r *http.Request, t *testing.T) {
-	db := testInitMigration(t)
-	api.GetUsers(w, r, db)
-}
-
-func mockGetUser(w http.ResponseWriter, r *http.Request, username string, t *testing.T) {
-	db := testInitMigration(t)
-	api.GetUserWithUsername(w, r, username, db)
-}
-
-func mockCreateUser(w http.ResponseWriter, r *http.Request, user u.User, db *gorm.DB, t *testing.T) {
-	api.CreateUserFromUser(w, r, user, db)
-}
-
-func mockUpdateUser(w http.ResponseWriter, r *http.Request, oldUser, updatedUser u.User, db *gorm.DB, t *testing.T) {
-	UpdateUserFromUser(w, r, username, db)
-}
 
 func mockDeleteUser(w http.ResponseWriter, r *http.Request, username string, db *gorm.DB, t *testing.T) {
 	endpoints.SetHeader(w)
@@ -135,7 +116,7 @@ func mockGetTopUsers(w http.ResponseWriter, r *http.Request, limit string, db *g
 
 // TESTING FUNCTIONS //
 
-func getUserTest(username string, t *testing.T) (status int) {
+func getUserTest(user u.User, t *testing.T, db *gorm.DB) (status int) {
 	req, err := http.NewRequest("GET", "/api/users/{username}/", nil)
 	if err != nil {
 		t.Error(err)
@@ -143,7 +124,7 @@ func getUserTest(username string, t *testing.T) (status int) {
 
 	rr := httptest.NewRecorder()
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		mockGetUser(w, r, username, t)
+		api.GetUserWithUsername(w, r, user.Username, db)
 	})
 
 	handler.ServeHTTP(rr, req)
@@ -151,41 +132,48 @@ func getUserTest(username string, t *testing.T) (status int) {
 	return rr.Result().StatusCode
 }
 
-func createUserTest(user u.User, t *testing.T) (status int) {
-	db := testInitMigration(t)
-	req, err := http.NewRequest("POST", "/api/users/", nil)
+func createUserTest(user u.User, t *testing.T, db *gorm.DB) (status int) {
+
+	marshal, err := json.Marshal(user)
+	if err != nil {
+		t.Error(err)
+	}
+	req, err := http.NewRequest("POST", "/api/users/", bytes.NewReader(marshal))
 	if err != nil {
 		t.Error(err)
 	}
 
 	rr := httptest.NewRecorder()
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		mockCreateUser(w, r, user, db, t)
+		api.CreateUser(w, r, db)
 	})
 
 	handler.ServeHTTP(rr, req)
 
-	return rr.Code
+	return rr.Result().StatusCode
 }
 
-func updateUserTest(user map[string]string, username string, t *testing.T) (status int) {
-	db := testInitMigration(t)
-	req, err := http.NewRequest("PUT", "/api/users/{username}/", nil)
+func updateUserTest(ogUser, updatedUser u.User, t *testing.T, db *gorm.DB) (status int) {
+
+	updatedMarshal, err := json.Marshal(updatedUser)
+	if err != nil {
+		t.Error(err)
+	}
+	req, err := http.NewRequest("PUT", "/api/users/{username}/", bytes.NewReader(updatedMarshal))
 	if err != nil {
 		t.Error(err)
 	}
 	req.Header.Set("Content-Type", "application/json")
-	req.Write()
 
 	rr := httptest.NewRecorder()
 
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		mockUpdateUser(w, r, user, username, db, t)
+		api.UpdateUserFromUser(w, r, ogUser, db)
 	})
 
 	handler.ServeHTTP(rr, req)
 
-	return rr.Code
+	return rr.Result().StatusCode
 }
 
 func deleteUserTest(username string, t *testing.T) (status int) {

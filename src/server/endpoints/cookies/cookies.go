@@ -119,11 +119,11 @@ func SetCookieHandler(w http.ResponseWriter, r *http.Request, user u.User) {
 	}
 }
 
-func GetCookieHandler(w http.ResponseWriter, r *http.Request, cookieName string, secretKey []byte) error {
+func GetCookieHandler(w http.ResponseWriter, r *http.Request, cookieName string) error {
 	// Retrieve the cookie from the request using its name.
 	// If no matching cookie is found, this will return a
 	// http.ErrNoCookie error.
-
+	secretKey := []byte("COOKIE_SECRET")
 	_, err := ReadSignedCookie(r, cookieName, secretKey)
 	if err != nil {
 		switch {
