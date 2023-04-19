@@ -24,6 +24,7 @@ export class LandingPageComponent {
   navMap: any;
   loader: any;
   timeContinue: boolean = true;
+  score: number;
 
   setStreetView(latLng: google.maps.LatLng) {
     this.streetViewLat = latLng.lat();
@@ -65,7 +66,13 @@ export class LandingPageComponent {
     lineDistance.setMap(this.navMap);
     const temp = localStorage.getItem("username");
     if (temp != null) {
-      this.IssueService.updateScore(temp, score);
+      this.IssueService.getUserScore(temp).subscribe((res) => {
+        this.score = JSON.parse(JSON.stringify(res)).score;
+        console.log(this.score);
+      });
+      this.IssueService.updateScore(temp, score).subscribe((res) => {
+        console.log(res.body);
+      });
     } else console.log("Not logged in");
   }
 
@@ -80,8 +87,8 @@ export class LandingPageComponent {
       this.submit();
     }
   }
-  async someFunction() {
-    await new Promise((resolve) => setTimeout(resolve, 100));
+  async timer() {
+    await new Promise((resolve) => setTimeout(resolve, 800));
   }
 
   googleMapsLoad() {

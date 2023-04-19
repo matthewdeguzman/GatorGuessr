@@ -30,7 +30,10 @@ export class AccountComponent {
     this.dialogRef.close();
   }
   updateUser(newUsername: string, newPassword: string) {
-    this.IssueService.updateUser(newUsername, newPassword);
+    this.IssueService.updateUser(newUsername, newPassword).subscribe((res) => {
+      console.log(res);
+    });
+
     this.closeDialog();
   }
 }
