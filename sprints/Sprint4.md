@@ -19,6 +19,7 @@ Tests that ensure the correct error message comes up depending on the mistake th
 11. Registers click on map
 12. Signs in and signs out
 13. Tests delete user by creating a new user, logs in, and deletes user
+14. Tests the next button to refresh the map
 
 
 #### More Visiting Pages Tests:
