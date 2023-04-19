@@ -22,7 +22,6 @@ func GetUserWithUsername(w http.ResponseWriter, r *http.Request, username string
 	}
 	err := helpers.AuthorizeRequest(w, r, user)
 	if err != nil {
-		http.Error(w, "Access Denied", http.StatusForbidden)
 		return
 	}
 	helpers.EncodeUser(user, w)
@@ -38,7 +37,6 @@ func UpdateUserFromUser(w http.ResponseWriter, r *http.Request, ogUser u.User, d
 	// validate request
 	err := helpers.AuthorizeRequest(w, r, ogUser)
 	if err != nil {
-		http.Error(w, "Access Denied", http.StatusForbidden)
 		return
 	}
 

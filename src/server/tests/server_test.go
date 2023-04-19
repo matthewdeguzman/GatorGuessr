@@ -3,11 +3,13 @@ package tests
 import (
 	"bytes"
 	"encoding/json"
+	"log"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 
 	"github.com/matthewdeguzman/GatorGuessr/src/server/endpoints/api"
+	"github.com/matthewdeguzman/GatorGuessr/src/server/endpoints/cookies"
 	u "github.com/matthewdeguzman/GatorGuessr/src/server/structs"
 )
 
@@ -35,7 +37,7 @@ func TestGetUsers(t *testing.T) {
 	}
 }
 
-func TestWithoutAuthorization(t *testing.T) {
+func TestGetWithoutAuthorization(t *testing.T) {
 
 	db := testInitMigration(t)
 	user := u.User{
@@ -50,7 +52,7 @@ func TestWithoutAuthorization(t *testing.T) {
 		t.Error(err)
 	}
 
-	// sends request without setting cookie, should return a forbidden status
+	// sends request without setting cookie, should return a not found status
 	rr := httptest.NewRecorder()
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		api.GetUserWithUsername(w, r, user.Username, db)
@@ -60,7 +62,42 @@ func TestWithoutAuthorization(t *testing.T) {
 
 	status := rr.Result().StatusCode
 
-	if status != http.StatusForbidden {
+	if status != http.StatusNotFound {
+		t.Fail()
+	}
+}
+
+func TestGetWithBadCreds(t *testing.T) {
+
+	db := testInitMigration(t)
+	user := u.User{
+		Username: "User",
+		Password: "User",
+	}
+	addUser(user, t, db)
+
+	// changes username so cookie should not work
+	req, err := http.NewRequest("GET", "/api/users/{username}/", nil)
+	if err != nil {
+		t.Error(err)
+	}
+
+	// change cookie value. the request should return forbidden status
+	rr := httptest.NewRecorder()
+	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		cookies.SetCookieHandler(w, r, user)
+		cookie, err := r.Cookie("UserLoginCookie")
+		if err != nil || cookie == nil {
+			log.Print(err)
+			t.Fail()
+		}
+		cookie.Value += "appendage"
+		api.GetUserWithUsername(w, r, user.Username, db)
+	})
+
+	handler.ServeHTTP(rr, req)
+
+	if status := rr.Result().StatusCode; status != http.StatusForbidden {
 		t.Fail()
 	}
 }

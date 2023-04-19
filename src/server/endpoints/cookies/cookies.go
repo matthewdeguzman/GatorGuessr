@@ -121,9 +121,9 @@ func GetCookieHandler(w http.ResponseWriter, r *http.Request) error {
 	if err != nil {
 		switch {
 		case errors.Is(err, http.ErrNoCookie):
-			http.Error(w, "cookie not found", http.StatusBadRequest)
+			http.Error(w, "cookie not found", http.StatusNotFound)
 		case errors.Is(err, ErrInvalidValue):
-			http.Error(w, "invalid cookie", http.StatusBadRequest)
+			http.Error(w, "invalid cookie", http.StatusForbidden)
 		default:
 			log.Println(err)
 			http.Error(w, "server error", http.StatusInternalServerError)
