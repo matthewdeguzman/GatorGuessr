@@ -5,6 +5,7 @@
 ### Front-end
 
 #### More Registration Tests
+
 Tests that ensure the correct error message comes up depending on the mistake the user makes when registering
 1. Username is too short
 2. Username is too long
@@ -18,6 +19,7 @@ Tests that ensure the correct error message comes up depending on the mistake th
 10. Registering correctly takes user to login page
 
 ### Landing Page and Map Tests
+
 1. Registers click on map
 2. Signs in and signs out
 3. Tests delete user by creating a new user, logs in, and deletes user
@@ -25,6 +27,7 @@ Tests that ensure the correct error message comes up depending on the mistake th
 
 
 #### More Visiting Pages Tests:
+
 1. Ensures all buttons on the banner take the user to the correct page no matter what page they are on
 2. Ensures that when a user puts in a url that doesn't exist, they get taken to the page-not-found component
 3. When the user purposely goes to the page-not-found component, it works and the button to go back takes them to their previous page
