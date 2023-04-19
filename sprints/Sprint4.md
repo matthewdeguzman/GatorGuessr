@@ -1,5 +1,10 @@
 # Sprint 4
 
+## Work Completed
+
+## Back-end
+- Implemented cookies and proper authorization flow. Previously, there was no way of authorizing the requests which was a big security concern. However, we have worked with the net/http package to create cookies upon certain requests. Certain endpoints now require cookies to be sent. Furthermore, the cookies are verified via an HMAC signature that is prepended to the value upon creation. 
+
 ## Tests
 
 - TestGetUsers: Tests if GetUsers endpoint correctly returns the list of users
