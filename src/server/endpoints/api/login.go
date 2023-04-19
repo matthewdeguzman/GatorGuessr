@@ -62,6 +62,21 @@ func UpdateUserFromUser(w http.ResponseWriter, r *http.Request, ogUser u.User, d
 	helpers.EncodeUser(updatedUser, w)
 }
 
+func DeleteUserFromUsername(w http.ResponseWriter, r *http.Request, user u.User, db *gorm.DB) {
+	if user.Username == "" {
+		helpers.UserDNErr(w)
+		return
+	}
+
+	// authorize request
+	err := helpers.AuthorizeRequest(w, r, user)
+	if err != nil {
+		http.Error(w, "Access Denied", http.StatusForbidden)
+		return
+	}
+	db.Delete(&user, "Username = ?", user.Username)
+	helpers.EncodeUser(user, w)
+}
 func GetUsers(w http.ResponseWriter, r *http.Request, db *gorm.DB) {
 	helpers.SetHeader(w)
 	var users []u.User
@@ -124,19 +139,7 @@ func DeleteUser(w http.ResponseWriter, r *http.Request, db *gorm.DB) {
 	var user u.User
 
 	helpers.FetchUser(db, &user, params["username"])
-	if user.Username == "" {
-		helpers.UserDNErr(w)
-		return
-	}
-
-	// authorize request
-	err := helpers.AuthorizeRequest(w, r, user)
-	if err != nil {
-		http.Error(w, "Access Denied", http.StatusForbidden)
-		return
-	}
-	db.Delete(&user, "Username = ?", params["username"])
-	helpers.EncodeUser(user, w)
+	DeleteUserFromUsername(w, r, user, db)
 }
 
 func ValidateUser(w http.ResponseWriter, r *http.Request, db *gorm.DB) {

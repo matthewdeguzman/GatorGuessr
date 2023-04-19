@@ -176,8 +176,7 @@ func updateUserTest(ogUser, updatedUser u.User, t *testing.T, db *gorm.DB) (stat
 	return rr.Result().StatusCode
 }
 
-func deleteUserTest(username string, t *testing.T) (status int) {
-	db := testInitMigration(t)
+func deleteUserTest(user u.User, t *testing.T, db *gorm.DB) (status int) {
 	req, err := http.NewRequest("DELETE", "/api/users/{username}/", nil)
 	if err != nil {
 		t.Error(err)
@@ -185,7 +184,7 @@ func deleteUserTest(username string, t *testing.T) (status int) {
 
 	rr := httptest.NewRecorder()
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		mockDeleteUser(w, r, username, db, t)
+		api.DeleteUserFromUsername(w, r, user, db)
 	})
 
 	handler.ServeHTTP(rr, req)

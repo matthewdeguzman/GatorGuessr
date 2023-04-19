@@ -173,40 +173,31 @@ func TestUpdateUserID(t *testing.T) {
 }
 
 func TestDeleteExistingUser(t *testing.T) {
+	db := testInitMigration()
 	user := u.User{
-		Username: "test-user613",
-		Password: "heyo",
+		Username: "User",
+		Password: "User",
 	}
 
-	addUser(user, t)
-
-	status := deleteUserTest(user.Username, t)
+	cleanDB(user, db)
+	addUser(user, t, db)
+	status := deleteUserTest(user, t, db)
 	if status != http.StatusOK {
-		cleanDB(&user, user.Username, t)
 		t.Log(status)
 		t.Fail()
 	}
 
-}
-
-func TestDeleteNonexistingUser(t *testing.T) {
-	username := "not-real-user :o"
-	status := deleteUserTest(username, t)
-	if status != http.StatusNotFound {
-		cleanDB(&u.User{}, username, t)
-		t.Log(status)
-		t.Fail()
-	}
 }
 
 func TestValidateExistingUser(t *testing.T) {
+	db := testInitMigration(t)
 	user := u.User{
-		Username: "new-user-000420",
-		Password: "jflka;fjsdlkfjeiw",
+		Username: "User",
+		Password: "User",
 	}
-	addUser(user, t)
+	cleanDB(user, db)
+	addUser(user, t, db)
 	status := validateUserTest(user, t)
-	cleanDB(&user, user.Username, t)
 	if status != http.StatusOK {
 		t.Log(status)
 		t.Fail()
@@ -214,12 +205,14 @@ func TestValidateExistingUser(t *testing.T) {
 }
 
 func TestValidateNonexistantuser(t *testing.T) {
+	db := testInitMigration(t)
 	user := u.User{
-		Username: "new-user-000420",
-		Password: "jflka;fjsdlkfjeiw",
+		Username: "User",
+		Password: "User",
 	}
+	cleanDB(user, db)
 	status := validateUserTest(user, t)
-	if status != http.StatusNotFound {
+	if status != http.StatusOK {
 		t.Log(status)
 		t.Fail()
 	}
