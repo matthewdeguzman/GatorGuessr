@@ -82,8 +82,7 @@ func ReadSignedCookie(r *http.Request, name string, secretKey []byte) (string, e
 	mac.Write([]byte(name))
 	mac.Write([]byte(value))
 	expectedSignature := mac.Sum(nil)
-	log.Println("Received value: " + string(signature))
-	log.Println("Expected value: " + string(expectedSignature))
+
 	// If the signatures do not match, then the cookie is not valid
 	// and may have been modified by the client
 	if !hmac.Equal([]byte(signature), expectedSignature) {

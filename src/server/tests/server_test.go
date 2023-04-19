@@ -1,6 +1,8 @@
 package tests
 
 import (
+	"bytes"
+	"encoding/json"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -33,6 +35,35 @@ func TestGetUsers(t *testing.T) {
 	}
 }
 
+func TestWithoutAuthorization(t *testing.T) {
+
+	db := testInitMigration(t)
+	user := u.User{
+		Username: "User",
+		Password: "User",
+	}
+
+	addUser(user, t, db)
+
+	req, err := http.NewRequest("GET", "/api/users/{username}/", nil)
+	if err != nil {
+		t.Error(err)
+	}
+
+	// sends request without setting cookie, should return a forbidden status
+	rr := httptest.NewRecorder()
+	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		api.GetUserWithUsername(w, r, user.Username, db)
+	})
+
+	handler.ServeHTTP(rr, req)
+
+	status := rr.Result().StatusCode
+
+	if status != http.StatusForbidden {
+		t.Fail()
+	}
+}
 func TestGetExistingUser(t *testing.T) {
 	db := testInitMigration(t)
 	user := u.User{
@@ -119,6 +150,42 @@ func TestCreateUserWithID(t *testing.T) {
 
 }
 
+func TestUpdateUserWithoutAuthorization(t *testing.T) {
+	db := testInitMigration(t)
+	ogUser := u.User{
+		Username: "User",
+		Password: "User",
+	}
+	updatedUser := u.User{
+		Password: "NewPassword",
+	}
+	cleanDB(ogUser, db)
+	addUser(ogUser, t, db)
+
+	updatedMarshal, err := json.Marshal(updatedUser)
+	if err != nil {
+		t.Error(err)
+	}
+	req, err := http.NewRequest("PUT", "/api/users/{username}/", bytes.NewReader(updatedMarshal))
+	if err != nil {
+		t.Error(err)
+	}
+	req.Header.Set("Content-Type", "application/json")
+
+	rr := httptest.NewRecorder()
+
+	// attempts to update user without cookie. should return forbidden request status
+	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		api.UpdateUserFromUser(w, r, ogUser, db)
+	})
+
+	handler.ServeHTTP(rr, req)
+
+	if status := rr.Result().StatusCode; status != http.StatusForbidden {
+		t.Log(status)
+		t.Fail()
+	}
+}
 func TestUpdateNonexistantUser(t *testing.T) {
 	db := testInitMigration(t)
 	ogUser := u.User{

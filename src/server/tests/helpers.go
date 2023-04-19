@@ -11,6 +11,7 @@ import (
 
 	"github.com/matthewdeguzman/GatorGuessr/src/server/endpoints"
 	"github.com/matthewdeguzman/GatorGuessr/src/server/endpoints/api"
+	"github.com/matthewdeguzman/GatorGuessr/src/server/endpoints/cookies"
 	u "github.com/matthewdeguzman/GatorGuessr/src/server/structs"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -80,6 +81,7 @@ func getUserTest(user u.User, t *testing.T, db *gorm.DB) (status int) {
 
 	rr := httptest.NewRecorder()
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		cookies.SetCookieHandler(w, r, user)
 		api.GetUserWithUsername(w, r, user.Username, db)
 	})
 
@@ -124,6 +126,7 @@ func updateUserTest(ogUser, updatedUser u.User, t *testing.T, db *gorm.DB) (stat
 	rr := httptest.NewRecorder()
 
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		cookies.SetCookieHandler(w, r, ogUser)
 		api.UpdateUserFromUser(w, r, ogUser, db)
 	})
 
