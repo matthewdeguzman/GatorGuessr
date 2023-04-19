@@ -82,7 +82,6 @@ export class UserService {
 
   // Gets a user's score
   getUserScore(username: string) {
-    console.log(`UserLoginCookie=${this.CookieService.get("UserLoginCookie")}`);
     return this.http
       .get(`${this.uri}/api/users/${username}/`, {
         withCredentials: true,
@@ -94,7 +93,6 @@ export class UserService {
 
   // Updates a users Username and Password
   updateUser(username: string, password: string) {
-    console.log(this.CookieService.get("UserLoginCookie"));
     const body = { Username: username, Password: password };
     return this.http
       .put(`${this.uri}/api/users/${username}/`, body, {
@@ -107,7 +105,6 @@ export class UserService {
 
   // Updates a users score
   updateScore(username: string, score: number) {
-    console.log(this.CookieService.get("UserLoginCookie"));
     const body = { Score: score };
     return this.http
       .put(`${this.uri}/api/users/${username}/`, body, {
