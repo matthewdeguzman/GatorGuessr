@@ -83,7 +83,6 @@ export class LandingPageComponent {
       strokeWeight: 4,
     });
     lineDistance.setMap(this.navMap);
-    this.googleMapsLoad();
   }
 
   countDown() {
