@@ -6,6 +6,15 @@ import { Observable } from "rxjs";
 import { IssueService } from "src/app/services/issue.service";
 import { BannerComponent } from "../banner/banner.component";
 
+interface User {
+  ID: number;
+  Username: string;
+  Password: string;
+  Score: number;
+  CreatedAt: string;
+  UpdatedAt: string;
+}
+
 @Component({
   selector: "app-landing-page",
   templateUrl: "./landing-page.component.html",
@@ -21,7 +30,7 @@ export class LandingPageComponent {
   streetViewLat: number = 0;
   streetViewLng: number = 0;
   navMap: any;
-  score: number;
+  oldScore: number;
 
   setStreetView(latLng: google.maps.LatLng) {
     this.streetViewLat = latLng.lat();
@@ -41,10 +50,10 @@ export class LandingPageComponent {
     const maxDistance = 0.04; // Maximum allowed distance for maximum points (adjust as needed)
     const maxPoints = 1000; // Maximum points for a perfect guess
     const minPoints = 0; // Minimum points for a guess beyond the maximum allowed distance
-    const score = Math.round(
+    const newScore = Math.round(
       Math.max(maxPoints - (distance / maxDistance) * maxPoints, minPoints)
     );
-    console.log("Score: " + score);
+    console.log("Score: " + newScore);
     var orginalLocation = new google.maps.Marker({
       position: { lat: this.streetViewLat, lng: this.streetViewLng },
       map: this.navMap,
@@ -62,13 +71,15 @@ export class LandingPageComponent {
     lineDistance.setMap(this.navMap);
     const temp = localStorage.getItem("username");
     if (temp != null) {
-      this.IssueService.getUserScore(temp).subscribe((res) => {
-        this.score = JSON.parse(JSON.stringify(res)).score;
-        console.log(this.score);
+      this.IssueService.getUserScore(temp).subscribe((data) => {
+        this.oldScore = (data as User).Score;
       });
-      this.IssueService.updateScore(temp, score).subscribe((res) => {
-        console.log(res.body);
-      });
+      if (newScore > this.oldScore) {
+        this.IssueService.updateScore(temp, newScore).subscribe((res) => {
+          console.log("Score updated");
+          console.log(res);
+        });
+      }
     } else console.log("Not logged in");
   }
 
