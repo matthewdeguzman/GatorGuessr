@@ -15,8 +15,9 @@ import (
 )
 
 var (
-	db  *gorm.DB
-	err error
+	db        *gorm.DB
+	err       error
+	secretKey []byte = []byte(os.Getenv("COOKIE_SECRET"))
 )
 
 func initializeMigration() {
@@ -51,7 +52,7 @@ func initializeRouter() {
 		case "GET":
 			api.GetUsers(w, r, db)
 		case "POST":
-			api.CreateUser(w, r, db)
+			api.CreateUser(w, r, db, secretKey)
 		case "OPTIONS":
 			w.WriteHeader(http.StatusOK)
 		default:
@@ -63,11 +64,11 @@ func initializeRouter() {
 		endpoints.EnableCors(w)
 		switch r.Method {
 		case "GET":
-			api.GetUser(w, r, db)
+			api.GetUser(w, r, db, secretKey)
 		case "PUT":
-			api.UpdateUser(w, r, db)
+			api.UpdateUser(w, r, db, secretKey)
 		case "DELETE":
-			api.DeleteUser(w, r, db)
+			api.DeleteUser(w, r, db, secretKey)
 		case "OPTIONS":
 			w.WriteHeader(http.StatusOK)
 		default:
@@ -79,7 +80,7 @@ func initializeRouter() {
 		endpoints.EnableCors(w)
 		switch r.Method {
 		case "POST":
-			api.ValidateUser(w, r, db)
+			api.ValidateUser(w, r, db, secretKey)
 		case "OPTIONS":
 			w.WriteHeader(http.StatusOK)
 		default:

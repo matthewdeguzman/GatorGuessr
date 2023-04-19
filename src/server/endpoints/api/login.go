@@ -12,7 +12,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func GetUserWithUsername(w http.ResponseWriter, r *http.Request, username string, db *gorm.DB) {
+func GetUserWithUsername(w http.ResponseWriter, r *http.Request, username string, db *gorm.DB, secretKey []byte) {
 	var user u.User
 	helpers.FetchUser(db, &user, username)
 
@@ -20,14 +20,14 @@ func GetUserWithUsername(w http.ResponseWriter, r *http.Request, username string
 		helpers.UserDNErr(w)
 		return
 	}
-	err := helpers.AuthorizeRequest(w, r, user)
+	err := helpers.AuthorizeRequest(w, r, user, secretKey)
 	if err != nil {
 		return
 	}
 	helpers.EncodeUser(user, w)
 }
 
-func UpdateUserFromUser(w http.ResponseWriter, r *http.Request, ogUser u.User, db *gorm.DB) {
+func UpdateUserFromUser(w http.ResponseWriter, r *http.Request, ogUser u.User, db *gorm.DB, secretKey []byte) {
 
 	if ogUser.Username == "" {
 		helpers.UserDNErr(w)
@@ -35,7 +35,7 @@ func UpdateUserFromUser(w http.ResponseWriter, r *http.Request, ogUser u.User, d
 	}
 
 	// validate request
-	err := helpers.AuthorizeRequest(w, r, ogUser)
+	err := helpers.AuthorizeRequest(w, r, ogUser, secretKey)
 	if err != nil {
 		return
 	}
@@ -60,14 +60,14 @@ func UpdateUserFromUser(w http.ResponseWriter, r *http.Request, ogUser u.User, d
 	helpers.EncodeUser(updatedUser, w)
 }
 
-func DeleteUserFromUsername(w http.ResponseWriter, r *http.Request, user u.User, db *gorm.DB) {
+func DeleteUserFromUsername(w http.ResponseWriter, r *http.Request, user u.User, db *gorm.DB, secretKey []byte) {
 	if user.Username == "" {
 		helpers.UserDNErr(w)
 		return
 	}
 
 	// authorize request
-	err := helpers.AuthorizeRequest(w, r, user)
+	err := helpers.AuthorizeRequest(w, r, user, secretKey)
 	if err != nil {
 		http.Error(w, "Access Denied", http.StatusForbidden)
 		return
@@ -82,14 +82,14 @@ func GetUsers(w http.ResponseWriter, r *http.Request, db *gorm.DB) {
 	json.NewEncoder(w).Encode(users)
 }
 
-func GetUser(w http.ResponseWriter, r *http.Request, db *gorm.DB) {
+func GetUser(w http.ResponseWriter, r *http.Request, db *gorm.DB, secretKey []byte) {
 	helpers.SetHeader(w)
 
 	params := mux.Vars(r)
-	GetUserWithUsername(w, r, params["username"], db)
+	GetUserWithUsername(w, r, params["username"], db, secretKey)
 }
 
-func CreateUser(w http.ResponseWriter, r *http.Request, db *gorm.DB) {
+func CreateUser(w http.ResponseWriter, r *http.Request, db *gorm.DB, secretKey []byte) {
 	helpers.SetHeader(w)
 
 	var user u.User
@@ -101,7 +101,7 @@ func CreateUser(w http.ResponseWriter, r *http.Request, db *gorm.DB) {
 	}
 
 	if user.ID != 0 || user.Password == "" {
-		helpers.WriteErr(w, http.StatusBadRequest, "400 - Attempting to change ID or password is empty")
+		helpers.WriteErr(w, http.StatusBadRequest, "400 - Attempting to set ID or password is empty")
 		return
 	}
 
@@ -117,10 +117,10 @@ func CreateUser(w http.ResponseWriter, r *http.Request, db *gorm.DB) {
 	helpers.EncodeUser(user, w)
 
 	// create cookie
-	cookies.SetCookieHandler(w, r, user)
+	cookies.SetCookieHandler(w, r, user, secretKey)
 }
 
-func UpdateUser(w http.ResponseWriter, r *http.Request, db *gorm.DB) {
+func UpdateUser(w http.ResponseWriter, r *http.Request, db *gorm.DB, secretKey []byte) {
 	helpers.SetHeader(w)
 	params := mux.Vars(r)
 
@@ -128,19 +128,19 @@ func UpdateUser(w http.ResponseWriter, r *http.Request, db *gorm.DB) {
 
 	helpers.FetchUser(db, &ogUser, params["username"])
 
-	UpdateUserFromUser(w, r, ogUser, db)
+	UpdateUserFromUser(w, r, ogUser, db, secretKey)
 }
 
-func DeleteUser(w http.ResponseWriter, r *http.Request, db *gorm.DB) {
+func DeleteUser(w http.ResponseWriter, r *http.Request, db *gorm.DB, secretKey []byte) {
 	helpers.SetHeader(w)
 	params := mux.Vars(r)
 	var user u.User
 
 	helpers.FetchUser(db, &user, params["username"])
-	DeleteUserFromUsername(w, r, user, db)
+	DeleteUserFromUsername(w, r, user, db, secretKey)
 }
 
-func ValidateUser(w http.ResponseWriter, r *http.Request, db *gorm.DB) {
+func ValidateUser(w http.ResponseWriter, r *http.Request, db *gorm.DB, secretKey []byte) {
 	helpers.SetHeader(w)
 
 	var user u.User
@@ -168,5 +168,5 @@ func ValidateUser(w http.ResponseWriter, r *http.Request, db *gorm.DB) {
 	}
 
 	// create cookie
-	cookies.SetCookieHandler(w, r, user)
+	cookies.SetCookieHandler(w, r, user, secretKey)
 }

@@ -179,8 +179,8 @@ func SetHeader(w http.ResponseWriter) {
 	w.Header().Set("Content-Type", "application/json")
 }
 
-func AuthorizeRequest(w http.ResponseWriter, r *http.Request, user u.User) error {
-	err := cookies.GetCookieHandler(w, r)
+func AuthorizeRequest(w http.ResponseWriter, r *http.Request, user u.User, secretKey []byte) error {
+	err := cookies.GetCookieHandler(w, r, secretKey)
 
 	return err
 }
