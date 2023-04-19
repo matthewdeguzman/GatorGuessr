@@ -63,6 +63,8 @@ export class LandingPageComponent {
     if (temp != null) {
       this.IssueService.updateScore(temp, score);
     } else console.log("Not logged in");
+
+    this.ngOnInit();
   }
 
   countDown() {
