@@ -28,6 +28,11 @@ mat-card-content {
   justify-content: center;
 }
 
+mat-card-title{
+  margin-bottom: 15px;
+  font-size: large;
+}
+
 mat-card-footer {
   color: red;
   display: flex;
