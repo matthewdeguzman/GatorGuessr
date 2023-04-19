@@ -54,7 +54,7 @@ func CreateUserFromUser(w http.ResponseWriter, r *http.Request, user u.User, db 
 	cookies.SetCookieHandler(w, r, user)
 }
 
-func UpdateUserFromUser(w http.ResponseWriter, r *http.Request, oldUser u.User, updatedUser u.User, db *gorm.DB) {
+func UpdateUserFromUser(w http.ResponseWriter, r *http.Request) {
 	if oldUser.Username == "" {
 		helpers.UserDNErr(w)
 		return

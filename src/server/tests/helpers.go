@@ -71,7 +71,7 @@ func mockCreateUser(w http.ResponseWriter, r *http.Request, user u.User, db *gor
 }
 
 func mockUpdateUser(w http.ResponseWriter, r *http.Request, oldUser, updatedUser u.User, db *gorm.DB, t *testing.T) {
-	UpdateUserFromUser(w, r, oldUser, updatedUser, db)
+	UpdateUserFromUser(w, r, username, db)
 }
 
 func mockDeleteUser(w http.ResponseWriter, r *http.Request, username string, db *gorm.DB, t *testing.T) {
@@ -174,8 +174,11 @@ func updateUserTest(user map[string]string, username string, t *testing.T) (stat
 	if err != nil {
 		t.Error(err)
 	}
+	req.Header.Set("Content-Type", "application/json")
+	req.Write()
 
 	rr := httptest.NewRecorder()
+
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		mockUpdateUser(w, r, user, username, db, t)
 	})
