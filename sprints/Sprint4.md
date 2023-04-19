@@ -4,6 +4,24 @@
 
 ### Front-end
 
+#### More Registration Tests
+Tests that ensure the correct error message comes up depending on the mistake the user makes when registering
+1. Username is too short
+2. Username is too long
+3. No username was given
+4. Password is too short
+5. Password is too long
+6. Password doesn't contain uppercase
+7. Password doesn't contain lowercase
+8. Password doesn't contain number
+9. No password was given
+10. Registering correctly takes user to login page
+
+#### More Visiting Pages Tests:
+1. Ensures all buttons on the banner take the user to the correct page no matter what page they are on
+2. Ensures that when a user puts in a url that doesn't exist, they get taken to the page-not-found component
+3. When the user purposely goes to the page-not-found component, it works and the button to go back takes them to their previous page
+
 #### Google Maps
 We updated our layout on the landing page component for our Google Maps API implementation. We display one map, street view panorama, as the base layer and then in a small box on the bottom left of the screen is the second map, the default navigation projection. 
 
