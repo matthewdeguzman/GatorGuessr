@@ -22,3 +22,19 @@ describe("Signs out", () => {
         cy.url().should("eq", "http://localhost:4200/home");
     });
 });
+describe("Test delete user", () => {
+    it("Registers new user, logs in, and deletes user", () => {
+      cy.visit("http://localhost:4200/register");
+      cy.get("#mat-input-0").type("Test1");
+      cy.get("#mat-input-1").type("Testpassword1");
+      cy.get("[id^=register-button]").click();
+      cy.url().should("eq", "http://localhost:4200/login");
+      cy.get("[id^=username]").type("Test1");
+      cy.get("[id^=password]").type("Testpassword1");
+      cy.get("[id^=login-button]").click();
+      cy.url().should("eq", "http://localhost:4200/landing-page");
+      cy.get("[id^=delete]").click();
+      cy.contains("Delete Account").click();
+      cy.url().should("eq", "http://localhost:4200/home");
+    });
+  });
