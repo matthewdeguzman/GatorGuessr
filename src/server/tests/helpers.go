@@ -2,8 +2,12 @@ package tests
 
 import (
 	"bytes"
+	"crypto/hmac"
+	"crypto/sha256"
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 	"net/http/httptest"
 	"strconv"
@@ -48,11 +52,49 @@ func addUser(user u.User, t *testing.T, db *gorm.DB) (err error) {
 		t.Error(err)
 	}
 	user.Password = hash
-
+	cleanDB(user, db)
 	db.Create(&user)
 	return nil
 }
 
+func cookieExists(name string, cookies []*http.Cookie, t *testing.T) bool {
+	// if there is no cookie with the expected name, then the test fails
+	for _, cookie := range cookies {
+		if cookie.Name == "UserLoginCookie" {
+			return true
+		}
+	}
+
+	return false
+
+}
+
+func addCookie(user u.User, r *http.Request, secretKey []byte) {
+
+	cookie := http.Cookie{
+		Name:   "UserLoginCookie",
+		Value:  "UserLogin" + strconv.FormatUint(uint64(user.ID), 10),
+		MaxAge: 60 * 60 * 24 * 365 * 5,
+		Path:   "/api/",
+	}
+
+	// Calculate the HMAC signature of the cookie name and value, using SHA256 and
+	// a secret key
+	mac := hmac.New(sha256.New, secretKey)
+	mac.Write([]byte(cookie.Name))
+	mac.Write([]byte(cookie.Value))
+	signature := mac.Sum(nil)
+
+	// Prepend the cookie value with the HMAC signature.
+	cookie.Value = string(signature) + cookie.Value
+	log.Println("Written value: " + cookie.Value)
+
+	// encode the value in base64
+	cookie.Value = base64.URLEncoding.EncodeToString([]byte(cookie.Value))
+
+	r.AddCookie(&cookie)
+
+}
 func mockGetTopUsers(w http.ResponseWriter, r *http.Request, limit string, db *gorm.DB, t *testing.T) {
 	var users []u.User
 
@@ -72,7 +114,7 @@ func mockGetTopUsers(w http.ResponseWriter, r *http.Request, limit string, db *g
 
 // TESTING FUNCTIONS //
 
-func getUserTest(user u.User, t *testing.T, db *gorm.DB) (status int) {
+func getUserTest(user u.User, t *testing.T, db *gorm.DB, secretKey []byte) (status int) {
 	req, err := http.NewRequest("GET", "/api/users/{username}/", nil)
 	if err != nil {
 		t.Error(err)
@@ -80,7 +122,8 @@ func getUserTest(user u.User, t *testing.T, db *gorm.DB) (status int) {
 
 	rr := httptest.NewRecorder()
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		api.GetUserWithUsername(w, r, user.Username, db)
+		addCookie(user, r, secretKey)
+		api.GetUserWithUsername(w, r, user.Username, db, secretKey)
 	})
 
 	handler.ServeHTTP(rr, req)
@@ -88,7 +131,7 @@ func getUserTest(user u.User, t *testing.T, db *gorm.DB) (status int) {
 	return rr.Result().StatusCode
 }
 
-func createUserTest(user u.User, t *testing.T, db *gorm.DB) (status int) {
+func createUserTest(user u.User, t *testing.T, db *gorm.DB, secretKey []byte) (status int) {
 
 	marshal, err := json.Marshal(user)
 	if err != nil {
@@ -101,7 +144,7 @@ func createUserTest(user u.User, t *testing.T, db *gorm.DB) (status int) {
 
 	rr := httptest.NewRecorder()
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		api.CreateUser(w, r, db)
+		api.CreateUser(w, r, db, secretKey)
 	})
 
 	handler.ServeHTTP(rr, req)
@@ -109,7 +152,7 @@ func createUserTest(user u.User, t *testing.T, db *gorm.DB) (status int) {
 	return rr.Result().StatusCode
 }
 
-func updateUserTest(ogUser, updatedUser u.User, t *testing.T, db *gorm.DB) (status int) {
+func updateUserTest(ogUser, updatedUser u.User, t *testing.T, db *gorm.DB, secretKey []byte) (status int) {
 
 	updatedMarshal, err := json.Marshal(updatedUser)
 	if err != nil {
@@ -124,7 +167,8 @@ func updateUserTest(ogUser, updatedUser u.User, t *testing.T, db *gorm.DB) (stat
 	rr := httptest.NewRecorder()
 
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		api.UpdateUserFromUser(w, r, ogUser, db)
+		addCookie(ogUser, r, secretKey)
+		api.UpdateUserFromUser(w, r, ogUser, db, secretKey)
 	})
 
 	handler.ServeHTTP(rr, req)
@@ -132,7 +176,7 @@ func updateUserTest(ogUser, updatedUser u.User, t *testing.T, db *gorm.DB) (stat
 	return rr.Result().StatusCode
 }
 
-func deleteUserTest(user u.User, t *testing.T, db *gorm.DB) (status int) {
+func deleteUserTest(user u.User, t *testing.T, db *gorm.DB, secretKey []byte) (status int) {
 	req, err := http.NewRequest("DELETE", "/api/users/{username}/", nil)
 	if err != nil {
 		t.Error(err)
@@ -140,15 +184,16 @@ func deleteUserTest(user u.User, t *testing.T, db *gorm.DB) (status int) {
 
 	rr := httptest.NewRecorder()
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		api.DeleteUserFromUsername(w, r, user, db)
+		addCookie(user, r, secretKey)
+		api.DeleteUserFromUsername(w, r, user, db, secretKey)
 	})
 
 	handler.ServeHTTP(rr, req)
 
-	return rr.Code
+	return rr.Result().StatusCode
 }
 
-func validateUserTest(sentUser u.User, t *testing.T, db *gorm.DB) (status int) {
+func validateUserTest(sentUser u.User, t *testing.T, db *gorm.DB, secretKey []byte) (status int) {
 
 	sentMarshal, err := json.Marshal(sentUser)
 	if err != nil {
@@ -161,12 +206,13 @@ func validateUserTest(sentUser u.User, t *testing.T, db *gorm.DB) (status int) {
 
 	rr := httptest.NewRecorder()
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		api.ValidateUser(w, r, db)
+		addCookie(sentUser, r, secretKey)
+		api.ValidateUser(w, r, db, secretKey)
 	})
 
 	handler.ServeHTTP(rr, req)
 
-	return rr.Code
+	return rr.Result().StatusCode
 }
 
 func getTopUsersTest(limit string, t *testing.T) (status int, users []u.User) {
