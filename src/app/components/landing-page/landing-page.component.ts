@@ -36,7 +36,7 @@ export class LandingPageComponent {
   score: number;
   canClick: boolean = true;
   oldScore: number;
-
+  clockTime: any;
 
   setStreetView(latLng: google.maps.LatLng) {
     this.streetViewLat = latLng.lat();
@@ -50,7 +50,6 @@ export class LandingPageComponent {
     this.googleMapsLoad();
     this.timeContinue = true;
     this.time = 60;
-    this.countDown();
   }
 
   submit() {
@@ -87,15 +86,19 @@ export class LandingPageComponent {
   }
 
   countDown() {
-    this.time--; // decrements by one second
-    if (this.time > 0 && this.timeContinue == true) {
-      setTimeout(() => {
-        this.countDown();
-      }, 1000); //decrement one second
-    } else {
-      // If remaining time reaches 0, call the submit function
-      this.submit();
-    }
+    this.clockTime = setInterval(() => {
+      if (this.time == 0) {
+        this.timeContinue = false;
+        this.submit();
+        clearInterval(this.clockTime);
+      }
+      if (this.timeContinue) {
+        this.drop();
+      }
+    }, 1000);
+  }
+  drop() {
+    this.time--;
   }
   async timer() {
     await new Promise((resolve) => setTimeout(resolve, 800));

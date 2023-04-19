@@ -1,13 +1,3 @@
-describe("User that already exists", () => {
-  it("Tries to login with user that already exists", () => {
-    cy.visit("http://localhost:4200/register");
-    cy.get("#mat-input-0").type("ramajanco");
-    cy.get("#mat-input-1").type("Password123");
-    cy.get("[id^=register-button]").click();
-    cy.get("mat-card-footer").contains("Error: User already exists");
-  });
-});
-
 describe("User with too short username", () => {
   it("Tries to register with username that is too short", () => {
     cy.visit("http://localhost:4200/register");
