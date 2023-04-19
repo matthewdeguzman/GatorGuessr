@@ -21,6 +21,7 @@ export class LandingPageComponent {
   streetViewLat: number = 0;
   streetViewLng: number = 0;
   navMap: any;
+  score: number;
 
   setStreetView(latLng: google.maps.LatLng) {
     this.streetViewLat = latLng.lat();
@@ -61,7 +62,13 @@ export class LandingPageComponent {
     lineDistance.setMap(this.navMap);
     const temp = localStorage.getItem("username");
     if (temp != null) {
-      this.IssueService.updateScore(temp, score);
+      this.IssueService.getUserScore(temp).subscribe((res) => {
+        this.score = JSON.parse(JSON.stringify(res)).score;
+        console.log(this.score);
+      });
+      this.IssueService.updateScore(temp, score).subscribe((res) => {
+        console.log(res.body);
+      });
     } else console.log("Not logged in");
   }
 
@@ -76,8 +83,8 @@ export class LandingPageComponent {
       this.submit();
     }
   }
-  async someFunction() {
-    await new Promise((resolve) => setTimeout(resolve, 100));
+  async timer() {
+    await new Promise((resolve) => setTimeout(resolve, 800));
   }
 
   constructor(
@@ -86,11 +93,11 @@ export class LandingPageComponent {
   ) {}
 
   async ngOnInit() {
-    this.BannerComponent.ngOnInit();
+    this.BannerComponent.updateBanner(); //Might not need this
     this.IssueService.getApiKey().subscribe((res) => {
       this.string = res.body as string;
     });
-    await this.someFunction();
+    await this.timer();
     this.string = this.string.substring(1, this.string.length - 2);
 
     let loader = new Loader({

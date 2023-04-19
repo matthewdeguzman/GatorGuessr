@@ -1,3 +1,4 @@
+import { User } from "./../../services/user/user.service";
 import { AppComponent } from "./../../app.component";
 import { Component, HostBinding, OnInit } from "@angular/core";
 import { IssueService } from "src/app/services/issue.service";
@@ -52,7 +53,8 @@ export class BannerComponent implements OnInit {
     this.username = localStorage.getItem("username") || "null";
     if (this.username !== "null") {
       this.IssueService.getUserScore(this.username).subscribe((data) => {
-        this.score = data;
+        this.score = JSON.parse(JSON.stringify(data));
+        console.log(JSON.stringify(data));
       });
     }
   }
