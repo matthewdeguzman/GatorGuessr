@@ -92,6 +92,7 @@ func SetCookieHandler(w http.ResponseWriter, r *http.Request, user u.User, secre
 		Value:  "UserLogin" + strconv.FormatUint(uint64(user.ID), 10),
 		MaxAge: 60 * 60 * 24 * 365 * 5,
 		Path:   "/api/",
+		Domain: ".localhost",
 	}
 	err := WriteSignedCookie(w, cookie, secretKey)
 	if err != nil {
