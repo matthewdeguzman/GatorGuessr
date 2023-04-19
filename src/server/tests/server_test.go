@@ -73,7 +73,6 @@ func TestGetExistingUser(t *testing.T) {
 
 	addUser(user, t, db)
 	status := getUserTest(user, t, db)
-	cleanDB(user, db)
 
 	if status != http.StatusOK {
 		t.Fail()
@@ -180,7 +179,7 @@ func TestUpdateUserWithoutAuthorization(t *testing.T) {
 	updatedUser := u.User{
 		Password: "NewPassword",
 	}
-	cleanDB(ogUser, db)
+
 	addUser(ogUser, t, db)
 
 	updatedMarshal, err := json.Marshal(updatedUser)
@@ -231,7 +230,6 @@ func TestUpdateExistingUser(t *testing.T) {
 	updatedUser := u.User{
 		Password: "NewPassword",
 	}
-	cleanDB(ogUser, db)
 	addUser(ogUser, t, db)
 	status := updateUserTest(ogUser, updatedUser, t, db)
 	if status != http.StatusOK {
@@ -250,7 +248,6 @@ func TestUpdateUserID(t *testing.T) {
 		ID: 9403059,
 	}
 
-	cleanDB(ogUser, db)
 	addUser(ogUser, t, db)
 	status := updateUserTest(ogUser, updatedUser, t, db)
 
@@ -267,7 +264,6 @@ func TestDeleteUserWithoutAuthorization(t *testing.T) {
 		Password: "User",
 	}
 
-	cleanDB(user, db)
 	addUser(user, t, db)
 	req, err := http.NewRequest("DELETE", "/api/users/{username}/", nil)
 	if err != nil {
@@ -294,7 +290,6 @@ func TestDeleteExistingUser(t *testing.T) {
 		Password: "User",
 	}
 
-	cleanDB(user, db)
 	addUser(user, t, db)
 	status := deleteUserTest(user, t, db)
 	if status != http.StatusOK {
@@ -310,7 +305,7 @@ func TestValidateExistantUserCookie(t *testing.T) {
 		Username: "User",
 		Password: "User",
 	}
-	cleanDB(user, db)
+
 	addUser(user, t, db)
 
 	sentMarshal, err := json.Marshal(user)
@@ -346,7 +341,7 @@ func TestValidateExistingUser(t *testing.T) {
 		Username: "User",
 		Password: "User",
 	}
-	cleanDB(user, db)
+
 	addUser(user, t, db)
 
 	status := validateUserTest(user, t, db)
@@ -381,7 +376,6 @@ func TestValidateIncorrectPassword(t *testing.T) {
 		Password: "WrongPassword",
 	}
 
-	cleanDB(realUser, db)
 	addUser(realUser, t, db)
 
 	status := validateUserTest(sentUser, t, db)
@@ -433,7 +427,27 @@ func TestLeaderboardOverMaxLimit(t *testing.T) {
 }
 
 func TestLeaderboardSorted(t *testing.T) {
+	db := testInitMigration(t)
 	limit := "10"
+
+	user1 := u.User{
+		Username: "User1",
+		Password: "password",
+		Score:    999,
+	}
+	user2 := u.User{
+		Username: "User1",
+		Password: "password",
+		Score:    100,
+	}
+	user3 := u.User{
+		Username: "User1",
+		Password: "password",
+		Score:    5,
+	}
+	addUser(user1, t, db)
+	addUser(user2, t, db)
+	addUser(user3, t, db)
 	status, users := getTopUsersTest(limit, t)
 
 	if status != http.StatusOK {

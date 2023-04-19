@@ -49,7 +49,7 @@ func addUser(user u.User, t *testing.T, db *gorm.DB) (err error) {
 		t.Error(err)
 	}
 	user.Password = hash
-
+	cleanDB(user, db)
 	db.Create(&user)
 	return nil
 }
