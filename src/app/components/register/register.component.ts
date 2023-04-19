@@ -52,6 +52,7 @@ export class RegisterComponent {
     this.IssueService.getUser(username).subscribe(
       (res) => {
         console.log("Hatsune Miku");
+        this.invalidUser = true;
       },
       (error) => {
         if (error.status == 404) {
