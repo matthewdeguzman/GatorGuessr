@@ -25,6 +25,7 @@ export class LandingPageComponent {
   loader: any;
   timeContinue: boolean = true;
   score: number;
+  canClick: boolean = true;
 
   setStreetView(latLng: google.maps.LatLng) {
     this.streetViewLat = latLng.lat();
@@ -34,8 +35,10 @@ export class LandingPageComponent {
     this.userLat = latLng.lat();
     this.userLng = latLng.lng();
   }
+  nextButton() {}
 
   submit() {
+    this.canClick = false;
     this.timeContinue = false;
     console.log("Submit button clicked");
     const distance = Math.sqrt(
@@ -92,6 +95,7 @@ export class LandingPageComponent {
   }
 
   googleMapsLoad() {
+    this.canClick = true;
     this.loader.load().then(() => {
       const pano = new google.maps.StreetViewPanorama(
         document.getElementById("Smap") as HTMLElement,
@@ -175,8 +179,8 @@ export class LandingPageComponent {
       google.maps.event.addListener(
         navMap,
         "click",
-        function (e: { latLng: google.maps.LatLng }) {
-          placeMarker(e.latLng, navMap);
+        (e: { latLng: google.maps.LatLng }) => {
+          if (this.canClick == true) placeMarker(e.latLng, navMap);
         }
       );
       const placeMarker = (

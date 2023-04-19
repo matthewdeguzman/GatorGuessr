@@ -19,7 +19,16 @@
       >
         Submit
       </button>
-      <div>&nbsp; {{ time }} Seconds Left</div>
+      <div>&nbsp; {{ time }} Seconds Left &nbsp;&nbsp;</div>
+      <button
+        mat-raised-button
+        color="accent"
+        class="next"
+        id="nextButton"
+        (click)="nextButton()"
+      >
+        Submit
+      </button>
     </mat-card-actions>
   </mat-card>
 </div>
