@@ -19,8 +19,8 @@ describe("Incorrect Password", () => {
 describe("Correct Login", () => {
   it("Logs in with correct username and password", () => {
     cy.visit("http://localhost:4200/login");
-    cy.get("[id^=username]").type("Frontend");
-    cy.get("[id^=password]").type("FrontendIsNumber1");
+    cy.get("[id^=username]").type("testuser1");
+    cy.get("[id^=password]").type("Password123");
     cy.get("[id^=login-button]").click();
     cy.url().should("eq", "http://localhost:4200/landing-page");
   });

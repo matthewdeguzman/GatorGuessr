@@ -82,11 +82,11 @@ describe("Password with no number", () => {
 describe("New User", () => {
   it("Registers new user and logs in", () => {
     cy.visit("http://localhost:4200/register");
-    cy.get("#mat-input-0").type("testuser");
+    cy.get("#mat-input-0").type("testuser2");
     cy.get("#mat-input-1").type("Password123");
     cy.get("[id^=register-button]").click();
     cy.url().should("eq", "http://localhost:4200/login");
-    cy.get("[id^=username]").type("testuser");
+    cy.get("[id^=username]").type("testuser2");
     cy.get("[id^=password]").type("Password123");
     cy.get("[id^=login-button]").click();
     cy.url().should("eq", "http://localhost:4200/landing-page");
