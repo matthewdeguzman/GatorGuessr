@@ -28,12 +28,11 @@ export class UserService {
   // Checks if login is valid
   validateUser(username: string, password: string) {
     const user = this.buildUser(username, password);
-    return this.http
-      .post(`${this.uri}/api/login/`, user, {
-        observe: "response",
-        responseType: "text",
-      })
-      .pipe(map((response) => response));
+    return this.http.post(`${this.uri}/api/login/`, user, {
+      withCredentials: true,
+      observe: "response",
+      responseType: "text",
+    });
   }
 
   // Creates a user
@@ -41,6 +40,7 @@ export class UserService {
     const user = this.buildUser(username, password);
     return this.http
       .post(`${this.uri}/api/users/`, user, {
+        withCredentials: true,
         observe: "response",
         responseType: "text",
       })
@@ -51,6 +51,7 @@ export class UserService {
   getUser(username: string) {
     return this.http
       .get(`${this.uri}/api/users/${username}/`, {
+        withCredentials: true,
         observe: "response",
         responseType: "text",
       })
@@ -61,6 +62,7 @@ export class UserService {
   getApiKey() {
     return this.http
       .get(`${this.uri}/api/maps-key/`, {
+        withCredentials: true,
         observe: "response",
         responseType: "text",
       })
@@ -69,10 +71,6 @@ export class UserService {
 
   // Deletes a user
   deleteUser(username: string) {
-    this.CookieService.set(
-      "UserLoginCookie",
-      `${localStorage.getItem("token")}`
-    );
     return this.http
       .delete(`${this.uri}/api/users/${username}/`, {
         withCredentials: true,
@@ -84,26 +82,18 @@ export class UserService {
 
   // Gets a user's score
   getUserScore(username: string) {
-    this.CookieService.set(
-      "UserLoginCookie",
-      `${localStorage.getItem("token")}`
-    );
     console.log(`UserLoginCookie=${this.CookieService.get("UserLoginCookie")}`);
     return this.http
       .get(`${this.uri}/api/users/${username}/`, {
         withCredentials: true,
-        observe: "response",
-        responseType: "text",
+        observe: "body",
+        responseType: "json",
       })
-      .pipe(map((response) => response.status));
+      .pipe(map((response) => response));
   }
 
   // Updates a users Username and Password
   updateUser(username: string, password: string) {
-    this.CookieService.set(
-      "UserLoginCookie",
-      `${localStorage.getItem("token")}`
-    );
     console.log(this.CookieService.get("UserLoginCookie"));
     const body = { Username: username, Password: password };
     return this.http
@@ -117,15 +107,6 @@ export class UserService {
 
   // Updates a users score
   updateScore(username: string, score: number) {
-    this.CookieService.set(
-      "UserLoginCookie",
-      `${localStorage.getItem("token")}`,
-      69420,
-      "/",
-      "localhost",
-      true,
-      "Strict"
-    );
     console.log(this.CookieService.get("UserLoginCookie"));
     const body = { Score: score };
     return this.http
@@ -137,60 +118,3 @@ export class UserService {
       .pipe(map((response) => response));
   }
 }
-
-/*
-import { Injectable } from "@angular/core";
-import { HttpClient } from "@angular/common/http";
-import { map } from "rxjs/operators";
-
-export type User = {
-  ID: number;
-  Username: string;
-  Password: string;
-};
-
-@Injectable({
-  providedIn: "root",
-})
-export class IssueService {
-  uri = "http://localhost:9000";
-  constructor(private http: HttpClient) {}
-
-  // Checks if login is valid
-  validateUser(username: string, password: string) {
-    const user = {
-      username: username,
-      password: password,
-    };
-    return this.http
-      .post(`${this.uri}/api/login/`, user, {
-        observe: "response",
-        responseType: "text",
-      })
-      .pipe(map((response) => response.status));
-  }
-
-  // Makes a user
-  createUser(username: string, password: string) {
-    const user = {
-      username: username,
-      password: password,
-    };
-    return this.http
-      .post(`${this.uri}/api/users/`, user, {
-        observe: "response",
-        responseType: "text",
-      })
-      .pipe(map((response) => response.status));
-  }
-
-  getUser(username: string) {
-    return this.http
-      .get(`${this.uri}/api/users/${username}/`, {
-        observe: "response",
-        responseType: "text",
-      })
-      .pipe(map((response) => response.status));
-  }
-}
-*/

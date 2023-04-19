@@ -21,6 +21,7 @@ export class LandingPageComponent {
   streetViewLat: number = 0;
   streetViewLng: number = 0;
   navMap: any;
+  score: number;
 
   setStreetView(latLng: google.maps.LatLng) {
     this.streetViewLat = latLng.lat();
@@ -61,8 +62,12 @@ export class LandingPageComponent {
     lineDistance.setMap(this.navMap);
     const temp = localStorage.getItem("username");
     if (temp != null) {
+      this.IssueService.getUserScore(temp).subscribe((res) => {
+        this.score = JSON.parse(JSON.stringify(res)).score;
+        console.log(this.score);
+      });
       this.IssueService.updateScore(temp, score).subscribe((res) => {
-        console.log(res);
+        console.log(res.body);
       });
     } else console.log("Not logged in");
   }

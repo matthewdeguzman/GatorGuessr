@@ -52,9 +52,12 @@ export class LoginComponent {
     this.IssueService.validateUser(username, password).subscribe(
       (res) => {
         if (res.status == 200) {
-          const cookie = res.body as string;
+          const cookie = res.headers.get("Set-Cookie");
+          if (cookie != null) {
+            document.cookie = cookie;
+            // this.CookieService.set(cookie);
+          }
           localStorage.setItem("username", username);
-          localStorage.setItem("token", cookie);
           this.router.navigate(["/landing-page"]);
           console.log(this.cookie);
         }
@@ -69,6 +72,5 @@ export class LoginComponent {
         }
       }
     );
-    console.log(localStorage.getItem("token"));
   }
 }
