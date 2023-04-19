@@ -35,7 +35,10 @@ export class LandingPageComponent {
     this.userLat = latLng.lat();
     this.userLng = latLng.lng();
   }
-  nextButton() {}
+  nextButton() {
+    this.googleMapsLoad();
+    this.timeContinue = true;
+  }
 
   submit() {
     this.canClick = false;
