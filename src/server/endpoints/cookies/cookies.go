@@ -21,7 +21,17 @@ var (
 	ErrInvalidValue = errors.New("invalid cookie value")
 )
 
-func writeCookie(w http.ResponseWriter, cookie http.Cookie) error {
+func WriteSignedCookie(w http.ResponseWriter, cookie http.Cookie, secretKey []byte) error {
+	// Calculate the HMAC signature of the cookie name and value, using SHA256 and
+	// a secret key
+	mac := hmac.New(sha256.New, secretKey)
+	mac.Write([]byte(cookie.Name))
+	mac.Write([]byte(cookie.Value))
+	signature := mac.Sum(nil)
+
+	// Prepend the cookie value with the HMAC signature.
+	cookie.Value = string(signature) + cookie.Value
+	log.Println("Writted value: " + cookie.Value)
 
 	// encode the value in base64
 	cookie.Value = base64.URLEncoding.EncodeToString([]byte(cookie.Value))
@@ -36,8 +46,10 @@ func writeCookie(w http.ResponseWriter, cookie http.Cookie) error {
 	return nil
 }
 
-func readCookie(r *http.Request, name string) (string, error) {
+func ReadSignedCookie(r *http.Request, name string, secretKey []byte) (string, error) {
 
+	// Read in the signed value from the cookie. This should be in the format
+	// "{signature}{original value}".
 	cookie, err := r.Cookie(name)
 	if err != nil {
 		return "", err
@@ -46,34 +58,12 @@ func readCookie(r *http.Request, name string) (string, error) {
 	// Decode the base64-encoded cookie value. If the cookie didn't contain a
 	// valid base64-encoded value, this operation will fail and we return an
 	// ErrInvalidValue error.
-	value, err := base64.URLEncoding.DecodeString(cookie.Value)
+	signedValue, err := base64.URLEncoding.DecodeString(cookie.Value)
 	if err != nil {
 		return "", ErrInvalidValue
 	}
 
 	// Return the decoded cookie value.
-	return string(value), nil
-}
-
-func WriteSignedCookie(w http.ResponseWriter, cookie http.Cookie, secretKey []byte) error {
-	// Calculate the HMAC signature of the cookie name and value, using SHA256 and
-	// a secret key
-	mac := hmac.New(sha256.New, secretKey)
-	mac.Write([]byte(cookie.Name))
-	mac.Write([]byte(cookie.Value))
-	signature := mac.Sum(nil)
-
-	// Prepend the cookie value with the HMAC signature.
-	cookie.Value = string(signature) + cookie.Value
-	log.Println("Writted value: " + cookie.Value)
-	return writeCookie(w, cookie)
-}
-
-func ReadSignedCookie(r *http.Request, name string, secretKey []byte) (string, error) {
-
-	// Read in the signed value from the cookie. This should be in the format
-	// "{signature}{original value}".
-	signedValue, err := readCookie(r, name)
 	if err != nil {
 		return "", err
 	}
@@ -102,7 +92,7 @@ func ReadSignedCookie(r *http.Request, name string, secretKey []byte) (string, e
 		return "", ErrInvalidValue
 	}
 
-	return value, nil
+	return string(value), nil
 }
 
 func SetCookieHandler(w http.ResponseWriter, r *http.Request, user u.User) {
