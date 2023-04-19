@@ -12,6 +12,7 @@ The endpoints `CreateUser` and `ValidateUser` both create cookies for their resp
 
 The endpoints `GetUser`, `UpdateUser`, and `DeleteUser` all required a cookie to be sent in the http request. If no cookie is found, then a `400` response is returned. The value of the cookie is seperated into an HMAC signature and its value based on a size specified by the backend. The HMAC signature is recomputed based on the value and name of the cookie and compared with the HMAC signature sent with the cookie. If the signatures both match, then the request continue, else a `404` response is returned.
 
+## Endpoints
 
 ### `GET /api/users/` func GetUsers(w http.ResponseWriter, r *http.Request)
 
