@@ -17,6 +17,8 @@ Tests that ensure the correct error message comes up depending on the mistake th
 9. No password was given
 10. Registering correctly takes user to login page
 11. Registers click on map
+12. Signs in and signs out
+13. Tests delete user by creating a new user, logs in, and deletes user
 
 
 #### More Visiting Pages Tests:
