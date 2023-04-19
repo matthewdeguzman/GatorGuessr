@@ -1,4 +1,3 @@
-import { User } from "./../../services/user/user.service";
 import { AppComponent } from "./../../app.component";
 import { Component, HostBinding, OnInit } from "@angular/core";
 import { IssueService } from "src/app/services/issue.service";
@@ -6,6 +5,15 @@ import { MatDialog, MatDialogConfig } from "@angular/material/dialog";
 import { AccountComponent } from "../account/account.component";
 import { DeleteComponent } from "../delete/delete.component";
 import { Router } from "@angular/router";
+
+interface User {
+  ID: number;
+  Username: string;
+  Password: string;
+  Score: number;
+  CreatedAt: string;
+  UpdatedAt: string;
+}
 
 @Component({
   selector: "app-banner",
@@ -16,7 +24,7 @@ export class BannerComponent implements OnInit {
   selectedValue = "lightMode";
   selectedTheme = "light_mode";
   username = "Guest";
-  score = 0;
+  score: number;
 
   constructor(
     private AppComponent: AppComponent,
@@ -53,8 +61,7 @@ export class BannerComponent implements OnInit {
     this.username = localStorage.getItem("username") || "null";
     if (this.username !== "null") {
       this.IssueService.getUserScore(this.username).subscribe((data) => {
-        this.score = JSON.parse(JSON.stringify(data));
-        console.log(JSON.stringify(data));
+        this.score = (data as User).Score;
       });
     }
   }
