@@ -50,7 +50,6 @@ export class LandingPageComponent {
     this.googleMapsLoad();
     this.timeContinue = true;
     this.time = 60;
-    this.countDown();
   }
 
   submit() {
@@ -84,16 +83,18 @@ export class LandingPageComponent {
       strokeWeight: 4,
     });
     lineDistance.setMap(this.navMap);
+    this.googleMapsLoad();
   }
 
   countDown() {
-    // // decrements by one second
-    const inteval = setInterval(() => {
-      if (this.time > 0 && this.timeContinue == true) {
-        this.drop();
-      } else {
-        clearInterval(inteval);
+    this.clockTime = setInterval(() => {
+      if (this.time == 0) {
+        this.timeContinue = false;
         this.submit();
+        clearInterval(this.clockTime);
+      }
+      if (this.timeContinue) {
+        this.drop();
       }
     }, 1000);
   }
