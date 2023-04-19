@@ -173,7 +173,7 @@ func TestUpdateUserID(t *testing.T) {
 }
 
 func TestDeleteExistingUser(t *testing.T) {
-	db := testInitMigration()
+	db := testInitMigration(t)
 	user := u.User{
 		Username: "User",
 		Password: "User",
@@ -197,7 +197,8 @@ func TestValidateExistingUser(t *testing.T) {
 	}
 	cleanDB(user, db)
 	addUser(user, t, db)
-	status := validateUserTest(user, t)
+
+	status := validateUserTest(user, t, db)
 	if status != http.StatusOK {
 		t.Log(status)
 		t.Fail()
@@ -211,7 +212,7 @@ func TestValidateNonexistantuser(t *testing.T) {
 		Password: "User",
 	}
 	cleanDB(user, db)
-	status := validateUserTest(user, t)
+	status := validateUserTest(user, t, db)
 	if status != http.StatusOK {
 		t.Log(status)
 		t.Fail()
@@ -219,17 +220,21 @@ func TestValidateNonexistantuser(t *testing.T) {
 }
 
 func TestValidateIncorrectPassword(t *testing.T) {
-	user := u.User{
-		Username: "new-user-000420",
-		Password: "password",
+	db := testInitMigration(t)
+	realUser := u.User{
+		Username: "User",
+		Password: "User",
+	}
+	sentUser := u.User{
+		Username: realUser.Username,
+		Password: "WrongPassword",
 	}
 
-	addUser(user, t)
-	user.Password = "wrong-password!"
-	status := validateUserTest(user, t)
-	cleanDB(&user, user.Username, t)
+	cleanDB(realUser, db)
+	addUser(realUser, t, db)
 
-	user.Password = "wrong-password!"
+	status := validateUserTest(sentUser, t, db)
+
 	if status != http.StatusNotFound {
 		t.Log(status)
 		t.Fail()
