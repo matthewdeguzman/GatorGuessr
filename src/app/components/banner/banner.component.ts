@@ -4,6 +4,7 @@ import { IssueService } from "src/app/services/issue.service";
 import { MatDialog, MatDialogConfig } from "@angular/material/dialog";
 import { AccountComponent } from "../account/account.component";
 import { DeleteComponent } from "../delete/delete.component";
+import { Router } from "@angular/router";
 
 @Component({
   selector: "app-banner",
@@ -19,7 +20,8 @@ export class BannerComponent implements OnInit {
   constructor(
     private AppComponent: AppComponent,
     private IssueService: IssueService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private router: Router
   ) {}
 
   ngOnInit() {
@@ -47,7 +49,7 @@ export class BannerComponent implements OnInit {
 
   // Login methods
   updateBanner() {
-    this.username = localStorage.getItem("username") || "Guest";
+    this.username = localStorage.getItem("username") || "null";
     if (this.username !== "null") {
       this.IssueService.getUserScore(this.username).subscribe((data) => {
         this.score = data;
@@ -58,6 +60,13 @@ export class BannerComponent implements OnInit {
   // Theme methods
   getTheme() {
     return this.selectedValue;
+  }
+  signOut() {
+    localStorage.removeItem("username");
+    this.router.navigate(["/home"]);
+  }
+  loggedIn() {
+    return localStorage.getItem("username") != null;
   }
 
   toggleTheme() {

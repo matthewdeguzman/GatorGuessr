@@ -4,6 +4,7 @@ import { Component } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { Observable } from "rxjs";
 import { IssueService } from "src/app/services/issue.service";
+import { BannerComponent } from "../banner/banner.component";
 
 @Component({
   selector: "app-landing-page",
@@ -79,15 +80,18 @@ export class LandingPageComponent {
     await new Promise((resolve) => setTimeout(resolve, 100));
   }
 
-  constructor(private IssueService: IssueService) {}
+  constructor(
+    private IssueService: IssueService,
+    private BannerComponent: BannerComponent
+  ) {}
 
   async ngOnInit() {
+    this.BannerComponent.ngOnInit();
     this.IssueService.getApiKey().subscribe((res) => {
       this.string = res.body as string;
     });
     await this.someFunction();
     this.string = this.string.substring(1, this.string.length - 2);
-    console.log(this.string);
 
     let loader = new Loader({
       apiKey: this.string,
