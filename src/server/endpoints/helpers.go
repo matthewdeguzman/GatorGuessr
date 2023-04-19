@@ -180,7 +180,7 @@ func SetHeader(w http.ResponseWriter) {
 }
 
 func AuthorizeRequest(w http.ResponseWriter, r *http.Request, user u.User) error {
-	err := cookies.GetCookieHandler(w, r, "UserLoginCookie")
+	err := cookies.GetCookieHandler(w, r)
 
 	return err
 }

@@ -15,8 +15,8 @@ import (
 )
 
 var (
-	db        *gorm.DB
-	err       error
+	db  *gorm.DB
+	err error
 )
 
 func initializeMigration() {
