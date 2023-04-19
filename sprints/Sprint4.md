@@ -1,5 +1,32 @@
 # Sprint 4
 
+## Tests
+
+- TestGetUsers: Tests if GetUsers endpoint correctly returns the list of users
+- TestGetWithoutAuthorization: Tests if an error is returned when calling GetUsers endpoint without proper cookie
+- TestGetExistingUser: Tests if GetUser endpoint returns an existing user
+- TestGetNonexistantUser: Tests if GetUser responds with a 404 error if a call for a user not in the database is made
+- TestCreateNewUser: Tests if CreateUser endpoint correctly creates a new user
+- TestCreateUserWithoutPassword: Tests if CreateUser endpoint correctly responds with an error if a user is attempting to be created without a password
+- TestCreateUserWithID: Tests if CreateUser endpoint correctly throws an error if a user is attempting to be created with an ID
+- TestUpdateNonexistantUser: Tests if UpdateUser endpoint correctly responds with an error if a user that does not exist in the database is being udpated
+- TestUpdateUserWithoutAuthorization: Tests if CreateUser endpoint returns an error when called without proper cookie
+- TestUpdateExistingUser: Tets if UpdateUser endpoint correctly updates an existing user in the database
+- TestUpdateUserID: Tests if UpdateUser endpoint correctly responds with an error if the ID of a user is being updated
+- TestUpdateUserScore: Tests if UpdateUser endpoint correctly updates the score field of a user
+- TestUpdateUserWithoutAuthorization: Tests if DeleteUser endpoint returns an error when called without proper cookie
+- Test DeleteExisingUser: Tests if DeleteUser endpoint correctly deletes an existing user from the database
+- TestDeleteNonexistingUser: Tests if DeleteUser endpoint correctly responds with an error if a call to delete a user that does not exist in the database is made
+- TestValidateExistingUserCookie: Tests if a cookie is created properly upon a successful call of the ValidateUser endpoint
+- TestValidateExisingUser: Tests if ValidateUser endpoint correctly validates an existing user with the correct password in the database
+- TestValidateNonexistantUser: Tests if ValidateUser endpoint correctly responds with an error if a nonexistant user is being validated
+- TestValidateIncorrectPassword: Tests if ValidateUser endpoint correctly responds with an error if a username is provided with an incorrect password
+- TestLeaderboardNegativeInteger: Tests if the GetTopUsers endpoint correctly handles negative integers as a parameter
+- TestLeaderboardFloatintPoint: Tests if the GetTopUsers endpoint correctly handles floating point numbers as a parameter
+- TestLeaderboardZero: Tests if the GetTopUsers endpoint correctly handles 0 as a parameter
+- TestLeaderboardOverMaxLimit: Tests if the GetTopUsers endpoint correctly handles an integer larger than the number of users in the database
+- TestLeaderboardSorted: Tests if the GetTopUsers endpoint correctly returns a sorted list of users according to their scores
+
 ## Documentation
 
 ## Authorization Flow
