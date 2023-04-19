@@ -16,10 +16,12 @@ Tests that ensure the correct error message comes up depending on the mistake th
 8. Password doesn't contain number
 9. No password was given
 10. Registering correctly takes user to login page
-11. Registers click on map
-12. Signs in and signs out
-13. Tests delete user by creating a new user, logs in, and deletes user
-14. Tests the next button to refresh the map
+
+### Landing Page and Map Tests
+1. Registers click on map
+2. Signs in and signs out
+3. Tests delete user by creating a new user, logs in, and deletes user
+4. Tests the next button to refresh the map
 
 
 #### More Visiting Pages Tests:
