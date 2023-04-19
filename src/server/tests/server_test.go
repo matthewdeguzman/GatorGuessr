@@ -283,6 +283,41 @@ func TestDeleteExistingUser(t *testing.T) {
 
 }
 
+func TestValidateExistantUserCookie(t *testing.T) {
+	db := testInitMigration(t)
+	user := u.User{
+		Username: "User",
+		Password: "User",
+	}
+	cleanDB(user, db)
+	addUser(user, t, db)
+
+	sentMarshal, err := json.Marshal(sentUser)
+	if err != nil {
+		t.Error(err)
+	}
+	req, err := http.NewRequest("POST", "/api/login/", bytes.NewReader(sentMarshal))
+	if err != nil {
+		t.Error(err)
+	}
+
+	rr := httptest.NewRecorder()
+	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		api.ValidateUser(w, r, db)
+	})
+
+	handler.ServeHTTP(rr, req)
+
+	if cookie := rr.Result().Cookies("UserLoginCookie"); cookie == nil {
+		t.Log("Cookie not set")
+		t.Fail()
+	}
+
+	if status := rr.Result().StatusCode; status != http.StatusOK {
+		t.Log(status)
+		t.Fail()
+	}
+}
 func TestValidateExistingUser(t *testing.T) {
 	db := testInitMigration(t)
 	user := u.User{

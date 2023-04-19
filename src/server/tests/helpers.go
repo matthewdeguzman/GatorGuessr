@@ -170,7 +170,7 @@ func validateUserTest(sentUser u.User, t *testing.T, db *gorm.DB) (status int) {
 
 	handler.ServeHTTP(rr, req)
 
-	return rr.Code
+	return rr.Result().StatusCode
 }
 
 func getTopUsersTest(limit string, t *testing.T) (status int, users []u.User) {
