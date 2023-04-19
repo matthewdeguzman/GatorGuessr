@@ -1,7 +1,7 @@
 import { Component } from "@angular/core";
 import { MatDialogRef } from "@angular/material/dialog";
 import { IssueService } from "src/app/services/issue.service";
-import { FormGroup, FormControl } from "@angular/forms";
+import { FormGroup, FormControl, Validators } from "@angular/forms";
 
 @Component({
   selector: "app-account",
@@ -13,6 +13,8 @@ export class AccountComponent {
   newPassword: string;
   newUsername: string;
   public showPassword: boolean = false;
+  public showSubmit: boolean = false;
+  public invalidUser: boolean = false;
 
   updateForm = new FormGroup({
     newUsername: new FormControl(""),
@@ -33,7 +35,14 @@ export class AccountComponent {
     this.IssueService.updateUser(newUsername, newPassword).subscribe((res) => {
       console.log(res);
     });
-
     this.closeDialog();
+  }
+  verifySubmit(): boolean {
+    if (this.usernameRequirements.valid && this.passwordRequirements.valid) {
+      return false; //means it will display
+    } else return true;
+  }
+  public showUserError(): boolean {
+    return this.invalidUser;
   }
 }
