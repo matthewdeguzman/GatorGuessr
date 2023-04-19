@@ -2,6 +2,17 @@
 
 ## Documentation
 
+## Authorization Flow
+
+### Creating signature
+
+The endpoints `CreateUser` and `ValidateUser` both create cookies for their respective users upon successful calls. The value of the cookie is dependent on the ID of the user and is base 64 encoded then made cryptographically secure by creating an HMAC signature and prepending it to the cookie value. The cookie is set with the `Set-Header` header in the response.
+
+### Verification
+
+The endpoints `GetUser`, `UpdateUser`, and `DeleteUser` all required a cookie to be sent in the http request. If no cookie is found, then a `400` response is returned. The value of the cookie is seperated into an HMAC signature and its value based on a size specified by the backend. The HMAC signature is recomputed based on the value and name of the cookie and compared with the HMAC signature sent with the cookie. If the signatures both match, then the request continue, else a `404` response is returned.
+
+
 ### func GetUsers(w http.ResponseWriter, r *http.Request)
 
 Retrieves users from the MySql database using `db.first` and stores them in a slice of users. The slice is encoded in the ResponseWriter and a 200 OK request is encoded as well.
@@ -30,10 +41,3 @@ Reads `user` from the JSON object provided in `r`.  `user.password` is decrypted
 
 Reads `limit` from `r` and executes a search query with `db.Limit` to get `limit` amount of users. The users are sorted in descending order of score using `db.Order` and stored in a slice. If `limit` is not a uint, a 400 error is encoded in `w`. Else, the slice of users is encoded in `w`.
 
-### func SetCookieHandler(w http.ResponseWriter, r *http.Request)
-
-This function handles the path `/cookies/get/`. The function receives a cookie in the http request with these [specific fields](https://go.dev/src/net/http/cookie.go) of a cookie. The HMAC signature is encoded with a secret key and based on the name and value of the sent cookie then preprended to the cookie value. The value is then encoded in base 64 and if the string is larger than 4096 characters, an error is thrown. Otherwise, the cookie is written into the response writer and written with the response writer. Note that the `COOKIE_SECRET` environment variable must be defined and it is usually a 32-bit cryptographically randomly generated number.
-
-### func GetCookieHandler(w http.ResponseWriter, r *http.Request)
-
-This function handles the path `/cookies/set/{cookie-name}/`. The function receives a cookie in the http request and the name of the cookie as the `cookie-name` routing variable then verifies whether the cookie is valid. If there is no cookie with the given name, a bad request is returned. The name and value of the cookie are base 64 encoded, so they are decoded first. Then, the cookie is verified if the HMAC signature generated with the secret key, cookie name, and cookie value match the expected HMAC signature of the same values. If the signatures do not match, the cookie is not valid and a bad request is returned. Note that the `COOKIE_SECRET` environment variable must be defined and it is usually a 32-bit cryptographically randomly generated number.
