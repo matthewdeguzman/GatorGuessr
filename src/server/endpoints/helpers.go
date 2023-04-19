@@ -8,7 +8,6 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
-	"os"
 	"strings"
 
 	"github.com/matthewdeguzman/GatorGuessr/src/server/endpoints/cookies"
@@ -181,9 +180,7 @@ func SetHeader(w http.ResponseWriter) {
 }
 
 func AuthorizeRequest(w http.ResponseWriter, r *http.Request, user u.User) error {
-	secretKey := []byte(os.Getenv("COOKIE_SECRET"))
-
-	err := cookies.GetCookieHandler(w, r, "UserLoginCookie", secretKey)
+	err := cookies.GetCookieHandler(w, r)
 
 	return err
 }

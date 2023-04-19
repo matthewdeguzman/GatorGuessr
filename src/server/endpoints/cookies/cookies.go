@@ -65,7 +65,7 @@ func WriteSignedCookie(w http.ResponseWriter, cookie http.Cookie, secretKey []by
 
 	// Prepend the cookie value with the HMAC signature.
 	cookie.Value = string(signature) + cookie.Value
-
+	log.Println("Writted value: " + cookie.Value)
 	return writeCookie(w, cookie)
 }
 
@@ -92,10 +92,13 @@ func ReadSignedCookie(r *http.Request, name string, secretKey []byte) (string, e
 	mac.Write([]byte(name))
 	mac.Write([]byte(value))
 	expectedSignature := mac.Sum(nil)
-
+	log.Println("Received value: " + string(signature))
+	log.Println("Expected value: " + string(expectedSignature))
 	// If the signatures do not match, then the cookie is not valid
 	// and may have been modified by the client
 	if !hmac.Equal([]byte(signature), expectedSignature) {
+		log.Println(signature)
+		log.Println(expectedSignature)
 		return "", ErrInvalidValue
 	}
 
@@ -109,6 +112,7 @@ func SetCookieHandler(w http.ResponseWriter, r *http.Request, user u.User) {
 		Name:   "UserLoginCookie",
 		Value:  "UserLogin" + strconv.FormatUint(uint64(user.ID), 10),
 		MaxAge: 60 * 60 * 24 * 365 * 5,
+		Path:   "/api/",
 	}
 	secretKey := []byte(os.Getenv("COOKIE_SECRET"))
 	err := WriteSignedCookie(w, cookie, secretKey)
@@ -119,12 +123,12 @@ func SetCookieHandler(w http.ResponseWriter, r *http.Request, user u.User) {
 	}
 }
 
-func GetCookieHandler(w http.ResponseWriter, r *http.Request, cookieName string, secretKey []byte) error {
+func GetCookieHandler(w http.ResponseWriter, r *http.Request) error {
 	// Retrieve the cookie from the request using its name.
 	// If no matching cookie is found, this will return a
 	// http.ErrNoCookie error.
-
-	_, err := ReadSignedCookie(r, cookieName, secretKey)
+	secretKey := []byte(os.Getenv("COOKIE_SECRET"))
+	_, err := ReadSignedCookie(r, "UserLoginCookie", secretKey)
 	if err != nil {
 		switch {
 		case errors.Is(err, http.ErrNoCookie):

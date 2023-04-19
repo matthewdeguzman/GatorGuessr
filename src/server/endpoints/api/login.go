@@ -12,19 +12,9 @@ import (
 	"gorm.io/gorm"
 )
 
-func GetUsers(w http.ResponseWriter, r *http.Request, db *gorm.DB) {
-	helpers.SetHeader(w)
-	var users []u.User
-	db.Find(&users)
-	json.NewEncoder(w).Encode(users)
-}
-
-func GetUser(w http.ResponseWriter, r *http.Request, db *gorm.DB) {
-	helpers.SetHeader(w)
-
-	params := mux.Vars(r)
+func GetUserWithUsername(w http.ResponseWriter, r *http.Request, username string, db *gorm.DB) {
 	var user u.User
-	helpers.FetchUser(db, &user, params["username"])
+	helpers.FetchUser(db, &user, username)
 
 	if user.Username == "" {
 		helpers.UserDNErr(w)
@@ -36,6 +26,69 @@ func GetUser(w http.ResponseWriter, r *http.Request, db *gorm.DB) {
 		return
 	}
 	helpers.EncodeUser(user, w)
+}
+
+func UpdateUserFromUser(w http.ResponseWriter, r *http.Request, ogUser u.User, db *gorm.DB) {
+
+	if ogUser.Username == "" {
+		helpers.UserDNErr(w)
+		return
+	}
+
+	// validate request
+	err := helpers.AuthorizeRequest(w, r, ogUser)
+	if err != nil {
+		http.Error(w, "Access Denied", http.StatusForbidden)
+		return
+	}
+
+	updatedUser := ogUser
+	helpers.DecodeUser(&updatedUser, r)
+
+	if ogUser.ID != updatedUser.ID {
+		helpers.WriteErr(w, http.StatusMethodNotAllowed, "405 - Cannot change immutable field")
+		return
+	}
+
+	hash, err := helpers.EncodePassword(updatedUser.Password)
+	if err != nil {
+		helpers.HashErr(w)
+		return
+	}
+	updatedUser.Password = hash
+	updatedUser.CreatedAt = ogUser.CreatedAt
+
+	db.Save(&updatedUser)
+	helpers.EncodeUser(updatedUser, w)
+}
+
+func DeleteUserFromUsername(w http.ResponseWriter, r *http.Request, user u.User, db *gorm.DB) {
+	if user.Username == "" {
+		helpers.UserDNErr(w)
+		return
+	}
+
+	// authorize request
+	err := helpers.AuthorizeRequest(w, r, user)
+	if err != nil {
+		http.Error(w, "Access Denied", http.StatusForbidden)
+		return
+	}
+	db.Delete(&user, "Username = ?", user.Username)
+	helpers.EncodeUser(user, w)
+}
+func GetUsers(w http.ResponseWriter, r *http.Request, db *gorm.DB) {
+	helpers.SetHeader(w)
+	var users []u.User
+	db.Find(&users)
+	json.NewEncoder(w).Encode(users)
+}
+
+func GetUser(w http.ResponseWriter, r *http.Request, db *gorm.DB) {
+	helpers.SetHeader(w)
+
+	params := mux.Vars(r)
+	GetUserWithUsername(w, r, params["username"], db)
 }
 
 func CreateUser(w http.ResponseWriter, r *http.Request, db *gorm.DB) {
@@ -73,41 +126,11 @@ func UpdateUser(w http.ResponseWriter, r *http.Request, db *gorm.DB) {
 	helpers.SetHeader(w)
 	params := mux.Vars(r)
 
-	var oldUser u.User
-	var updatedUser u.User
+	var ogUser u.User
 
-	helpers.FetchUser(db, &oldUser, params["username"])
-	helpers.FetchUser(db, &updatedUser, params["username"])
+	helpers.FetchUser(db, &ogUser, params["username"])
 
-	if oldUser.Username == "" {
-		helpers.UserDNErr(w)
-		return
-	}
-
-	// validate request
-	err := helpers.AuthorizeRequest(w, r, oldUser)
-	if err != nil {
-		http.Error(w, "Access Denied", http.StatusForbidden)
-		return
-	}
-
-	helpers.DecodeUser(&updatedUser, r)
-
-	if oldUser.ID != updatedUser.ID {
-		helpers.WriteErr(w, http.StatusMethodNotAllowed, "405 - Cannot change immutable field")
-		return
-	}
-
-	hash, err := helpers.EncodePassword(updatedUser.Password)
-	if err != nil {
-		helpers.HashErr(w)
-		return
-	}
-	updatedUser.Password = hash
-	updatedUser.CreatedAt = oldUser.CreatedAt
-
-	db.Save(&updatedUser)
-	helpers.EncodeUser(updatedUser, w)
+	UpdateUserFromUser(w, r, ogUser, db)
 }
 
 func DeleteUser(w http.ResponseWriter, r *http.Request, db *gorm.DB) {
@@ -116,19 +139,7 @@ func DeleteUser(w http.ResponseWriter, r *http.Request, db *gorm.DB) {
 	var user u.User
 
 	helpers.FetchUser(db, &user, params["username"])
-	if user.Username == "" {
-		helpers.UserDNErr(w)
-		return
-	}
-
-	// authorize request
-	err := helpers.AuthorizeRequest(w, r, user)
-	if err != nil {
-		http.Error(w, "Access Denied", http.StatusForbidden)
-		return
-	}
-	db.Delete(&user, "Username = ?", params["username"])
-	helpers.EncodeUser(user, w)
+	DeleteUserFromUsername(w, r, user, db)
 }
 
 func ValidateUser(w http.ResponseWriter, r *http.Request, db *gorm.DB) {
