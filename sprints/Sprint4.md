@@ -18,6 +18,14 @@ Tests that ensure the correct error message comes up depending on the mistake th
 9. No password was given
 10. Registering correctly takes user to login page
 
+### Landing Page and Map Tests
+
+1. Registers click on map
+2. Signs in and signs out
+3. Tests delete user by creating a new user, logs in, and deletes user
+4. Tests the next button to refresh the map
+
+
 #### More Visiting Pages Tests:
 
 1. Ensures all buttons on the banner take the user to the correct page no matter what page they are on
@@ -59,6 +67,18 @@ Rather than returning the user itself, logging in and registering users yield HT
 #### Page-not-found Component
 
 When an incorrect URL is entered, users are redirected to a "page not found" component that provides them with the option to return to their previous location, thereby enhancing navigation throughout the application. This feature serves as a safeguard against user confusion, in case they unintentionally navigate to the wrong page or we mistakenly redirect them to an nonexistent location.
+
+#### Deleting User
+
+If a user decides to delete their account, they can do so by sending an `HTTP delete request` to the backend through the app. This action will log the user out of the site and delete any cookies and browsing history associated with their account. Deleting an account gives the user complete control over their data and allows them to remove their account from the app if they wish.
+
+#### App Guards
+
+The App Guards feature ensures that users can only access sites that they are authorized to view. This is achieved by checking if the user has a valid cookie that grants them access to the site. If the cookie is missing or invalid, the App Guards prevent the user from accessing the site. This security measure helps to protect sensitive information and restricts unauthorized access to the app.
+
+##### Cookies
+
+The app utilizes cookies to store user-specific data, including their high score and username. Cookies also play a vital role in user authentication, as they are used to validate the user's identity and grant them access to the rest of the site. By relying on cookies, the app can provide a seamless and personalized experience for each user, while also ensuring the security of their data.
 
 ## Back-end
 
