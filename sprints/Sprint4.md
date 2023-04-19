@@ -16,6 +16,8 @@ Tests that ensure the correct error message comes up depending on the mistake th
 8. Password doesn't contain number
 9. No password was given
 10. Registering correctly takes user to login page
+11. Registers click on map
+
 
 #### More Visiting Pages Tests:
 1. Ensures all buttons on the banner take the user to the correct page no matter what page they are on
