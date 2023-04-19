@@ -88,7 +88,7 @@ export class UserService {
       "UserLoginCookie",
       `${localStorage.getItem("token")}`
     );
-    console.log(this.CookieService.get("UserLoginCookie"));
+    console.log(`UserLoginCookie=${this.CookieService.get("UserLoginCookie")}`);
     return this.http
       .get(`${this.uri}/api/users/${username}/`, {
         withCredentials: true,
@@ -119,7 +119,12 @@ export class UserService {
   updateScore(username: string, score: number) {
     this.CookieService.set(
       "UserLoginCookie",
-      `${localStorage.getItem("token")}`
+      `${localStorage.getItem("token")}`,
+      69420,
+      "/",
+      "localhost",
+      true,
+      "Strict"
     );
     console.log(this.CookieService.get("UserLoginCookie"));
     const body = { Score: score };
