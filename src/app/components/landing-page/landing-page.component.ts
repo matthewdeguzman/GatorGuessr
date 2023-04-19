@@ -67,6 +67,7 @@ export class LandingPageComponent {
     const newScore = Math.round(
       Math.max(maxPoints - (distance / maxDistance) * maxPoints, minPoints)
     );
+    this.BannerComponent.updateScore(newScore);
     console.log("Score: " + newScore);
     var orginalLocation = new google.maps.Marker({
       position: { lat: this.streetViewLat, lng: this.streetViewLng },
@@ -83,18 +84,6 @@ export class LandingPageComponent {
       strokeWeight: 4,
     });
     lineDistance.setMap(this.navMap);
-    const temp = localStorage.getItem("username");
-    if (temp != null) {
-      this.IssueService.getUserScore(temp).subscribe((data) => {
-        this.oldScore = (data as User).Score;
-      });
-      if (newScore > this.oldScore) {
-        this.IssueService.updateScore(temp, newScore).subscribe((res) => {
-          console.log("Score updated");
-          console.log(res);
-        });
-      }
-    } else console.log("Not logged in");
   }
 
   countDown() {

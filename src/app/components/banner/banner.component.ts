@@ -25,6 +25,7 @@ export class BannerComponent implements OnInit {
   selectedTheme = "light_mode";
   username = "Guest";
   score: number;
+  highscore: number;
 
   constructor(
     private AppComponent: AppComponent,
@@ -55,13 +56,29 @@ export class BannerComponent implements OnInit {
 
     this.dialog.open(AccountComponent, dialogConfig);
   }
+  updateScore(score: number) {
+    this.score = score;
+    if (this.score > this.highscore) {
+      this.updateHighScore();
+    }
+  }
+  updateHighScore() {
+    this.highscore = this.score;
+    const temp = localStorage.getItem("username");
+    if (temp != null) {
+      this.IssueService.updateScore(temp, this.score).subscribe((res) => {
+        console.log("Score updated");
+        console.log(res);
+      });
+    }
+  }
 
   // Login methods
   updateBanner() {
     this.username = localStorage.getItem("username") || "null";
     if (this.username !== "null") {
       this.IssueService.getUserScore(this.username).subscribe((data) => {
-        this.score = (data as User).Score;
+        this.highscore = (data as User).Score;
       });
     }
   }
