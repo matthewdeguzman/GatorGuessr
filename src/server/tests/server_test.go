@@ -292,7 +292,7 @@ func TestValidateExistantUserCookie(t *testing.T) {
 	cleanDB(user, db)
 	addUser(user, t, db)
 
-	sentMarshal, err := json.Marshal(sentUser)
+	sentMarshal, err := json.Marshal(user)
 	if err != nil {
 		t.Error(err)
 	}
@@ -308,7 +308,15 @@ func TestValidateExistantUserCookie(t *testing.T) {
 
 	handler.ServeHTTP(rr, req)
 
-	if cookie := rr.Result().Cookies("UserLoginCookie"); cookie == nil {
+	// if there is no cookie with the expected name, then the test fails
+	var cookieExists bool = false
+	for _, cookie := range rr.Result().Cookies() {
+		if cookie.Name == "UserLoginCookie" {
+			cookieExists = true
+			break
+		}
+	}
+	if !cookieExists {
 		t.Log("Cookie not set")
 		t.Fail()
 	}
