@@ -32,10 +32,9 @@
         <div color="primary">HighScore: {{ highscore }}</div>
         <div color="primary">Score: {{ score }}</div>
       </span>
-
       <span class="right">
         <div *ngIf="loggedIn()">
-          <a mat-button (click)="signOut()">Sign Out</a>
+          <a class="sign_out_button" mat-button (click)="signOut()">Sign Out</a>
           <button
             mat-icon-button
             id="account-settings"

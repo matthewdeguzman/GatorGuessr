@@ -1,6 +1,6 @@
 .full {
-  height: 30vh;
-  width: 20vw;
+  height: 32vh;
+  width: 23vw;
   position: absolute;
   bottom: 0;
   left: 0;
@@ -27,6 +27,11 @@
   //bottom: calc(100% - 50px); /* Update bottom value to position the "sub" element above ".full" element */
   //left: 10px; /* Update left value to position the "sub" element above ".full" element */
 
+}
+
+.next{
+  z-index: 2;
+  position: relative;
 }
 
 .streetView {

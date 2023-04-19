@@ -5,6 +5,7 @@ import { HttpClient } from "@angular/common/http";
 import { Observable } from "rxjs";
 import { IssueService } from "src/app/services/issue.service";
 import { BannerComponent } from "../banner/banner.component";
+import { clear } from "console";
 
 interface User {
   ID: number;
@@ -30,7 +31,12 @@ export class LandingPageComponent {
   streetViewLat: number = 0;
   streetViewLng: number = 0;
   navMap: any;
+  loader: any;
+  timeContinue: boolean = true;
+  score: number;
+  canClick: boolean = true;
   oldScore: number;
+
 
   setStreetView(latLng: google.maps.LatLng) {
     this.streetViewLat = latLng.lat();
@@ -40,8 +46,16 @@ export class LandingPageComponent {
     this.userLat = latLng.lat();
     this.userLng = latLng.lng();
   }
+  nextButton() {
+    this.googleMapsLoad();
+    this.timeContinue = true;
+    this.time = 60;
+    this.countDown();
+  }
 
   submit() {
+    this.canClick = false;
+    this.timeContinue = false;
     console.log("Submit button clicked");
     const distance = Math.sqrt(
       Math.pow(this.userLat - this.streetViewLat, 2) +
@@ -74,7 +88,7 @@ export class LandingPageComponent {
 
   countDown() {
     this.time--; // decrements by one second
-    if (this.time > 0) {
+    if (this.time > 0 && this.timeContinue == true) {
       setTimeout(() => {
         this.countDown();
       }, 1000); //decrement one second
@@ -87,35 +101,16 @@ export class LandingPageComponent {
     await new Promise((resolve) => setTimeout(resolve, 800));
   }
 
-  constructor(
-    private IssueService: IssueService,
-    private BannerComponent: BannerComponent
-  ) {}
-
-  async ngOnInit() {
-    this.BannerComponent.updateBanner(); //Might not need this
-    this.IssueService.getApiKey().subscribe((res) => {
-      this.string = res.body as string;
-    });
-    await this.timer();
-    this.string = this.string.substring(1, this.string.length - 2);
-
-    let loader = new Loader({
-      apiKey: this.string,
-      version: "weekly",
-    });
-    setTimeout(() => {
-      this.countDown();
-    }, 1000); //decrements by 1000ms
-
-    loader.load().then(() => {
+  googleMapsLoad() {
+    this.canClick = true;
+    this.loader.load().then(() => {
       const pano = new google.maps.StreetViewPanorama(
         document.getElementById("Smap") as HTMLElement,
         {
           disableDefaultUI: false,
           addressControl: false,
           fullscreenControl: false,
-
+          showRoadLabels: false,
           //position: { lat: this.lat, lng: this.long },
 
           pov: {
@@ -191,8 +186,8 @@ export class LandingPageComponent {
       google.maps.event.addListener(
         navMap,
         "click",
-        function (e: { latLng: google.maps.LatLng }) {
-          placeMarker(e.latLng, navMap);
+        (e: { latLng: google.maps.LatLng }) => {
+          if (this.canClick == true) placeMarker(e.latLng, navMap);
         }
       );
       const placeMarker = (
@@ -204,5 +199,31 @@ export class LandingPageComponent {
         this.setUserLoc(Location);
       };
     });
+  }
+
+  constructor(
+    private IssueService: IssueService,
+    private BannerComponent: BannerComponent
+  ) {}
+
+  async ngOnInit() {
+    this.BannerComponent.ngOnInit();
+    this.IssueService.getApiKey().subscribe((res) => {
+      this.string = res.body as string;
+    });
+    await this.timer();
+    this.string = this.string.substring(1, this.string.length - 2);
+
+    this.loader = new Loader({
+      apiKey: this.string,
+      version: "weekly",
+    });
+    this.time = 60;
+    this.countDown();
+    // setTimeout(() => {
+    //   this.time = 60;
+    //   this.countDown();
+    // }, 1000); //decrements by 1000ms
+    this.googleMapsLoad();
   }
 }
