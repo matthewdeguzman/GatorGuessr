@@ -200,7 +200,7 @@ export class LandingPageComponent {
     this.IssueService.getApiKey().subscribe((res) => {
       this.string = res.body as string;
     });
-    await this.someFunction();
+    await this.timer();
     this.string = this.string.substring(1, this.string.length - 2);
 
     this.loader = new Loader({
