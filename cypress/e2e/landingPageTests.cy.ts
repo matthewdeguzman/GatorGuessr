@@ -44,4 +44,18 @@ describe("Test delete user", () => {
         cy.get("[id^=login-button]").click();
         cy.get("div").contains("Error: No User Found");
     });
+    describe("Test the next button", () => {
+        beforeEach(() => {
+            cy.visit("http://localhost:4200/login");
+            cy.get("[id^=username]").type("Frontend");
+            cy.get("[id^=password]").type("FrontendIsNumber1");
+            cy.get("[id^=login-button]").click();
+        })
+        it("Clicks on the map, submits and clicks next", () => {
+            cy.get("[id^=Gmap]").click("center");
+            cy.get("[id^=submitButton]").click();
+            cy.get("[id^=nextButton]").click();
+            cy.url().should("eq", "http://localhost:4200/landing-page");
+        });
+    });
   });
