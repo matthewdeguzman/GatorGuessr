@@ -94,8 +94,10 @@ export class UserService {
   // Updates a users Username and Password
   updateUser(username: string, password: string) {
     const body = { Username: username, Password: password };
+    const oldname = localStorage.getItem("username");
+    localStorage.setItem("username", username);
     return this.http
-      .put(`${this.uri}/api/users/${username}/`, body, {
+      .put(`${this.uri}/api/users/${oldname}/`, body, {
         withCredentials: true,
         observe: "response",
         responseType: "text",
