@@ -33,7 +33,7 @@
           </mat-card-footer>
         </div>
         <div>
-          <mat-form-field appearance="outline">
+          <mat-form-field class="password" appearance="outline">
             <mat-label>New Password</mat-label>
             <input
               class="input"
@@ -69,16 +69,18 @@
             </mat-icon>
           </mat-form-field>
         </div>
-
-        <button
-          mat-raised-button
-          color="primary"
-          type="submit"
-          [disabled]="verifySubmit()"
-          (click)="updateUser(newUsername.value, newPassword.value)"
-        >
-          Save
-        </button>
+        <div class="mat-button">
+          <button
+            mat-raised-button
+            color="primary"
+            type="submit"
+            [disabled]="verifySubmit()"
+            mat-raised-button
+            (click)="updateUser(newUsername.value, newPassword.value)"
+          >
+            Save
+          </button>
+        </div>
       </form>
     </mat-card-content>
   </mat-card>

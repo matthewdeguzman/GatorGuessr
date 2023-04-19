@@ -20,7 +20,19 @@ export class AccountComponent {
     newUsername: new FormControl(""),
     newPassword: new FormControl(""),
   });
-
+  usernameRequirements = new FormControl("", [
+    Validators.required,
+    Validators.minLength(4),
+    Validators.maxLength(20),
+  ]);
+  passwordRequirements = new FormControl("", [
+    Validators.required,
+    Validators.minLength(8),
+    Validators.maxLength(25),
+    Validators.pattern(
+      "^(?=[^A-Z]*[A-Z])(?=[^a-z]*[a-z])(?=\\D*\\d)[A-Za-z\\d!$%@#£€*?&]{8,}$"
+    ),
+  ]);
   constructor(
     private IssueService: IssueService,
     private dialogRef: MatDialogRef<AccountComponent>

@@ -1,39 +1,46 @@
 mat-card {
-    justify-content: center;
-    text-align: center;
-    width: 100%;
-    max-width: max-content;
-    margin: auto;
-  }
-  
-  mat-form-field {
-    width: 100%;
-    min-width: 300px;
-  }
-  
-  mat-card-title,
-  mat-card-content {
-    display: flex;
-    justify-content: center;
-  }
-  
-  mat-card-footer {
-    color: red;
-    display: flex;
-    font-size: large;
-    justify-content: center;
-    margin-bottom: 5%;
-  }
-  .input {
-    padding-top: 6%;
-  }
-  .error {
-    padding-bottom: 1%;
-  }
-  .password{
-    padding-top: 4%;
-  }
-  
-.title {
-  margin-top: 10px;
+  justify-content: center;
+  text-align: center;
+  width: 100%;
+  max-width: max-content;
+  margin: auto;
+}
+
+mat-form-field {
+  width: 100%;
+  min-width: 300px;
+}
+mat-error {
+  max-width: 100%;
+  font-size: 12px;
+}
+
+.password mat-error {
+  display: none !important;
+}
+.password mat-error:first-child {
+  display: block !important;
+}
+
+mat-card-title,
+mat-card-content {
+  display: flex;
+  justify-content: center;
+}
+
+mat-card-footer {
+  color: red;
+  display: flex;
+  font-size: large;
+  justify-content: center;
+  margin-bottom: 5%;
+}
+.input {
+  padding-top: 6%;
+}
+.error {
+  padding-bottom: 1%;
+}
+.password{
+  padding-top: 4%;
 }
