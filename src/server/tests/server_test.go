@@ -80,7 +80,7 @@ func TestGetExistingUser(t *testing.T) {
 	}
 }
 
-func TestGetNonexiststantUser(t *testing.T) {
+func TestGetNonexistantUser(t *testing.T) {
 	db := testInitMigration(t)
 	user := u.User{
 		Username: "NonexistantUser",
@@ -119,6 +119,27 @@ func TestCreateNewUser(t *testing.T) {
 		Password: "User",
 	}
 	cleanDB(user, db)
+
+	marshal, err := json.Marshal(user)
+	if err != nil {
+		t.Error(err)
+	}
+	req, err := http.NewRequest("POST", "/api/users/", bytes.NewReader(marshal))
+	if err != nil {
+		t.Error(err)
+	}
+
+	rr := httptest.NewRecorder()
+	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		api.CreateUser(w, r, db)
+	})
+
+	handler.ServeHTTP(rr, req)
+
+	if !cookieExists("UserLoginCookie", rr.Result().Cookies()) {
+		t.Log("Cookie not properly set")
+		t.Fail()
+	}
 	if status := createUserTest(user, t, db); status != http.StatusOK {
 		t.Fail()
 	}
@@ -309,15 +330,8 @@ func TestValidateExistantUserCookie(t *testing.T) {
 	handler.ServeHTTP(rr, req)
 
 	// if there is no cookie with the expected name, then the test fails
-	var cookieExists bool = false
-	for _, cookie := range rr.Result().Cookies() {
-		if cookie.Name == "UserLoginCookie" {
-			cookieExists = true
-			break
-		}
-	}
-	if !cookieExists {
-		t.Log("Cookie not set")
+	if !cookieExists("UserLoginCookie", rr.Result().Cookies()) {
+		t.Log("Cookie not properly set")
 		t.Fail()
 	}
 

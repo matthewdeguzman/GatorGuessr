@@ -54,6 +54,17 @@ func addUser(user u.User, t *testing.T, db *gorm.DB) (err error) {
 	return nil
 }
 
+func cookieExists(name string, cookies []*http.Cookie) bool {
+	// if there is no cookie with the expected name, then the test fails
+	for _, cookie := range cookies {
+		if cookie.Name == "UserLoginCookie" {
+			return true
+		}
+	}
+
+	return false
+
+}
 func mockGetTopUsers(w http.ResponseWriter, r *http.Request, limit string, db *gorm.DB, t *testing.T) {
 	var users []u.User
 
