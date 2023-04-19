@@ -88,16 +88,14 @@ export class LandingPageComponent {
 
   countDown() {
     // // decrements by one second
-    this.drop();
-    if (this.time > 0 && this.timeContinue == true) {
-      this.clockTime = setTimeout(() => {
-        this.countDown();
-      }, 1000); //decrement one second
-    } else {
-      // If remaining time reaches 0, call the submit function
-      this.clockTime.clearTimeout();
-      this.submit();
-    }
+    const inteval = setInterval(() => {
+      if (this.time > 0 && this.timeContinue == true) {
+        this.drop();
+      } else {
+        clearInterval(inteval);
+        this.submit();
+      }
+    }, 1000);
   }
   drop() {
     this.time--;
