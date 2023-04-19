@@ -37,4 +37,11 @@ describe("Test delete user", () => {
       cy.contains("Delete Account").click();
       cy.url().should("eq", "http://localhost:4200/home");
     });
+    it("Tries to log in", () => {
+        cy.visit("http://localhost:4200/login");
+        cy.get("[id^=username]").type("Test1");
+        cy.get("[id^=password]").type("Testpassword1");
+        cy.get("[id^=login-button]").click();
+        cy.get("div").contains("Error: No User Found");
+    });
   });
