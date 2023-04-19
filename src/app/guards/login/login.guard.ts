@@ -5,15 +5,15 @@ import { Router } from "@angular/router";
 @Injectable({
   providedIn: "root",
 })
-export class AuthGuard implements CanActivate {
+export class LoginGuard implements CanActivate {
   constructor(private Router: Router) {}
   canActivate(): boolean {
-    if (localStorage.getItem("username") == null) {
-      console.log("activate false");
-      this.Router.navigate(["/home"]);
+    if (localStorage.getItem("username") != null) {
+      console.log("login false");
+      this.Router.navigate(["/landing-page"]);
       return false;
     } else {
-      console.log("activate true");
+      console.log("login true");
       return true;
     }
   }

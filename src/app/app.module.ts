@@ -22,6 +22,8 @@ import { HttpClientModule } from "@angular/common/http";
 import { CookieService } from "ngx-cookie-service";
 import { AccountComponent } from "./components/account/account.component";
 import { DeleteComponent } from "./components/delete/delete.component";
+import { AuthGuard } from "./guards/auth/auth.guard";
+import { LoginGuard } from "./guards/login/login.guard";
 
 //Don't know if we will still need this
 /*const routes: Routes = [
@@ -70,7 +72,7 @@ import { DeleteComponent } from "./components/delete/delete.component";
     MaterialModule,
     //RouterModule.forRoot(routes),
   ],
-  providers: [IssueService, CookieService],
+  providers: [IssueService, CookieService, AuthGuard, LoginGuard],
   bootstrap: [AppComponent],
   exports: [RouterModule],
 })

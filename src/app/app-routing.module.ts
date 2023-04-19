@@ -5,10 +5,17 @@ import { NgModule } from "@angular/core";
 import { RouterModule, Routes } from "@angular/router";
 import { RegisterComponent } from "./components/register/register.component";
 import { HomeComponent } from "./components/home/home.component";
+import { AuthGuard } from "./guards/auth/auth.guard";
+import { LoginGuard } from "./guards/login/login.guard";
 
 const routes: Routes = [
-  { path: "home", title: "Home", component: HomeComponent },
   {
+    path: "home",
+    title: "Home",
+    component: HomeComponent,
+  },
+  {
+    canActivate: [LoginGuard],
     path: "login",
     title: "Login",
     component: LoginComponent,
@@ -16,9 +23,15 @@ const routes: Routes = [
   {
     path: "landing-page",
     title: "GatorGuessr",
+    canActivate: [AuthGuard],
     component: LandingPageComponent,
   },
-  { path: "register", title: "Register", component: RegisterComponent },
+  {
+    canActivate: [LoginGuard],
+    path: "register",
+    title: "Register",
+    component: RegisterComponent,
+  },
   {
     path: "page-not-found",
     title: "404 Error",

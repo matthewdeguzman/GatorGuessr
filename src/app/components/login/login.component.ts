@@ -52,6 +52,7 @@ export class LoginComponent {
             69420,
             "/miku"
           );
+          localStorage.setItem("username", username);
           this.router.navigate(["/landing-page"]);
         }
       },
