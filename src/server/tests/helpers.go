@@ -143,12 +143,13 @@ func deleteUserTest(user u.User, t *testing.T, db *gorm.DB) (status int) {
 
 	rr := httptest.NewRecorder()
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		cookies.SetCookieHandler(w, r, user)
 		api.DeleteUserFromUsername(w, r, user, db)
 	})
 
 	handler.ServeHTTP(rr, req)
 
-	return rr.Code
+	return rr.Result().StatusCode
 }
 
 func validateUserTest(sentUser u.User, t *testing.T, db *gorm.DB) (status int) {
