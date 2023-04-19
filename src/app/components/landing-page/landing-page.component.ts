@@ -108,7 +108,7 @@ export class LandingPageComponent {
           disableDefaultUI: false,
           addressControl: false,
           fullscreenControl: false,
-
+          showRoadLabels: false,
           //position: { lat: this.lat, lng: this.long },
 
           pov: {
