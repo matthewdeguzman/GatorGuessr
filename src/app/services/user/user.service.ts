@@ -57,20 +57,6 @@ export class UserService {
       .pipe(map((response) => response.status));
   }
 
-  // Gets user score
-  getUserScore(username: string) {
-    return this.http
-      .get(`${this.uri}/api/users/${username}/`, {
-        observe: "response",
-        responseType: "text",
-      })
-      .pipe(
-        map((res) => {
-          const body = JSON.parse(res.body as string);
-          return body.Score;
-        })
-      );
-  }
   // Gets api key
   getApiKey() {
     return this.http
@@ -83,13 +69,13 @@ export class UserService {
 
   // Deletes a user
   deleteUser(username: string) {
-    const headers = new HttpHeaders().set(
+    this.CookieService.set(
       "UserLoginCookie",
-      this.CookieService.get("UserLoginCookie")
+      `${localStorage.getItem("token")}`
     );
     return this.http
       .delete(`${this.uri}/api/users/${username}/`, {
-        headers: headers,
+        withCredentials: true,
         observe: "response",
         responseType: "text",
       })
@@ -97,35 +83,53 @@ export class UserService {
   }
 
   // Gets a user's score
-  getScore(username: string) {
-    const headers = new HttpHeaders().set(
+  getUserScore(username: string) {
+    this.CookieService.set(
       "UserLoginCookie",
-      this.CookieService.get("UserLoginCookie")
+      `${localStorage.getItem("token")}`
     );
+    console.log(this.CookieService.get("UserLoginCookie"));
     return this.http
       .get(`${this.uri}/api/users/${username}/`, {
-        headers: headers,
+        withCredentials: true,
         observe: "response",
         responseType: "text",
       })
       .pipe(map((response) => response.status));
   }
 
-  // Updates a user
+  // Updates a users Username and Password
   updateUser(username: string, password: string) {
-    //TODO: Update user
-  }
-  updateScore(username: string, score: number) {
-    const headers = new HttpHeaders()
-      .set("UserLoginCookie", this.CookieService.get("UserLoginCookie"))
-      .set("Score", score.toString());
+    this.CookieService.set(
+      "UserLoginCookie",
+      `${localStorage.getItem("token")}`
+    );
+    console.log(this.CookieService.get("UserLoginCookie"));
+    const body = { Username: username, Password: password };
     return this.http
-      .put(`${this.uri}/api/users/${username}/`, null, {
-        headers: headers,
+      .put(`${this.uri}/api/users/${username}/`, body, {
+        withCredentials: true,
         observe: "response",
         responseType: "text",
       })
-      .pipe(map((response) => response.status));
+      .pipe(map((response) => response));
+  }
+
+  // Updates a users score
+  updateScore(username: string, score: number) {
+    this.CookieService.set(
+      "UserLoginCookie",
+      `${localStorage.getItem("token")}`
+    );
+    console.log(this.CookieService.get("UserLoginCookie"));
+    const body = { Score: score };
+    return this.http
+      .put(`${this.uri}/api/users/${username}/`, body, {
+        withCredentials: true,
+        observe: "response",
+        responseType: "text",
+      })
+      .pipe(map((response) => response));
   }
 }
 

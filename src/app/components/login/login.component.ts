@@ -21,6 +21,8 @@ export class LoginComponent {
     private CookieService: CookieService
   ) {}
 
+  cookie: string;
+
   // @Input() error: string | null;
   @Output() submitEM = new EventEmitter();
 
@@ -42,18 +44,19 @@ export class LoginComponent {
     this.showPassword = !this.showPassword;
   }
 
-  submitLogin(username: string, password: string) {
+  async timer() {
+    await new Promise((resolve) => setTimeout(resolve, 500));
+  }
+
+  async submitLogin(username: string, password: string) {
     this.IssueService.validateUser(username, password).subscribe(
       (res) => {
         if (res.status == 200) {
-          this.CookieService.set(
-            "UserLoginCookie",
-            res.body as string,
-            69420,
-            "/miku"
-          );
+          const cookie = res.body as string;
           localStorage.setItem("username", username);
+          localStorage.setItem("token", cookie);
           this.router.navigate(["/landing-page"]);
+          console.log(this.cookie);
         }
       },
       (error) => {
@@ -66,5 +69,6 @@ export class LoginComponent {
         }
       }
     );
+    console.log(localStorage.getItem("token"));
   }
 }
