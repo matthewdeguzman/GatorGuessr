@@ -47,8 +47,12 @@ By utilizing Material UI's style templates, we devised a method for users to swi
 Rather than returning the user itself, logging in and registering users yield HTTP status codes, a security measure that safeguards passwords and data on the API, while also facilitating communication with the backend. To enhance efficiency, we developed a user service that streamlines HTTP requests and enhances their organization, particularly since we need to make numerous backend calls.
 #### Page-not-found Component
 When an incorrect URL is entered, users are redirected to a "page not found" component that provides them with the option to return to their previous location, thereby enhancing navigation throughout the application. This feature serves as a safeguard against user confusion, in case they unintentionally navigate to the wrong page or we mistakenly redirect them to an nonexistent location.
-
-
+#### Deleting User
+If a user decides to delete their account, they can do so by sending an `HTTP delete request` to the backend through the app. This action will log the user out of the site and delete any cookies and browsing history associated with their account. Deleting an account gives the user complete control over their data and allows them to remove their account from the app if they wish.
+#### App Guards
+The App Guards feature ensures that users can only access sites that they are authorized to view. This is achieved by checking if the user has a valid cookie that grants them access to the site. If the cookie is missing or invalid, the App Guards prevent the user from accessing the site. This security measure helps to protect sensitive information and restricts unauthorized access to the app.
+##### Cookies
+The app utilizes cookies to store user-specific data, including their high score and username. Cookies also play a vital role in user authentication, as they are used to validate the user's identity and grant them access to the rest of the site. By relying on cookies, the app can provide a seamless and personalized experience for each user, while also ensuring the security of their data.
 
 ## Back-end
 - Implemented cookies and proper authorization flow. Previously, there was no way of authorizing the requests which was a big security concern. However, we have worked with the net/http package to create cookies upon certain requests. Certain endpoints now require cookies to be sent. Furthermore, the cookies are verified via an HMAC signature that is prepended to the value upon creation. 
