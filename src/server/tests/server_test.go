@@ -239,6 +239,33 @@ func TestUpdateUserID(t *testing.T) {
 	}
 }
 
+func TestDeleteUserWithoutAuthorization(t *testing.T) {
+	db := testInitMigration(t)
+	user := u.User{
+		Username: "User",
+		Password: "User",
+	}
+
+	cleanDB(user, db)
+	addUser(user, t, db)
+	req, err := http.NewRequest("DELETE", "/api/users/{username}/", nil)
+	if err != nil {
+		t.Error(err)
+	}
+
+	rr := httptest.NewRecorder()
+	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		api.DeleteUserFromUsername(w, r, user, db)
+	})
+
+	handler.ServeHTTP(rr, req)
+
+	if status := rr.Result().StatusCode; status != http.StatusOK {
+		t.Log(status)
+		t.Fail()
+	}
+}
+
 func TestDeleteExistingUser(t *testing.T) {
 	db := testInitMigration(t)
 	user := u.User{
