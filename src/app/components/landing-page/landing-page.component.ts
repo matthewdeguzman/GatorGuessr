@@ -38,6 +38,8 @@ export class LandingPageComponent {
   nextButton() {
     this.googleMapsLoad();
     this.timeContinue = true;
+    this.time = 60;
+    this.countDown();
   }
 
   submit() {
