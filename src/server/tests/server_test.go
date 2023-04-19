@@ -1,6 +1,8 @@
 package tests
 
 import (
+	"bytes"
+	"encoding/json"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -8,6 +10,8 @@ import (
 	"github.com/matthewdeguzman/GatorGuessr/src/server/endpoints/api"
 	u "github.com/matthewdeguzman/GatorGuessr/src/server/structs"
 )
+
+var secretKey []byte = []byte("test_secret")
 
 /// TESTS ///
 
@@ -33,6 +37,36 @@ func TestGetUsers(t *testing.T) {
 	}
 }
 
+func TestGetWithoutAuthorization(t *testing.T) {
+
+	db := testInitMigration(t)
+	user := u.User{
+		Username: "User",
+		Password: "User",
+	}
+
+	addUser(user, t, db)
+
+	req, err := http.NewRequest("GET", "/api/users/{username}/", nil)
+	if err != nil {
+		t.Error(err)
+	}
+
+	// sends request without setting cookie, should return a not found status
+	rr := httptest.NewRecorder()
+	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		api.GetUserWithUsername(w, r, user.Username, db, secretKey)
+	})
+
+	handler.ServeHTTP(rr, req)
+
+	status := rr.Result().StatusCode
+
+	if status != http.StatusNotFound {
+		t.Fail()
+	}
+}
+
 func TestGetExistingUser(t *testing.T) {
 	db := testInitMigration(t)
 	user := u.User{
@@ -41,15 +75,14 @@ func TestGetExistingUser(t *testing.T) {
 	}
 
 	addUser(user, t, db)
-	status := getUserTest(user, t, db)
-	cleanDB(user, db)
+	status := getUserTest(user, t, db, secretKey)
 
 	if status != http.StatusOK {
 		t.Fail()
 	}
 }
 
-func TestGetNonexiststantUser(t *testing.T) {
+func TestGetNonexistantUser(t *testing.T) {
 	db := testInitMigration(t)
 	user := u.User{
 		Username: "NonexistantUser",
@@ -57,7 +90,7 @@ func TestGetNonexiststantUser(t *testing.T) {
 	}
 
 	cleanDB(user, db)
-	status := getUserTest(user, t, db)
+	status := getUserTest(user, t, db, secretKey)
 
 	if status != http.StatusNotFound {
 		t.Fail()
@@ -72,7 +105,7 @@ func TestCreateExistingUser(t *testing.T) {
 	}
 
 	addUser(user, t, db)
-	status := createUserTest(user, t, db)
+	status := createUserTest(user, t, db, secretKey)
 	cleanDB(user, db)
 
 	if status != http.StatusBadRequest {
@@ -84,11 +117,31 @@ func TestCreateExistingUser(t *testing.T) {
 func TestCreateNewUser(t *testing.T) {
 	db := testInitMigration(t)
 	user := u.User{
-		Username: "NewUser",
+		Username: "User",
 		Password: "User",
 	}
 	cleanDB(user, db)
-	if status := createUserTest(user, t, db); status != http.StatusOK {
+
+	marshal, err := json.Marshal(user)
+	if err != nil {
+		t.Error(err)
+	}
+	req, err := http.NewRequest("POST", "/api/users/", bytes.NewReader(marshal))
+	if err != nil {
+		t.Error(err)
+	}
+
+	rr := httptest.NewRecorder()
+	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		api.CreateUser(w, r, db, secretKey)
+		if w.Header().Get("Set-Cookie") == "" {
+			t.Log("Cookie not properly set")
+			t.Fail()
+		}
+	})
+
+	handler.ServeHTTP(rr, req)
+	if status := rr.Result().StatusCode; status != http.StatusOK {
 		t.Fail()
 	}
 	cleanDB(user, db)
@@ -100,7 +153,7 @@ func TestCreateUserWithoutPassword(t *testing.T) {
 		Username: "NewUser",
 	}
 	cleanDB(user, db)
-	if status := createUserTest(user, t, db); status != http.StatusBadRequest {
+	if status := createUserTest(user, t, db, secretKey); status != http.StatusBadRequest {
 		t.Fail()
 	}
 
@@ -113,12 +166,48 @@ func TestCreateUserWithID(t *testing.T) {
 		ID:       10,
 	}
 	cleanDB(user, db)
-	if status := createUserTest(user, t, db); status != http.StatusBadRequest {
+	if status := createUserTest(user, t, db, secretKey); status != http.StatusBadRequest {
 		t.Fail()
 	}
 
 }
 
+func TestUpdateUserWithoutAuthorization(t *testing.T) {
+	db := testInitMigration(t)
+	ogUser := u.User{
+		Username: "User",
+		Password: "User",
+	}
+	updatedUser := u.User{
+		Password: "NewPassword",
+	}
+
+	addUser(ogUser, t, db)
+
+	updatedMarshal, err := json.Marshal(updatedUser)
+	if err != nil {
+		t.Error(err)
+	}
+	req, err := http.NewRequest("PUT", "/api/users/{username}/", bytes.NewReader(updatedMarshal))
+	if err != nil {
+		t.Error(err)
+	}
+	req.Header.Set("Content-Type", "application/json")
+
+	rr := httptest.NewRecorder()
+
+	// attempts to update user without cookie. should return forbidden request status
+	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		api.UpdateUserFromUser(w, r, ogUser, db, secretKey)
+	})
+
+	handler.ServeHTTP(rr, req)
+
+	if status := rr.Result().StatusCode; status != http.StatusNotFound {
+		t.Log(status)
+		t.Fail()
+	}
+}
 func TestUpdateNonexistantUser(t *testing.T) {
 	db := testInitMigration(t)
 	ogUser := u.User{
@@ -127,7 +216,7 @@ func TestUpdateNonexistantUser(t *testing.T) {
 	}
 
 	cleanDB(ogUser, db)
-	status := updateUserTest(u.User{}, ogUser, t, db)
+	status := updateUserTest(u.User{}, ogUser, t, db, secretKey)
 	if status != http.StatusNotFound {
 		t.Log(status)
 		t.Fail()
@@ -143,9 +232,8 @@ func TestUpdateExistingUser(t *testing.T) {
 	updatedUser := u.User{
 		Password: "NewPassword",
 	}
-	cleanDB(ogUser, db)
 	addUser(ogUser, t, db)
-	status := updateUserTest(ogUser, updatedUser, t, db)
+	status := updateUserTest(ogUser, updatedUser, t, db, secretKey)
 	if status != http.StatusOK {
 		t.Log(status)
 		t.Fail()
@@ -162,11 +250,36 @@ func TestUpdateUserID(t *testing.T) {
 		ID: 9403059,
 	}
 
-	cleanDB(ogUser, db)
 	addUser(ogUser, t, db)
-	status := updateUserTest(ogUser, updatedUser, t, db)
+	status := updateUserTest(ogUser, updatedUser, t, db, secretKey)
 
 	if status != http.StatusMethodNotAllowed {
+		t.Log(status)
+		t.Fail()
+	}
+}
+
+func TestDeleteUserWithoutAuthorization(t *testing.T) {
+	db := testInitMigration(t)
+	user := u.User{
+		Username: "User",
+		Password: "User",
+	}
+
+	addUser(user, t, db)
+	req, err := http.NewRequest("DELETE", "/api/users/{username}/", nil)
+	if err != nil {
+		t.Error(err)
+	}
+
+	rr := httptest.NewRecorder()
+	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		api.DeleteUserFromUsername(w, r, user, db, secretKey)
+	})
+
+	handler.ServeHTTP(rr, req)
+
+	if status := rr.Result().StatusCode; status != http.StatusNotFound {
 		t.Log(status)
 		t.Fail()
 	}
@@ -179,9 +292,8 @@ func TestDeleteExistingUser(t *testing.T) {
 		Password: "User",
 	}
 
-	cleanDB(user, db)
 	addUser(user, t, db)
-	status := deleteUserTest(user, t, db)
+	status := deleteUserTest(user, t, db, secretKey)
 	if status != http.StatusOK {
 		t.Log(status)
 		t.Fail()
@@ -189,16 +301,52 @@ func TestDeleteExistingUser(t *testing.T) {
 
 }
 
+func TestValidateExistantUserCookie(t *testing.T) {
+	db := testInitMigration(t)
+	user := u.User{
+		Username: "User",
+		Password: "User",
+	}
+
+	addUser(user, t, db)
+
+	sentMarshal, err := json.Marshal(user)
+	if err != nil {
+		t.Error(err)
+	}
+	req, err := http.NewRequest("POST", "/api/login/", bytes.NewReader(sentMarshal))
+	if err != nil {
+		t.Error(err)
+	}
+
+	rr := httptest.NewRecorder()
+	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		api.ValidateUser(w, r, db, secretKey)
+	})
+
+	handler.ServeHTTP(rr, req)
+
+	// if there is no cookie with the expected name, then the test fails
+	if !cookieExists("UserLoginCookie", rr.Result().Cookies(), t) {
+		t.Log("Cookie not properly set")
+		t.Fail()
+	}
+
+	if status := rr.Result().StatusCode; status != http.StatusOK {
+		t.Log(status)
+		t.Fail()
+	}
+}
 func TestValidateExistingUser(t *testing.T) {
 	db := testInitMigration(t)
 	user := u.User{
 		Username: "User",
 		Password: "User",
 	}
-	cleanDB(user, db)
+
 	addUser(user, t, db)
 
-	status := validateUserTest(user, t, db)
+	status := validateUserTest(user, t, db, secretKey)
 	if status != http.StatusOK {
 		t.Log(status)
 		t.Fail()
@@ -212,8 +360,8 @@ func TestValidateNonexistantuser(t *testing.T) {
 		Password: "User",
 	}
 	cleanDB(user, db)
-	status := validateUserTest(user, t, db)
-	if status != http.StatusOK {
+	status := validateUserTest(user, t, db, secretKey)
+	if status == http.StatusOK {
 		t.Log(status)
 		t.Fail()
 	}
@@ -230,10 +378,9 @@ func TestValidateIncorrectPassword(t *testing.T) {
 		Password: "WrongPassword",
 	}
 
-	cleanDB(realUser, db)
 	addUser(realUser, t, db)
 
-	status := validateUserTest(sentUser, t, db)
+	status := validateUserTest(sentUser, t, db, secretKey)
 
 	if status != http.StatusNotFound {
 		t.Log(status)
@@ -282,7 +429,27 @@ func TestLeaderboardOverMaxLimit(t *testing.T) {
 }
 
 func TestLeaderboardSorted(t *testing.T) {
+	db := testInitMigration(t)
 	limit := "10"
+
+	user1 := u.User{
+		Username: "User1",
+		Password: "password",
+		Score:    999,
+	}
+	user2 := u.User{
+		Username: "User1",
+		Password: "password",
+		Score:    100,
+	}
+	user3 := u.User{
+		Username: "User1",
+		Password: "password",
+		Score:    5,
+	}
+	addUser(user1, t, db)
+	addUser(user2, t, db)
+	addUser(user3, t, db)
 	status, users := getTopUsersTest(limit, t)
 
 	if status != http.StatusOK {
