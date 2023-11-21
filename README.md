@@ -13,7 +13,7 @@ guess was to their dropped off location.
 
 ## Requirements
 
-To run the server, you must set `DB_PASSWORD` to be the password for the database you are using as well as `COOKIE_SECRET` for encoding and decoding cookies. If you are having trouble, please contact my cell at `786-614-1426` or email me at `matthew.deguzman0613@gmail.com`.
+To run the server, you must set `DB_PASSWORD` to be the password for the database you are using as well as `COOKIE_SECRET` for encoding and decoding cookies.
 
 ## Cypress
 
